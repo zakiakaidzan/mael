@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SwiftMail - Dashboard Pesan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .loader { border-top-color: #0f172a; animation: spinner 0.6s linear infinite; }
+        @keyframes spinner { to { transform: rotate(360deg); } }
+        .message-content img { max-width: 100%; height: auto; }
+        .message-content a { color: #4f46e5; text-decoration: underline; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        @keyframes slideIn {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .toast-animate { animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 antialiased">
+
+    <!-- Kontainer Notifikasi -->
+    <div id="toast-container" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] flex flex-col gap-3 pointer-events-none"></div>
+
+    <div class="min-h-screen p-4 md:p-8">
+        <div class="max-w-4xl mx-auto">
+            
+            <!-- Header -->
+            <header class="flex flex-row items-center justify-between gap-4 mb-8">
+                <div class="flex items-center gap-4">
+                    <img src="https://i.postimg.cc/Fspg81Wy/logo-mail.png" alt="SwiftMail Logo" class="h-10 md:h-12 w-auto object-contain">
+                </div>
+                
+                <div class="flex items-center gap-2">
+                    <button id="open-login-btn" title="Pengaturan API" class="bg-white border border-slate-200 hover:border-indigo-200 text-slate-400 hover:text-indigo-600 p-3 rounded-2xl transition-all active:scale-95 flex items-center justify-center shadow-sm">
+                        <i data-lucide="settings" class="w-6 h-6"></i>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Bagian Hero -->
+            <div class="bg-white rounded-[2rem] p-6 md:p-10 shadow-sm border border-slate-100 mb-8 relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-40 h-40 bg-indigo-50 rounded-full -mr-20 -mt-20 opacity-40"></div>
+                
+                <div class="relative z-10">
+                    <label class="text-[10px] font-black text-indigo-600 uppercase tracking-widest mb-3 block">Alamat Email Aktif</label>
+                    
+                    <div class="flex flex-col lg:flex-row items-stretch lg:items-center gap-4">
+                        <!-- Grup Input Email & Tombol Hapus -->
+                        <div class="flex-grow flex items-center gap-2">
+                            <div class="flex-grow flex items-center bg-slate-50 border border-slate-200 rounded-2xl px-6 py-5 group focus-within:border-indigo-400 transition-all min-w-0">
+                                <span id="email-display" class="text-lg md:text-xl font-mono font-bold text-slate-800 truncate break-all">Memuat...</span>
+                            </div>
+                            <!-- Tombol Hapus dipindahkan ke samping input -->
+                            <button id="delete-email-btn" title="Hapus Permanen Alamat" class="bg-white border border-red-100 hover:bg-red-50 text-red-500 p-5 rounded-2xl transition-all active:scale-95 flex items-center justify-center shadow-sm shrink-0">
+                                <i data-lucide="trash-2" class="w-5 h-5"></i>
+                            </button>
+                        </div>
+                        
+                        <!-- Grup Tombol Aksi Lainnya -->
+                        <div class="flex gap-2">
+                            <button id="copy-btn" class="flex-1 lg:flex-none flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-8 py-5 rounded-2xl font-bold transition-all active:scale-95 shadow-lg shadow-slate-200">
+                                <i data-lucide="copy" class="w-5 h-5"></i>
+                                <span id="copy-text">Salin</span>
+                            </button>
+                            <button id="open-custom-name-btn" title="Edit Nama" class="bg-white border border-slate-200 hover:border-indigo-200 text-indigo-600 p-5 rounded-2xl transition-all active:scale-95 flex items-center justify-center shadow-sm">
+                                <i data-lucide="edit-3" class="w-5 h-5"></i>
+                            </button>
+                            <button id="generate-email-btn" title="Acak Nama" class="bg-white border border-slate-200 hover:border-slate-300 text-slate-600 p-5 rounded-2xl transition-all active:scale-95 flex items-center justify-center shadow-sm">
+                                <i data-lucide="shuffle" class="w-5 h-5"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 flex flex-wrap gap-4 text-[11px] font-bold text-slate-400 uppercase tracking-tighter">
+                        <div id="status-indicator" class="hidden items-center gap-1.5 px-3 py-1 bg-indigo-50 text-indigo-600 rounded-lg">
+                            <i data-lucide="refresh-cw" class="w-3 h-3 animate-spin"></i>
+                            <span>Sinkronisasi...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kotak Error -->
+            <div id="error-box" class="hidden bg-red-50 border border-red-100 text-red-600 p-5 rounded-3xl mb-8 items-center gap-4 animate-in slide-in-from-top-2">
+                <i data-lucide="alert-circle" class="w-6 h-6 flex-shrink-0"></i>
+                <p id="error-message" class="text-sm font-bold"></p>
+            </div>
+
+            <!-- Kontainer Kotak Masuk -->
+            <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden min-h-[500px] flex flex-col">
+                <div id="inbox-view" class="flex flex-col h-full">
+                    <div class="p-8 border-b border-slate-100 flex items-center justify-between bg-slate-50/30">
+                        <h3 class="font-black text-slate-800 flex items-center gap-3 text-lg">
+                            KOTAK MASUK
+                        </h3>
+                        <div class="flex items-center gap-3">
+                            <button id="manual-refresh" class="bg-white border border-slate-200 text-indigo-600 hover:bg-indigo-50 p-2.5 rounded-xl transition-all active:scale-90 shadow-sm">
+                                <i data-lucide="refresh-cw" class="w-5 h-5"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="messages-list" class="divide-y divide-slate-50 flex-grow">
+                        <!-- Konten Pesan -->
+                    </div>
+                </div>
+            </div>
+
+            <footer class="mt-12 text-center text-slate-300 text-[10px] font-bold uppercase tracking-widest py-8">
+                <p>© 2024 SwiftMail • Layanan Email Sekali Pakai</p>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Modal Detail Pesan -->
+    <div id="detail-modal" class="hidden fixed inset-0 bg-slate-900/70 backdrop-blur-md z-[60] flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-4xl rounded-[2.5rem] shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-300 flex flex-col max-h-[90vh]">
+            <div class="p-6 md:p-8 border-b border-slate-100 flex items-center justify-between bg-slate-50/50 flex-shrink-0">
+                <div class="flex items-center gap-4">
+                    <button id="close-detail" class="bg-white border border-slate-200 text-slate-500 hover:bg-slate-50 p-3 rounded-2xl transition-all active:scale-90 shadow-sm">
+                        <i data-lucide="arrow-left" class="w-6 h-6"></i>
+                    </button>
+                    <div><span id="detail-id" class="text-[9px] font-black text-slate-400 bg-white px-2 py-1 rounded-lg border border-slate-100 uppercase tracking-widest"></span></div>
+                </div>
+                <button id="delete-msg-modal-btn" class="flex items-center gap-2 bg-red-50 hover:bg-red-100 text-red-600 px-6 py-3.5 rounded-2xl text-sm font-black transition-all active:scale-95 shadow-sm border border-red-100">
+                    <i data-lucide="trash-2" class="w-4 h-4"></i> HAPUS
+                </button>
+            </div>
+            <div class="p-8 md:p-12 overflow-y-auto custom-scrollbar flex-grow bg-white">
+                <div class="mb-10">
+                    <h2 id="detail-subject" class="text-3xl font-black text-slate-900 mb-6 leading-tight tracking-tight"></h2>
+                    <div class="flex flex-col sm:flex-row sm:items-center gap-6 p-6 bg-slate-50 rounded-3xl border border-slate-100">
+                        <div class="flex items-center gap-4">
+                            <div class="bg-white text-slate-900 p-3 rounded-2xl shadow-sm"><i data-lucide="user" class="w-6 h-6"></i></div>
+                            <div>
+                                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Pengirim</p>
+                                <p id="detail-from-name" class="font-bold text-slate-800"></p>
+                                <p id="detail-from-addr" class="text-xs text-slate-500 font-mono"></p>
+                            </div>
+                        </div>
+                        <div class="hidden sm:block w-px h-10 bg-slate-200 mx-2"></div>
+                        <div>
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Waktu</p>
+                            <p id="detail-date" class="font-bold text-slate-700 text-sm"></p>
+                        </div>
+                    </div>
+                </div>
+                <div id="detail-body" class="message-content prose prose-slate max-w-none text-slate-700 leading-relaxed overflow-x-auto p-2"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Pengaturan API -->
+    <div id="login-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-[2rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+            <div class="p-8 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                <h3 class="font-black text-slate-800 uppercase tracking-widest text-sm">Pengaturan API</h3>
+                <button id="close-login" class="text-slate-400 hover:text-slate-600 active:scale-90"><i data-lucide="x" class="w-6 h-6"></i></button>
+            </div>
+            <div class="p-8 space-y-6">
+                <form id="login-form" class="space-y-6">
+                    <div>
+                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">API Address</label>
+                        <input type="email" id="input-address" required class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-4 text-slate-700 font-bold outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">API Password</label>
+                        <input type="password" id="input-password" required class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-4 text-slate-700 font-bold outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Otomatisasi</label>
+                        <button type="button" id="auto-refresh-btn" class="w-full flex items-center justify-between px-5 py-4 rounded-2xl text-xs font-bold transition-all bg-green-50 text-green-700 border border-green-100">
+                            <span class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div> Auto Refresh</span>
+                            <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                    <button type="submit" class="w-full bg-slate-900 hover:bg-black text-white font-black py-5 rounded-2xl shadow-xl transition-all active:scale-95 uppercase tracking-widest text-xs mt-4">Simpan Sesi</button>
+                </form>
+                <div class="pt-6 border-t border-slate-100">
+                    <button id="delete-all-msgs-btn" class="w-full flex items-center justify-center gap-2 px-5 py-4 rounded-2xl text-xs font-black transition-all bg-red-50 text-red-600 border border-red-100 hover:bg-red-100 active:scale-95">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i> HAPUS SEMUA KONTAK MASUK
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Custom Name -->
+    <div id="custom-name-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-[2rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+            <div class="p-8 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                <h3 class="font-black text-slate-800 uppercase tracking-widest text-sm">Custom ID</h3>
+                <button id="close-custom-name" class="text-slate-400 hover:text-slate-600 active:scale-90"><i data-lucide="x" class="w-6 h-6"></i></button>
+            </div>
+            <div class="p-8 space-y-6">
+                <div class="relative">
+                    <input type="text" id="input-custom-name" required class="w-full bg-slate-50 border border-slate-200 rounded-2xl pl-6 pr-32 py-5 text-slate-800 font-black outline-none focus:ring-2 focus:ring-indigo-500 lowercase transition-all">
+                    <div class="absolute inset-y-0 right-0 flex items-center pr-6 pointer-events-none">
+                        <span class="text-slate-400 font-bold text-xs">@rungzit.web.id</span>
+                    </div>
+                </div>
+                <button id="save-custom-name" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-black py-5 rounded-2xl shadow-xl transition-all active:scale-95 uppercase tracking-widest text-xs">Simpan Perubahan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loader Global -->
+    <div id="global-loader" class="hidden fixed inset-0 bg-slate-900/30 backdrop-blur-md z-[200] flex items-center justify-center">
+        <div class="bg-white p-10 rounded-[2.5rem] shadow-2xl flex flex-col items-center gap-6 border border-slate-100">
+            <div class="w-12 h-12 loader rounded-full border-[5px] border-slate-100 shadow-sm"></div>
+            <p class="text-xs font-black text-slate-800 uppercase tracking-[0.2em] italic">Proses Sinkronisasi...</p>
+        </div>
+    </div>
+
+    <script>
+        // --- Konfigurasi ---
+        const API_BASE = 'https://api.mail.tm';
+        const DOMAIN_TARGET = '@sonten.web.id';
+        const DEFAULT_CREDS = { address: 'zakia@deltajohnsons.com', password: 'masuk12345' };
+
+        // --- Manajemen State ---
+        let currentAPIAccount = JSON.parse(localStorage.getItem('temp_mail_api_account')) || DEFAULT_CREDS;
+        let currentToken = localStorage.getItem('temp_mail_token') || '';
+        let displayEmail = localStorage.getItem('temp_mail_display_email') || (generateRandomName() + DOMAIN_TARGET);
+        
+        let messages = [];
+        let isAutoRefresh = true;
+        let activeMessageId = null;
+        let isRefreshingToken = false; 
+
+        // --- Elemen DOM ---
+        const emailDisplay = document.getElementById('email-display');
+        const copyBtn = document.getElementById('copy-btn');
+        const generateBtn = document.getElementById('generate-email-btn');
+        const deleteBtn = document.getElementById('delete-email-btn');
+        const openCustomBtn = document.getElementById('open-custom-name-btn');
+        const customNameModal = document.getElementById('custom-name-modal');
+        const detailModal = document.getElementById('detail-modal');
+        const statusIndicator = document.getElementById('status-indicator');
+        const messagesList = document.getElementById('messages-list');
+        const loginModal = document.getElementById('login-modal');
+        const deleteMsgModalBtn = document.getElementById('delete-msg-modal-btn');
+        const deleteAllMsgsBtn = document.getElementById('delete-all-msgs-btn');
+        const toastContainer = document.getElementById('toast-container');
+        const openLoginBtn = document.getElementById('open-login-btn');
+        const autoRefreshBtn = document.getElementById('auto-refresh-btn');
+
+        function generateRandomName() {
+            const names = ['budi', 'yuki', 'kenji', 'ji-hoon', 'lin', 'mei', 'arjun', 'putri', 'siti', 'agus', 'adinata', 'saputra', 'kusuma', 'haruto', 'izumi', 'anwar', 'faisal', 'rahmat'];
+            const randomName = names[Math.floor(Math.random() * names.length)];
+            const randomNumber = Math.floor(Math.random() * 999);
+            return `${randomName}${randomNumber}`;
+        }
+
+        // --- Utilitas UI ---
+        function showLoader(v) { document.getElementById('global-loader').classList.toggle('hidden', !v); }
+        
+        function showError(t) { 
+            const b = document.getElementById('error-box');
+            document.getElementById('error-message').textContent = t;
+            b.classList.remove('hidden'); b.classList.add('flex');
+            if (!t.includes("Pengaturan API")) {
+                setTimeout(() => { b.classList.add('hidden'); }, 8000);
+            }
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            const bgColor = type === 'success' ? 'bg-slate-900' : 'bg-red-600';
+            const iconName = type === 'success' ? 'check' : 'alert-circle';
+            toast.className = `toast-animate pointer-events-auto flex items-center gap-3 ${bgColor} text-white px-6 py-4 rounded-2xl shadow-2xl min-w-[280px] border border-white/10`;
+            toast.innerHTML = `
+                <div class="${type === 'success' ? 'bg-green-500' : 'bg-white/20'} p-1 rounded-lg">
+                    <i data-lucide="${iconName}" class="w-4 h-4 text-white"></i>
+                </div>
+                <span class="text-xs font-black uppercase tracking-widest">${message}</span>
+            `;
+            toastContainer.appendChild(toast);
+            lucide.createIcons();
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(20px)';
+                toast.style.transition = 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
+                setTimeout(() => toast.remove(), 400);
+            }, 3000);
+        }
+
+        // --- Logika API ---
+        async function fetchAPI(endpoint, method = 'GET', body = null, isRetry = false) {
+            const headers = { 
+                'Accept': 'application/ld+json', 
+                'Content-Type': 'application/json' 
+            };
+            if (currentToken) headers['Authorization'] = `Bearer ${currentToken}`;
+            try {
+                const res = await fetch(`${API_BASE}${endpoint}`, { method, headers, body: body ? JSON.stringify(body) : null });
+                if (res.status === 401 && !isRetry && !isRefreshingToken) {
+                    const success = await silentLogin();
+                    if (success) return fetchAPI(endpoint, method, body, true);
+                    else throw new Error("Sesi API berakhir. Periksa kredensial di Pengaturan API.");
+                }
+                if (res.status === 204) return true;
+                if (method === 'DELETE' && res.ok) return true;
+                const text = await res.text();
+                const data = text ? JSON.parse(text) : true;
+                if (!res.ok) throw new Error(data.detail || `Error ${res.status}`);
+                return data;
+            } catch (e) { throw e; }
+        }
+
+        async function silentLogin() {
+            if (isRefreshingToken) return false;
+            if (!currentAPIAccount.address || !currentAPIAccount.password) return false;
+            isRefreshingToken = true;
+            try {
+                const res = await fetch(`${API_BASE}/token`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                    body: JSON.stringify({ address: currentAPIAccount.address.trim(), password: currentAPIAccount.password.trim() })
+                });
+                if (!res.ok) throw new Error("Gagal login otomatis");
+                const data = await res.json();
+                if (data.token) {
+                    currentToken = data.token;
+                    localStorage.setItem('temp_mail_token', currentToken);
+                    return true;
+                }
+                return false;
+            } catch (err) { return false; } finally { isRefreshingToken = false; }
+        }
+
+        async function handleAPILogin(address, password) {
+            showLoader(true);
+            try {
+                const res = await fetch(`${API_BASE}/token`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                    body: JSON.stringify({ address: address.trim(), password: password.trim() })
+                });
+                if (!res.ok) throw new Error("Kredensial salah.");
+                const data = await res.json();
+                currentToken = data.token;
+                currentAPIAccount = { address: address.trim(), password: password.trim() };
+                localStorage.setItem('temp_mail_token', currentToken);
+                localStorage.setItem('temp_mail_api_account', JSON.stringify(currentAPIAccount));
+                loginModal.classList.add('hidden');
+                document.getElementById('error-box').classList.add('hidden');
+                refreshUI();
+                getMessages();
+                showToast("Sesi API Disimpan");
+            } catch (err) {
+                showError("Auth Error: " + err.message);
+                showToast("Login Gagal", "error");
+            } finally { showLoader(false); }
+        }
+
+        async function getMessages() {
+            if (!currentToken && !isRefreshingToken) {
+                const success = await silentLogin();
+                if (!success) return; 
+            }
+            statusIndicator.classList.remove('hidden');
+            statusIndicator.classList.add('flex');
+            try {
+                const data = await fetchAPI('/messages?page=1');
+                if (data && data['hydra:member']) messages = data['hydra:member'];
+                else if (Array.isArray(data)) messages = data;
+                else messages = [];
+                renderInbox();
+            } catch (err) {
+                if (err.message.includes("Sesi API berakhir")) showError(err.message);
+            } finally { statusIndicator.classList.add('hidden'); }
+        }
+
+        async function viewMessage(id) {
+            showLoader(true);
+            try {
+                const msg = await fetchAPI(`/messages/${id}`);
+                activeMessageId = id;
+                renderDetail(msg);
+                messages = messages.map(m => m.id === id ? {...m, seen: true} : m);
+                renderInbox();
+            } catch (err) { showError("Gagal memuat detail pesan"); } finally { showLoader(false); }
+        }
+
+        async function deleteMessage(id, isModal = false) {
+            if (!confirm("Hapus pesan ini secara permanen?")) return;
+            showLoader(true);
+            try {
+                await fetchAPI(`/messages/${id}`, 'DELETE');
+                messages = messages.filter(m => m.id !== id);
+                renderInbox();
+                if (isModal) closeDetailModal();
+                showToast("Pesan Terhapus");
+            } catch (err) { showToast("Gagal Menghapus", 'error'); } finally { showLoader(false); }
+        }
+
+        async function deleteAllMessages() {
+            if (messages.length === 0) return showToast("Kotak masuk kosong", "error");
+            if (!confirm(`Hapus SEMUA (${messages.length}) pesan?`)) return;
+            showLoader(true);
+            try {
+                const deletePromises = messages.map(msg => fetchAPI(`/messages/${msg.id}`, 'DELETE'));
+                await Promise.all(deletePromises);
+                messages = [];
+                renderInbox();
+                showToast("Semua Pesan Dihapus");
+                loginModal.classList.add('hidden');
+            } catch (err) { showToast("Beberapa gagal dihapus", "error"); getMessages(); } finally { showLoader(false); }
+        }
+
+        function refreshUI() { emailDisplay.textContent = displayEmail; }
+
+        function renderInbox() {
+            if (!messages || messages.length === 0) {
+                messagesList.innerHTML = `<div class="flex flex-col items-center justify-center p-20 text-center h-full"><div class="bg-slate-50 p-6 rounded-[2rem] mb-6"><i data-lucide="inbox" class="w-16 h-16 text-slate-200"></i></div><p class="font-black text-slate-800 uppercase tracking-widest text-xs">Inbox Kosong</p><p class="text-[10px] text-slate-400 mt-2 font-bold uppercase tracking-tighter">Menunggu email masuk...</p></div>`;
+            } else {
+                messagesList.innerHTML = messages.map(m => `<div class="group p-6 md:p-8 flex items-start gap-6 cursor-pointer transition-all hover:bg-slate-50 border-b border-slate-50 last:border-0 ${!m.seen ? 'bg-indigo-50/30' : ''}" onclick="viewMessage('${m.id}')"><div class="mt-2 w-3 h-3 rounded-full flex-shrink-0 ${!m.seen ? 'bg-indigo-600 shadow-lg shadow-indigo-100' : 'bg-transparent border-2 border-slate-200'}"></div><div class="flex-grow min-w-0"><div class="flex justify-between items-start mb-2"><span class="text-[10px] font-black uppercase tracking-widest text-slate-500 truncate mr-4">${m.from.name || m.from.address}</span><span class="text-[10px] font-bold text-slate-300 whitespace-nowrap">${new Date(m.createdAt).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</span></div><h4 class="text-sm md:text-base font-black text-slate-800 truncate mb-1.5">${m.subject || '(No Subject)'}</h4><p class="text-xs text-slate-400 line-clamp-1 font-medium">${m.intro || ''}</p></div><div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all"><button class="p-3 text-red-500 hover:bg-red-50 rounded-2xl transition-all shadow-sm bg-white border border-red-50" onclick="event.stopPropagation(); deleteMessage('${m.id}')"><i data-lucide="trash-2" class="w-4 h-4"></i></button><i data-lucide="chevron-right" class="w-5 h-5 text-slate-300"></i></div></div>`).join('');
+            }
+            lucide.createIcons();
+        }
+
+        function renderDetail(msg) {
+            detailModal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            document.getElementById('detail-id').textContent = `ID: ${msg.id.substring(0,8)}`;
+            document.getElementById('detail-subject').textContent = msg.subject || '(No Subject)';
+            document.getElementById('detail-from-name').textContent = msg.from.name || msg.from.address;
+            document.getElementById('detail-from-addr').textContent = msg.from.address;
+            document.getElementById('detail-date').textContent = new Date(msg.createdAt).toLocaleString('id-ID', { dateStyle: 'long', timeStyle: 'short' });
+            const body = document.getElementById('detail-body');
+            body.innerHTML = (msg.html && msg.html.length > 0) ? msg.html[0] : `<pre class="whitespace-pre-wrap font-sans text-sm p-4 bg-slate-50 rounded-2xl border border-slate-100">${msg.text || ''}</pre>`;
+            lucide.createIcons();
+        }
+
+        function closeDetailModal() { detailModal.classList.add('hidden'); document.body.style.overflow = 'auto'; activeMessageId = null; }
+
+        generateBtn.addEventListener('click', () => { displayEmail = generateRandomName() + DOMAIN_TARGET; localStorage.setItem('temp_mail_display_email', displayEmail); refreshUI(); showToast("ID Diacak"); });
+        openCustomBtn.addEventListener('click', () => { document.getElementById('input-custom-name').value = displayEmail.split('@')[0]; customNameModal.classList.remove('hidden'); });
+        document.getElementById('save-custom-name').addEventListener('click', () => {
+            let name = document.getElementById('input-custom-name').value.trim().toLowerCase().replace(/[^a-z0-9]/g, '');
+            if (name.length < 3) return showToast("Min. 3 Karakter", "error");
+            displayEmail = name + DOMAIN_TARGET;
+            localStorage.setItem('temp_mail_display_email', displayEmail);
+            refreshUI();
+            customNameModal.classList.add('hidden');
+            showToast("ID Disimpan");
+        });
+        deleteBtn.addEventListener('click', () => { if (confirm("Reset identitas email ini?")) { displayEmail = generateRandomName() + DOMAIN_TARGET; localStorage.setItem('temp_mail_display_email', displayEmail); refreshUI(); showToast("Identitas Direset"); } });
+        copyBtn.addEventListener('click', () => {
+            const t = document.createElement('textarea'); t.value = displayEmail;
+            document.body.appendChild(t); t.select(); document.execCommand('copy'); document.body.removeChild(t);
+            const span = document.getElementById('copy-text'); span.textContent = "Copied!";
+            setTimeout(() => span.textContent = "Salin", 2000);
+            showToast("Email Disalin");
+        });
+        deleteMsgModalBtn.addEventListener('click', () => { if (activeMessageId) deleteMessage(activeMessageId, true); });
+        deleteAllMsgsBtn.addEventListener('click', deleteAllMessages);
+        openLoginBtn.addEventListener('click', () => { document.getElementById('input-address').value = currentAPIAccount.address; document.getElementById('input-password').value = currentAPIAccount.password; loginModal.classList.remove('hidden'); });
+        document.getElementById('close-login').addEventListener('click', () => loginModal.classList.add('hidden'));
+        document.getElementById('close-custom-name').addEventListener('click', () => customNameModal.classList.add('hidden'));
+        document.getElementById('close-detail').addEventListener('click', closeDetailModal);
+        detailModal.addEventListener('click', (e) => { if (e.target === detailModal) closeDetailModal(); });
+        document.getElementById('manual-refresh').addEventListener('click', () => { getMessages(); showToast("Inbox Disinkronkan"); });
+        document.getElementById('login-form').addEventListener('submit', e => { e.preventDefault(); handleAPILogin(document.getElementById('input-address').value, document.getElementById('input-password').value); });
+        autoRefreshBtn.addEventListener('click', function() {
+            isAutoRefresh = !isAutoRefresh;
+            this.className = isAutoRefresh ? "w-full flex items-center justify-between px-5 py-4 rounded-2xl text-xs font-bold transition-all bg-green-50 text-green-700 border border-green-100" : "w-full flex items-center justify-between px-5 py-4 rounded-2xl text-xs font-bold transition-all bg-slate-100 text-slate-600 border border-slate-200";
+            this.innerHTML = isAutoRefresh ? `<span class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div> Auto Refresh</span><i data-lucide="refresh-cw" class="w-4 h-4"></i>` : `<span class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-slate-400"></div> Manual Mode</span><i data-lucide="refresh-cw" class="w-4 h-4"></i>`;
+            lucide.createIcons();
+            showToast(`Auto Sync: ${isAutoRefresh ? 'ON' : 'OFF'}`);
+        });
+
+        lucide.createIcons();
+        refreshUI();
+        getMessages();
+        setInterval(() => { if(isAutoRefresh && currentToken && detailModal.classList.contains('hidden')) getMessages(); }, 10000);
+    </script>
+</body>
+</html>
