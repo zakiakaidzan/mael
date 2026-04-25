@@ -1,0 +1,1552 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Client Dashboard | Wedding</title>
+	<!-- Tailwind CSS -->
+	<script src="https://cdn.tailwindcss.com"></script>
+	<script>
+		tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        teal: {
+                            50: '#f0f5f4',   // Aksen background sangat muda
+                            100: '#dce8e6',  // Hover background muda
+                            500: '#285e58',  // Lighter
+                            600: '#1f4642',  // Warna utama (Target user)
+                            700: '#163330',  // Darker (Untuk hover button)
+                        },
+                        slate: {
+                            50: '#f8fafc',
+                            100: '#f1f5f9',
+                            800: '#1e293b',
+                            900: '#0f172a',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+	</script>
+
+	<!-- Material Symbols Rounded -->
+	<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0"
+		rel="stylesheet" />
+
+	<!-- Chart.js CDN -->
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+	<!-- SheetJS (Excel) CDN -->
+	<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+	<!-- QRCode CDN -->
+	<script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+	<!-- HTML5-QRCode Scanner CDN -->
+	<script src="https://unpkg.com/html5-qrcode"></script>
+
+	<style>
+		@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+		body {
+			font-family: 'Inter', sans-serif;
+			background-color: #f8fafc;
+		}
+
+		.material-symbols-rounded {
+			font-variation-settings: 'FILL'0, 'wght'500, 'GRAD'0, 'opsz'24;
+			display: inline-block;
+			vertical-align: middle;
+		}
+
+		/* Custom Scrollbar */
+		::-webkit-scrollbar {
+			width: 6px;
+			height: 6px;
+		}
+
+		::-webkit-scrollbar-track {
+			background: transparent;
+		}
+
+		::-webkit-scrollbar-thumb {
+			background: #cbd5e1;
+			border-radius: 10px;
+		}
+
+		::-webkit-scrollbar-thumb:hover {
+			background: #94a3b8;
+		}
+
+		/* Smooth scrolling */
+		html {
+			scroll-behavior: smooth;
+		}
+
+		/* Loader */
+		.spinner {
+			border: 3px solid rgba(31, 70, 66, 0.1);
+			border-left-color: #1f4642;
+			border-radius: 50%;
+			width: 24px;
+			height: 24px;
+			animation: spin 1s linear infinite;
+		}
+
+		@keyframes spin {
+			0% {
+				transform: rotate(0deg);
+			}
+
+			100% {
+				transform: rotate(360deg);
+			}
+		}
+
+		/* Toast Animation */
+		@keyframes slideInRight {
+			from {
+				transform: translateX(100%);
+				opacity: 0;
+			}
+
+			to {
+				transform: translateX(0);
+				opacity: 1;
+			}
+		}
+
+		.toast-enter {
+			animation: slideInRight 0.3s ease-out forwards;
+		}
+	</style>
+</head>
+
+<body class="text-slate-800 antialiased overflow-x-hidden min-h-screen">
+
+	<!-- Container Utama -->
+	<div id="app"></div>
+
+	<!-- Container Modal & Toast -->
+	<div id="modal-container"></div>
+	<div id="toast-container" class="fixed top-5 right-5 z-[70] flex flex-col gap-3 pointer-events-none"></div>
+
+	<script>
+		// ==========================================
+        // CONFIG & STATE
+        // ==========================================
+        const API = "https://langgeng.fauzanmuhraom.workers.dev";
+        let state = {
+            profile: null,
+            insight: null,
+            guests: [],
+            rsvps: [],
+            messages: [],
+            selectedTemplate: 'umum' // Default template pesan WA
+        };
+        // Global object untuk Chart & Scanner
+        let charts = { visitor: null, status: null };
+        let html5QrcodeScanner = null;
+
+        // ==========================================
+        // UTILITY FUNCTIONS
+        // ==========================================
+        function escapeHtml(text) {
+            if (text === null || text === undefined) return '';
+            return String(text)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return '-';
+            const date = new Date(dateString);
+            if (isNaN(date)) return escapeHtml(dateString);
+            return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute:'2-digit' });
+        }
+
+        function formatForInput(dateString) {
+            if (!dateString) return '';
+            const d = new Date(dateString);
+            if (isNaN(d)) return '';
+            return d.toISOString().slice(0, 16);
+        }
+
+        function statusBadge(status) {
+            const s = escapeHtml(status || '').toLowerCase();
+            if (s === 'hadir') return '<span class="px-3 py-1 bg-teal-50 text-teal-700 text-xs font-semibold rounded-full border border-teal-100">Hadir</span>';
+            if (s === 'tidak_hadir' || s === 'tidak hadir') return '<span class="px-3 py-1 bg-red-50 text-red-600 text-xs font-semibold rounded-full border border-red-100">Tidak Hadir</span>';
+            if (s === 'ragu') return '<span class="px-3 py-1 bg-yellow-50 text-yellow-700 text-xs font-semibold rounded-full border border-yellow-100">Ragu-ragu</span>';
+            return `<span class="px-3 py-1 bg-slate-100 text-slate-600 text-xs font-semibold rounded-full">${s || 'Unknown'}</span>`;
+        }
+
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            const bgColor = type === 'success' ? 'bg-teal-600' : 'bg-red-500';
+            const icon = type === 'success' ? 'check_circle' : 'error';
+            
+            toast.className = `toast-enter ${bgColor} text-white px-5 py-3 rounded-2xl shadow-lg flex items-center gap-3 max-w-sm pointer-events-auto`;
+            toast.innerHTML = `<span class="material-symbols-rounded text-xl">${icon}</span><span class="text-sm font-medium">${escapeHtml(message)}</span>`;
+            
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(100%)';
+                toast.style.transition = 'all 0.3s ease-out';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        async function copyText(text) {
+            try {
+                await navigator.clipboard.writeText(text);
+                showToast("Link berhasil disalin!", "success");
+            } catch (err) {
+                showToast("Gagal menyalin link", "error");
+            }
+        }
+
+        // Tab Navigation
+        function switchSection(sectionId) {
+            document.querySelectorAll('.dashboard-section').forEach(el => el.classList.add('hidden'));
+            
+            const targetSection = document.getElementById(sectionId);
+            if (targetSection) targetSection.classList.remove('hidden');
+
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                if (btn.id.startsWith('nav-mobile')) {
+                    btn.classList.remove('text-teal-600');
+                    btn.classList.add('text-slate-500');
+                } else if (btn.id.startsWith('nav-desktop')) {
+                    btn.classList.remove('bg-slate-50', 'text-teal-600');
+                    btn.classList.add('text-slate-600');
+                }
+            });
+
+            const mobileBtn = document.getElementById('nav-mobile-' + sectionId);
+            if (mobileBtn) {
+                mobileBtn.classList.remove('text-slate-500');
+                mobileBtn.classList.add('text-teal-600');
+            }
+
+            const desktopBtn = document.getElementById('nav-desktop-' + sectionId);
+            if (desktopBtn) {
+                desktopBtn.classList.remove('text-slate-600');
+                desktopBtn.classList.add('bg-slate-50', 'text-teal-600');
+            }
+
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+
+        // ==========================================
+        // API WRAPPERS
+        // ==========================================
+        function getHeaders() {
+            const token = localStorage.getItem('client_token');
+            return {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            };
+        }
+
+        async function apiGet(endpoint) {
+            const res = await fetch(API + endpoint, { headers: getHeaders() });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || 'Gagal mengambil data');
+            return data;
+        }
+
+        async function apiPost(endpoint, payload) {
+            const isLogin = endpoint === '/api/client/login';
+            const headers = isLogin ? { 'Content-Type': 'application/json' } : getHeaders();
+            const res = await fetch(API + endpoint, { method: 'POST', headers: headers, body: JSON.stringify(payload) });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || 'Gagal mengirim data');
+            return data;
+        }
+
+        async function apiPut(endpoint, payload) {
+            try {
+                const res = await fetch(API + endpoint, { method: 'PUT', headers: getHeaders(), body: JSON.stringify(payload) });
+                let data = {}; try { data = await res.json(); } catch(e){}
+                if (!res.ok) throw new Error(data.message || 'Gagal mengubah data');
+                return data;
+            } catch (error) {
+                if(error.message === 'Failed to fetch') throw new Error('Koneksi terputus (CORS/Network error).');
+                throw error;
+            }
+        }
+
+        async function apiDelete(endpoint) {
+            try {
+                const res = await fetch(API + endpoint, { method: 'DELETE', headers: getHeaders() });
+                let data = {}; try { data = await res.json(); } catch(e){}
+                if (!res.ok) throw new Error(data.message || 'Gagal menghapus data');
+                return data;
+            } catch (error) {
+                if(error.message === 'Failed to fetch') throw new Error('Akses diblokir (Failed to fetch).');
+                throw error;
+            }
+        }
+
+        // ==========================================
+        // AUTHENTICATION
+        // ==========================================
+        async function login(event) {
+            event.preventDefault();
+            const btn = document.getElementById('login-btn');
+            const errorAlert = document.getElementById('login-error');
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            btn.disabled = true;
+            btn.innerHTML = '<div class="spinner border-white"></div>';
+            errorAlert.classList.add('hidden');
+
+            try {
+                const res = await apiPost('/api/client/login', { email, password });
+                if (res.success && res.token) {
+                    localStorage.setItem('client_token', res.token);
+                    showSplashscreen(); // Memanggil splashscreen alih-alih langsung render()
+                } else {
+                    throw new Error("Login gagal atau token tidak ditemukan");
+                }
+            } catch (err) {
+                errorAlert.classList.remove('hidden');
+                errorAlert.innerText = escapeHtml(err.message);
+                btn.disabled = false;
+                btn.innerHTML = 'Log in';
+            }
+        }
+
+        async function showSplashscreen() {
+            const html = `
+                <div id="splashscreen" class="fixed inset-0 z-[100] bg-[#baf29d] flex items-center justify-center transition-opacity duration-500">
+                    <!-- GIF Desktop -->
+                    <img src="https://a0j2gt7fjm.ucarecd.net/863bddfb-1144-40a7-9cad-86873fbb4e4d/logovideo-ezgif.com-crop.gif" alt="Splash Desktop" class="hidden md:block w-100 h-auto object-contain">
+                    <!-- GIF Mobile -->
+                    <img src="https://a0j2gt7fjm.ucarecd.net/863bddfb-1144-40a7-9cad-86873fbb4e4d/logovideo-ezgif.com-crop.gif" alt="Splash Mobile" class="block md:hidden w-85 h-auto object-contain">
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', html);
+            
+            // Tunggu animasi GIF berjalan sekitar 2.5 detik
+            await new Promise(r => setTimeout(r, 2500));
+            
+            // Render dashboard di background
+            render();
+
+            // Fade out splashscreen dengan halus
+            const splash = document.getElementById('splashscreen');
+            if (splash) {
+                splash.style.opacity = '0';
+                setTimeout(() => splash.remove(), 500);
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('client_token');
+            state = { profile: null, insight: null, guests: [], rsvps: [], messages: [] };
+            render();
+        }
+
+        // ==========================================
+        // PREMIUM FEATURES FUNCTIONS
+        // ==========================================
+        
+        // 1. Export Excel Laporan
+        async function exportExcel() {
+            const btn = document.getElementById('btn-export-excel');
+            const originalContent = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<div class="spinner border-teal-600 !w-5 !h-5 !border-2"></div>';
+
+            try {
+                // Jeda sebentar untuk loading effect UI
+                await new Promise(r => setTimeout(r, 500));
+
+                const data = state.guests.map(g => {
+                    const rsvp = state.rsvps.find(r => r.guest_code === g.invitation_code);
+                    return {
+                        "Nama": escapeHtml(g.name),
+                        "No HP": escapeHtml(g.phone || '-'),
+                        "Kategori": escapeHtml(g.category || '-'),
+                        "Status": rsvp ? escapeHtml(rsvp.status) : '-',
+                        "Jumlah Orang": rsvp ? (rsvp.guest_count || 1) : 0,
+                        "Ucapan": rsvp ? escapeHtml(rsvp.message || '-') : '-',
+                        "Tanggal": rsvp ? formatDate(rsvp.created_at) : '-'
+                    };
+                });
+
+                const worksheet = XLSX.utils.json_to_sheet(data);
+                const workbook = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(workbook, worksheet, "Laporan Undangan");
+                const slug = state.profile?.slug || 'undangan';
+                
+                XLSX.writeFile(workbook, `laporan-undangan-${slug}.xlsx`);
+                showToast("Laporan Excel berhasil diunduh!", "success");
+            } catch (err) {
+                showToast("Gagal export Excel", "error");
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalContent;
+            }
+        }
+
+        // 2. WhatsApp Otomatis
+        function normalizePhone(phone) {
+            if (!phone) return '';
+            let p = phone.replace(/[\s\+]/g, '');
+            if (p.startsWith('0')) {
+                p = '62' + p.substring(1);
+            }
+            return p;
+        }
+
+        function getTemplateMessage(type) {
+            switch(type) {
+                case 'islami': return "Assalamu'alaikum Warahmatullahi Wabarakatuh.\n\n";
+                case 'nasrani': return "Syalom, Salam Sejahtera dalam Kasih Tuhan.\n\n";
+                case 'hindu': return "Om Swastyastu.\n\n";
+                default: return "Salam Sejahtera.\n\n"; // Umum
+            }
+        }
+
+        function buildMessage(guest, templateType) {
+            const pembuka = getTemplateMessage(templateType);
+            const slug = state.profile?.slug || 'undangan';
+            const link = `${window.location.origin}/${escapeHtml(slug)}.html?to=${escapeHtml(guest.invitation_code)}`;
+            const coupleName = state.profile?.couple_name || 'Kami';
+            
+            return `${pembuka}Kepada Yth. Bapak/Ibu/Saudara/i ${escapeHtml(guest.name)}\n\nDengan penuh kebahagiaan, kami mengundang Anda untuk menghadiri acara pernikahan kami.\n\nSilakan buka undangan digital melalui link berikut:\n${link}\n\nMerupakan suatu kebahagiaan bagi kami apabila Anda berkenan hadir dan memberikan doa restu.\n\nTerima kasih.\n\n${escapeHtml(coupleName)}`;
+        }
+
+        function generateWAlink(id) {
+            const guest = state.guests.find(g => g.id == id);
+            if (!guest || !guest.phone) {
+                showToast("Nomor HP tamu tidak tersedia", "error");
+                return;
+            }
+            const phone = normalizePhone(guest.phone);
+            const template = state.selectedTemplate || 'umum';
+            const message = buildMessage(guest, template);
+            
+            const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+            window.open(url, '_blank');
+        }
+
+        // 3. QR Code Tamu
+        function openQRModal(id) {
+            const guest = state.guests.find(g => g.id == id);
+            if (!guest) return;
+            const slug = state.profile?.slug || 'undangan';
+            const link = `${window.location.origin}/${escapeHtml(slug)}.html?to=${escapeHtml(guest.invitation_code)}`;
+            
+            const modalHtml = `
+                <div class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
+                    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden transform transition-all text-center p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-xl font-bold text-slate-800">QR Code Tamu</h3>
+                            <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 bg-slate-50 hover:bg-slate-100 p-2 rounded-full transition-colors"><span class="material-symbols-rounded text-lg">close</span></button>
+                        </div>
+                        <p class="font-semibold text-slate-700">${escapeHtml(guest.name)}</p>
+                        <p class="text-xs text-slate-500 mb-6 truncate px-2">${link}</p>
+                        
+                        <div class="flex justify-center mb-6">
+                            <canvas id="qrcode-canvas" class="rounded-xl border border-slate-100 p-2 shadow-sm"></canvas>
+                        </div>
+                        
+                        <div class="flex gap-3">
+                            <button onclick="copyText('${link}')" class="flex-1 px-4 py-3 bg-slate-100 text-slate-700 font-semibold rounded-xl hover:bg-slate-200 transition-colors flex items-center justify-center gap-2"><span class="material-symbols-rounded text-lg">content_copy</span> Copy Link</button>
+                            <button onclick="downloadQR('${escapeHtml(guest.name)}', '${escapeHtml(guest.invitation_code)}')" class="flex-1 px-4 py-3 bg-teal-600 text-white font-semibold rounded-xl hover:bg-teal-700 transition-colors flex items-center justify-center gap-2"><span class="material-symbols-rounded text-lg">download</span> Download</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.getElementById('modal-container').innerHTML = modalHtml;
+            
+            // Render QR setelah DOM dimuat
+            setTimeout(() => {
+                generateQRCode(link);
+            }, 100);
+        }
+
+        function generateQRCode(link) {
+            const canvas = document.getElementById('qrcode-canvas');
+            if(canvas) {
+                QRCode.toCanvas(canvas, link, { width: 220, margin: 2, color: { dark: '#1e293b', light: '#ffffff' } }, function (error) {
+                    if (error) console.error(error);
+                });
+            }
+        }
+
+        function downloadQR(name, code) {
+            const canvas = document.getElementById('qrcode-canvas');
+            if(!canvas) return;
+            const url = canvas.toDataURL('image/png');
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `qr-${name.replace(/\s+/g, '-').toLowerCase()}-${code}.png`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        // 4. Scanner QR Check-In
+        function openScanner() {
+            const modalHtml = `
+                <div class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
+                    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all flex flex-col max-h-[90vh]">
+                        <div class="px-6 py-5 border-b border-slate-100 flex justify-between items-center shrink-0">
+                            <h3 class="text-lg font-bold text-slate-800">Scan QR Tamu</h3>
+                            <button onclick="closeScanner()" class="text-slate-400 hover:text-slate-600 bg-slate-50 hover:bg-slate-100 p-2 rounded-full transition-colors"><span class="material-symbols-rounded text-lg">close</span></button>
+                        </div>
+                        <div class="p-6 flex-1 overflow-y-auto">
+                            <div id="reader" class="w-full rounded-2xl overflow-hidden bg-slate-50 border border-slate-200"></div>
+                            <div id="scan-result" class="mt-6 hidden"></div>
+                            <button onclick="closeScanner()" class="mt-6 w-full px-4 py-3 bg-slate-100 text-slate-700 font-semibold rounded-xl hover:bg-slate-200 transition-colors">Tutup Scanner</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.getElementById('modal-container').innerHTML = modalHtml;
+            
+            setTimeout(() => {
+                html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: {width: 250, height: 250} }, false);
+                html5QrcodeScanner.render(handleScan, (error) => { /* Abaikan error scanning frame */ });
+            }, 300);
+        }
+
+        function closeScanner() {
+            if (html5QrcodeScanner) {
+                html5QrcodeScanner.clear().catch(e => console.error(e));
+                html5QrcodeScanner = null;
+            }
+            closeModal();
+        }
+
+        function handleScan(result) {
+            try {
+                // Validasi jika string adalah format URL Undangan
+                const url = new URL(result);
+                const code = url.searchParams.get('to');
+                if (code) {
+                    findGuestByInvitationCode(code);
+                } else {
+                    showScanError("QR tidak valid (Tidak ada kode undangan)");
+                }
+            } catch(e) {
+                // Jika bukan URL yang valid, coba cocokan string code-nya langsung (fallback)
+                findGuestByInvitationCode(result);
+            }
+        }
+
+        function findGuestByInvitationCode(code) {
+            const guest = state.guests.find(g => g.invitation_code === code);
+            const resultContainer = document.getElementById('scan-result');
+            resultContainer.classList.remove('hidden');
+            
+            if (guest) {
+                resultContainer.innerHTML = `
+                    <div class="bg-teal-50 p-4 rounded-2xl border border-teal-100 text-center">
+                        <div class="w-12 h-12 bg-teal-100 text-teal-600 rounded-full flex items-center justify-center mx-auto mb-2"><span class="material-symbols-rounded text-2xl">check_circle</span></div>
+                        <h4 class="text-lg font-bold text-slate-800">${escapeHtml(guest.name)}</h4>
+                        <p class="text-sm text-slate-500 mb-2">${escapeHtml(guest.category || 'Umum')} | ${escapeHtml(guest.phone || '-')}</p>
+                        <p class="text-xs text-slate-400 mb-3 text-center w-full break-words">Kode: ${escapeHtml(guest.invitation_code)}</p>
+                        <span class="inline-block bg-teal-600 text-white px-3 py-1 rounded-full text-xs font-semibold">Status: Terdaftar</span>
+                    </div>
+                `;
+            } else {
+                showScanError(`Tamu tidak ditemukan (Kode: ${escapeHtml(code)})`);
+            }
+
+            // Hentikan scanner setelah berhasil memindai
+            if (html5QrcodeScanner) {
+                html5QrcodeScanner.pause(true);
+            }
+        }
+
+        function showScanError(msg) {
+            const resultContainer = document.getElementById('scan-result');
+            resultContainer.classList.remove('hidden');
+            resultContainer.innerHTML = `
+                <div class="bg-red-50 p-4 rounded-2xl border border-red-100 text-center">
+                    <div class="w-12 h-12 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-2"><span class="material-symbols-rounded text-2xl">cancel</span></div>
+                    <h4 class="text-lg font-bold text-slate-800">Tamu tidak ditemukan</h4>
+                    <p class="text-xs text-slate-500 mb-2">${escapeHtml(msg)}</p>
+                </div>
+            `;
+            if (html5QrcodeScanner) html5QrcodeScanner.pause(true);
+        }
+
+
+        // ==========================================
+        // PROFILE MANAGEMENT
+        // ==========================================
+        function openProfileModal() {
+            const p = state.profile;
+            if (!p) return;
+
+            const modalHtml = `
+                <div class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4">
+                    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all">
+                        <div class="px-6 py-5 border-b border-slate-100 flex justify-between items-center">
+                            <h3 class="text-lg font-bold text-slate-800">Edit Profile</h3>
+                            <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 bg-slate-50 hover:bg-slate-100 p-2 rounded-full transition-colors"><span class="material-symbols-rounded text-lg">close</span></button>
+                        </div>
+                        <form onsubmit="updateProfile(event)" class="p-6">
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-600 mb-1">Nama Pasangan</label>
+                                    <input type="text" id="prof-name" value="${escapeHtml(p.couple_name)}" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none transition-all">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-600 mb-1">URL Foto Profile</label>
+                                    <input type="url" id="prof-photo" value="${escapeHtml(p.profile_photo || '')}" placeholder="https://..." class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none transition-all">
+                                </div>
+                            </div>
+                            <div class="mt-8 flex gap-3">
+                                <button type="button" onclick="closeModal()" class="flex-1 px-4 py-3 bg-slate-100 text-slate-700 font-semibold rounded-xl hover:bg-slate-200 transition-colors">Batal</button>
+                                <button type="submit" id="btn-update-prof" class="flex-1 px-4 py-3 bg-teal-600 text-white font-semibold rounded-xl hover:bg-teal-700 transition-colors flex justify-center items-center">Simpan</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            `;
+            document.getElementById('modal-container').innerHTML = modalHtml;
+        }
+
+        function closeModal() {
+            document.getElementById('modal-container').innerHTML = '';
+        }
+
+        async function updateProfile(event) {
+            event.preventDefault();
+            const btn = document.getElementById('btn-update-prof');
+            const couple_name = document.getElementById('prof-name').value;
+            const profile_photo = document.getElementById('prof-photo').value;
+            const expired_at = state.profile.expired_at; // Nilai tetap
+
+            btn.disabled = true;
+            btn.innerHTML = '<div class="spinner border-white"></div>';
+
+            try {
+                await apiPut(`/api/client/profile`, { couple_name, profile_photo, expired_at });
+                showToast("Profile berhasil diperbarui", "success");
+                closeModal();
+                await fetchDashboardData(false);
+            } catch (err) {
+                showToast(err.message, "error");
+                btn.disabled = false;
+                btn.innerHTML = 'Simpan';
+            }
+        }
+
+        // ==========================================
+        // GUEST MANAGEMENT MODALS
+        // ==========================================
+        async function loadGuests() {
+            try {
+                const res = await apiGet('/api/client/guests');
+                state.guests = res.data || res.guests || res || [];
+                if (!Array.isArray(state.guests)) state.guests = [];
+                renderGuestsList();
+            } catch (err) {
+                showToast(err.message, "error");
+            }
+        }
+
+        function openAddGuestModal() {
+            const modalHtml = `
+                <div class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4">
+                    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all">
+                        <div class="px-6 py-5 border-b border-slate-100 flex justify-between items-center">
+                            <h3 class="text-lg font-bold text-slate-800">Tambah Tamu</h3>
+                            <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 bg-slate-50 hover:bg-slate-100 p-2 rounded-full transition-colors"><span class="material-symbols-rounded text-lg">close</span></button>
+                        </div>
+                        <form onsubmit="addGuest(event)" class="p-6">
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-600 mb-1">Nama Wajib</label>
+                                    <input type="text" id="add-g-name" required placeholder="Nama lengkap" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none transition-all">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-600 mb-1">No HP</label>
+                                    <input type="text" id="add-g-phone" placeholder="08123..." class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none transition-all">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-600 mb-1">Kategori</label>
+                                    <input type="text" id="add-g-category" placeholder="Keluarga, VIP, dll" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none transition-all">
+                                </div>
+                            </div>
+                            <div class="mt-8 flex gap-3">
+                                <button type="button" onclick="closeModal()" class="flex-1 px-4 py-3 bg-slate-100 text-slate-700 font-semibold rounded-xl hover:bg-slate-200 transition-colors">Batal</button>
+                                <button type="submit" id="btn-add-guest" class="flex-1 px-4 py-3 bg-teal-600 text-white font-semibold rounded-xl hover:bg-teal-700 transition-colors flex justify-center items-center">Simpan</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            `;
+            document.getElementById('modal-container').innerHTML = modalHtml;
+        }
+
+        async function addGuest(event) {
+            event.preventDefault();
+            const btn = document.getElementById('btn-add-guest');
+            const name = document.getElementById('add-g-name').value;
+            const phone = document.getElementById('add-g-phone').value;
+            const category = document.getElementById('add-g-category').value;
+
+            if(!name.trim()) {
+                showToast("Nama tamu wajib diisi", "error");
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<div class="spinner border-white"></div>';
+
+            try {
+                await apiPost('/api/client/guests', { name, phone, category });
+                showToast("Tamu berhasil ditambahkan", "success");
+                closeModal();
+                await fetchDashboardData(false); 
+            } catch (err) {
+                showToast(err.message, "error");
+                btn.disabled = false;
+                btn.innerHTML = 'Simpan';
+            }
+        }
+
+        function openEditGuestModal(id) {
+            const guest = state.guests.find(g => g.id == id);
+            if (!guest) return;
+
+            const modalHtml = `
+                <div class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4">
+                    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all">
+                        <div class="px-6 py-5 border-b border-slate-100 flex justify-between items-center">
+                            <h3 class="text-lg font-bold text-slate-800">Edit Tamu</h3>
+                            <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 bg-slate-50 hover:bg-slate-100 p-2 rounded-full transition-colors"><span class="material-symbols-rounded text-lg">close</span></button>
+                        </div>
+                        <form onsubmit="updateGuest(event, '${escapeHtml(guest.id)}')" class="p-6">
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-600 mb-1">Nama Tamu</label>
+                                    <input type="text" id="edit-g-name" value="${escapeHtml(guest.name)}" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none transition-all">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-600 mb-1">No HP</label>
+                                    <input type="text" id="edit-g-phone" value="${escapeHtml(guest.phone || '')}" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none transition-all">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-600 mb-1">Kategori</label>
+                                    <input type="text" id="edit-g-category" value="${escapeHtml(guest.category || '')}" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none transition-all">
+                                </div>
+                            </div>
+                            <div class="mt-8 flex gap-3">
+                                <button type="button" onclick="closeModal()" class="flex-1 px-4 py-3 bg-slate-100 text-slate-700 font-semibold rounded-xl hover:bg-slate-200 transition-colors">Batal</button>
+                                <button type="submit" id="btn-update-guest" class="flex-1 px-4 py-3 bg-teal-600 text-white font-semibold rounded-xl hover:bg-teal-700 transition-colors flex justify-center items-center">Simpan</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            `;
+            document.getElementById('modal-container').innerHTML = modalHtml;
+        }
+
+        async function updateGuest(event, id) {
+            event.preventDefault();
+            const btn = document.getElementById('btn-update-guest');
+            const name = document.getElementById('edit-g-name').value;
+            const phone = document.getElementById('edit-g-phone').value;
+            const category = document.getElementById('edit-g-category').value;
+
+            btn.disabled = true;
+            btn.innerHTML = '<div class="spinner border-white"></div>';
+
+            try {
+                await apiPut(`/api/client/guest/${encodeURIComponent(id)}`, { name, phone, category });
+                showToast("Data tamu berhasil diubah", "success");
+                closeModal();
+                await fetchDashboardData(false);
+            } catch (err) {
+                showToast(err.message, "error");
+                btn.disabled = false;
+                btn.innerHTML = 'Simpan';
+            }
+        }
+
+        function openDeleteGuestModal(id) {
+            const safeId = escapeHtml(id);
+            const modalHtml = `
+                <div class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4">
+                    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden transform transition-all text-center p-6">
+                        <div class="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <span class="material-symbols-rounded text-3xl">delete</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-800 mb-2">Hapus Tamu?</h3>
+                        <p class="text-slate-500 text-sm mb-6">Yakin hapus tamu ini? RSVP dan visitor terkait ikut terhapus.</p>
+                        <div class="flex gap-3">
+                            <button onclick="closeModal()" class="flex-1 px-4 py-3 bg-slate-100 text-slate-700 font-semibold rounded-xl hover:bg-slate-200 transition-colors">Batal</button>
+                            <button onclick="confirmDeleteGuest('${safeId}')" id="btn-confirm-delete" class="flex-1 px-4 py-3 bg-red-500 text-white font-semibold rounded-xl hover:bg-red-600 transition-colors flex justify-center items-center">Ya, Hapus</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.getElementById('modal-container').innerHTML = modalHtml;
+        }
+
+        async function confirmDeleteGuest(id) {
+            const btn = document.getElementById('btn-confirm-delete');
+            btn.disabled = true;
+            btn.innerHTML = '<div class="spinner border-white"></div>';
+            try {
+                await apiDelete(`/api/client/guest/${encodeURIComponent(id)}`);
+                showToast("Tamu berhasil dihapus", "success");
+                closeModal();
+                await fetchDashboardData(false);
+            } catch (err) {
+                showToast(err.message, "error");
+                btn.disabled = false;
+                btn.innerHTML = 'Ya, Hapus';
+            }
+        }
+
+        function filterGuests() {
+            const keyword = document.getElementById('search-guest').value.toLowerCase();
+            const filtered = state.guests.filter(g => {
+                return (g.name || '').toLowerCase().includes(keyword) || 
+                       (g.category || '').toLowerCase().includes(keyword);
+            });
+            renderGuestsList(filtered);
+        }
+
+        // ==========================================
+        // RSVP MANAGEMENT
+        // ==========================================
+        function openEditRSVPModal(id) {
+            const rsvp = state.rsvps.find(r => r.id == id);
+            if (!rsvp) return;
+
+            const modalHtml = `
+                <div class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4">
+                    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all">
+                        <div class="px-6 py-5 border-b border-slate-100 flex justify-between items-center">
+                            <h3 class="text-lg font-bold text-slate-800">Edit RSVP</h3>
+                            <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 bg-slate-50 hover:bg-slate-100 p-2 rounded-full transition-colors"><span class="material-symbols-rounded text-lg">close</span></button>
+                        </div>
+                        <form onsubmit="updateRSVP(event, '${escapeHtml(rsvp.id)}')" class="p-6">
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-600 mb-1">Nama</label>
+                                    <input type="text" id="edit-r-name" value="${escapeHtml(rsvp.name)}" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none transition-all">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-600 mb-1">Status Kehadiran</label>
+                                    <select id="edit-r-status" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none transition-all">
+                                        <option value="hadir" ${rsvp.status === 'hadir' ? 'selected' : ''}>Hadir</option>
+                                        <option value="tidak_hadir" ${rsvp.status === 'tidak_hadir' ? 'selected' : ''}>Tidak Hadir</option>
+                                        <option value="ragu" ${rsvp.status === 'ragu' ? 'selected' : ''}>Ragu-ragu</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-600 mb-1">Jumlah Orang</label>
+                                    <input type="number" min="1" id="edit-r-count" value="${escapeHtml(rsvp.guest_count || 1)}" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none transition-all">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-600 mb-1">Pesan / Ucapan</label>
+                                    <textarea id="edit-r-message" rows="3" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none transition-all">${escapeHtml(rsvp.message || '')}</textarea>
+                                </div>
+                            </div>
+                            <div class="mt-8 flex gap-3">
+                                <button type="button" onclick="closeModal()" class="flex-1 px-4 py-3 bg-slate-100 text-slate-700 font-semibold rounded-xl hover:bg-slate-200 transition-colors">Batal</button>
+                                <button type="submit" id="btn-update-rsvp" class="flex-1 px-4 py-3 bg-teal-600 text-white font-semibold rounded-xl hover:bg-teal-700 transition-colors flex justify-center items-center">Simpan</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            `;
+            document.getElementById('modal-container').innerHTML = modalHtml;
+        }
+
+        async function updateRSVP(event, id) {
+            event.preventDefault();
+            const btn = document.getElementById('btn-update-rsvp');
+            const name = document.getElementById('edit-r-name').value;
+            const status = document.getElementById('edit-r-status').value;
+            const guest_count = parseInt(document.getElementById('edit-r-count').value);
+            const message = document.getElementById('edit-r-message').value;
+
+            btn.disabled = true;
+            btn.innerHTML = '<div class="spinner border-white"></div>';
+
+            try {
+                await apiPut(`/api/client/rsvp/${encodeURIComponent(id)}`, { name, status, guest_count, message });
+                showToast("RSVP berhasil diubah", "success");
+                closeModal();
+                await fetchDashboardData(false);
+            } catch (err) {
+                showToast(err.message, "error");
+                btn.disabled = false;
+                btn.innerHTML = 'Simpan';
+            }
+        }
+
+        function openDeleteRSVPModal(id) {
+            const safeId = escapeHtml(id);
+            const modalHtml = `
+                <div class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4">
+                    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden transform transition-all text-center p-6">
+                        <div class="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <span class="material-symbols-rounded text-3xl">delete</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-800 mb-2">Hapus RSVP?</h3>
+                        <p class="text-slate-500 text-sm mb-6">Yakin hapus RSVP/ucapan ini? Data tidak dapat dikembalikan.</p>
+                        <div class="flex gap-3">
+                            <button onclick="closeModal()" class="flex-1 px-4 py-3 bg-slate-100 text-slate-700 font-semibold rounded-xl hover:bg-slate-200 transition-colors">Batal</button>
+                            <button onclick="confirmDeleteRSVP('${safeId}')" id="btn-confirm-delete-rsvp" class="flex-1 px-4 py-3 bg-red-500 text-white font-semibold rounded-xl hover:bg-red-600 transition-colors flex justify-center items-center">Ya, Hapus</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.getElementById('modal-container').innerHTML = modalHtml;
+        }
+
+        async function confirmDeleteRSVP(id) {
+            const btn = document.getElementById('btn-confirm-delete-rsvp');
+            btn.disabled = true;
+            btn.innerHTML = '<div class="spinner border-white"></div>';
+            try {
+                await apiDelete(`/api/client/rsvp/${encodeURIComponent(id)}`);
+                showToast("RSVP berhasil dihapus", "success");
+                closeModal();
+                await fetchDashboardData(false);
+            } catch (err) {
+                showToast(err.message, "error");
+                btn.disabled = false;
+                btn.innerHTML = 'Ya, Hapus';
+            }
+        }
+
+        function filterRSVP() {
+            const keyword = document.getElementById('search-rsvp').value.toLowerCase();
+            const statusFilter = document.getElementById('filter-status-rsvp').value;
+            
+            const filtered = state.rsvps.filter(r => {
+                const matchName = r.name ? r.name.toLowerCase().includes(keyword) : false;
+                const matchStatus = statusFilter === 'semua' || (r.status && r.status.toLowerCase() === statusFilter);
+                return matchName && matchStatus;
+            });
+            
+            renderRSVPList(filtered);
+        }
+
+        // ==========================================
+        // ANALYTICS PREMIUM FUNCTIONS
+        // ==========================================
+        function buildDailyStats(rsvps) {
+            const stats = {};
+            rsvps.forEach(r => {
+                const dateObj = new Date(r.created_at);
+                if (isNaN(dateObj)) return;
+                
+                const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
+                const dd = String(dateObj.getDate()).padStart(2, '0');
+                const dateStr = `${dateObj.getFullYear()}-${mm}-${dd}`;
+                
+                if (!stats[dateStr]) {
+                    stats[dateStr] = { date: dateStr, total: 0, guest_count: 0, hadir: 0, tidak_hadir: 0 };
+                }
+                
+                stats[dateStr].total += 1;
+                stats[dateStr].guest_count += parseInt(r.guest_count || 1);
+                
+                const status = (r.status || '').toLowerCase();
+                if (status === 'hadir') stats[dateStr].hadir += 1;
+                if (status === 'tidak_hadir' || status === 'tidak hadir') stats[dateStr].tidak_hadir += 1;
+            });
+            return Object.values(stats).sort((a, b) => b.date.localeCompare(a.date));
+        }
+
+        function buildRSVPStatus(rsvps) {
+            let hadir = 0, tidak_hadir = 0, ragu = 0;
+            rsvps.forEach(r => {
+                const s = (r.status || '').toLowerCase();
+                if (s === 'hadir') hadir++;
+                else if (s === 'tidak_hadir' || s === 'tidak hadir') tidak_hadir++;
+                else if (s === 'ragu') ragu++;
+            });
+            return [hadir, tidak_hadir, ragu];
+        }
+
+        function buildTopGuests(rsvps) {
+            const counts = {};
+            rsvps.forEach(r => {
+                const name = escapeHtml(r.name || 'Anonim');
+                if (!counts[name]) counts[name] = { name: name, count: 0, guest_count: 0 };
+                counts[name].count += 1;
+                counts[name].guest_count += parseInt(r.guest_count || 1);
+            });
+            
+            return Object.values(counts).sort((a, b) => b.count - a.count).slice(0, 5);
+        }
+
+        function renderCharts() {
+            const rsvps = state.rsvps || [];
+            
+            // --- Line Chart Visitor ---
+            const dailyStats = buildDailyStats(rsvps);
+            const chartDataAsc = [...dailyStats].sort((a, b) => a.date.localeCompare(b.date));
+            const labelsVisitor = chartDataAsc.map(s => s.date);
+            const dataVisitor = chartDataAsc.map(s => s.total);
+
+            const ctxVisitor = document.getElementById('visitorChart').getContext('2d');
+            if (charts.visitor) charts.visitor.destroy();
+            charts.visitor = new Chart(ctxVisitor, {
+                type: 'line',
+                data: {
+                    labels: labelsVisitor.length ? labelsVisitor : ['Belum ada data'],
+                    datasets: [{
+                        label: 'Aktivitas RSVP',
+                        data: dataVisitor.length ? dataVisitor : [0],
+                        borderColor: '#1f4642',
+                        backgroundColor: 'rgba(31, 70, 66, 0.1)',
+                        borderWidth: 3,
+                        pointBackgroundColor: '#ffffff',
+                        pointBorderColor: '#1f4642',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+                }
+            });
+
+            // --- Doughnut Chart Status ---
+            const [hadir, tidak_hadir, ragu] = buildRSVPStatus(rsvps);
+            const ctxStatus = document.getElementById('statusChart').getContext('2d');
+            if (charts.status) charts.status.destroy();
+            charts.status = new Chart(ctxStatus, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Hadir', 'Tidak Hadir', 'Ragu-ragu'],
+                    datasets: [{
+                        data: (hadir || tidak_hadir || ragu) ? [hadir, tidak_hadir, ragu] : [0, 0, 0],
+                        backgroundColor: ['#1f4642', '#ef4444', '#eab308'],
+                        borderWidth: 0,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom', labels: { padding: 20, font: { family: 'Inter' } } } },
+                    cutout: '70%'
+                }
+            });
+        }
+
+        function renderAnalytics() {
+            const rsvps = state.rsvps || [];
+
+            // --- Statistik Harian ---
+            const dailyContainer = document.getElementById('daily-stats-container');
+            const dailyData = buildDailyStats(rsvps);
+            
+            if (dailyData.length === 0) {
+                dailyContainer.innerHTML = `<div class="p-6 text-center text-slate-500 bg-slate-50 rounded-2xl border border-dashed border-slate-200 text-sm">Belum ada data RSVP</div>`;
+            } else {
+                dailyContainer.innerHTML = dailyData.map(d => `
+                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 flex flex-col md:flex-row justify-between md:items-center gap-3">
+                        <div>
+                            <p class="font-bold text-slate-800">${formatDate(d.date)}</p>
+                            <p class="text-xs text-slate-500 mt-0.5">${d.total} Transaksi RSVP</p>
+                        </div>
+                        <div class="flex gap-4 text-sm">
+                            <div class="text-center"><span class="block font-bold text-slate-800">${d.guest_count}</span><span class="text-slate-400 text-[10px] uppercase tracking-wider">Orang</span></div>
+                            <div class="text-center"><span class="block font-bold text-green-500">${d.hadir}</span><span class="text-slate-400 text-[10px] uppercase tracking-wider">Hadir</span></div>
+                            <div class="text-center"><span class="block font-bold text-red-500">${d.tidak_hadir}</span><span class="text-slate-400 text-[10px] uppercase tracking-wider">Absen</span></div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // --- Top Tamu Aktif ---
+            const topGuestsContainer = document.getElementById('top-guests-container');
+            const topGuestsData = buildTopGuests(rsvps);
+            
+            if (topGuestsData.length === 0) {
+                topGuestsContainer.innerHTML = `<div class="p-6 text-center text-slate-500 bg-slate-50 rounded-2xl border border-dashed border-slate-200 text-sm">Belum ada data</div>`;
+            } else {
+                topGuestsContainer.innerHTML = topGuestsData.map((g, index) => `
+                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 flex items-center gap-4">
+                        <div class="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center font-bold text-slate-500 text-xs shadow-sm">
+                            #${index + 1}
+                        </div>
+                        <div class="flex-1">
+                            <p class="font-bold text-slate-800 text-sm">${g.name}</p>
+                            <p class="text-xs text-slate-500">${g.count} kali aktivitas RSVP</p>
+                        </div>
+                        <div class="bg-teal-50 text-teal-700 px-3 py-1.5 rounded-lg text-xs font-semibold border border-teal-100">
+                            ${g.guest_count} Orang
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            setTimeout(() => { renderCharts(); }, 50);
+        }
+
+        // ==========================================
+        // RENDERING LOGIC DASHBOARD
+        // ==========================================
+        function renderLogin() {
+            const html = `
+                <div class="min-h-screen w-full flex bg-white">
+                    <!-- Left Side (Form) -->
+                    <div class="w-full lg:w-1/2 flex flex-col justify-center px-8 sm:px-16 md:px-24 xl:px-32 relative">
+                        <div class="w-full max-w-sm mx-auto">
+                            <!-- Logo -->
+                            <div class="flex items-center gap-2 mb-10 lg:mb-12">
+                                <img src="https://raw.githubusercontent.com/langcdn/resource/main/nav/qobil_108175.png" alt="Logo" class="h-8 w-auto object-contain">
+                            </div>
+                            
+                            <!-- Titles -->
+                            <div class="mb-8 text-left">
+                                <h1 class="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight mb-3">Masuk ke Akun Anda</h1>
+                                <p class="text-sm sm:text-base text-slate-500">Masukkan email dan password Anda untuk masuk ke dashboard.</p>
+                            </div>
+                            
+                            <div id="login-error" class="hidden mb-6 bg-red-50 text-red-600 p-4 rounded-xl text-sm font-medium border border-red-100"></div>
+
+                            <!-- Form -->
+                            <form onsubmit="login(event)" class="space-y-5">
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-2 text-left">Email</label>
+                                    <input type="email" id="email" required placeholder="Contoh: client@email.com" class="w-full px-4 py-3.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-600 focus:border-teal-600 outline-none transition-all text-slate-800 shadow-[0_2px_10px_rgb(0,0,0,0.02)]">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-2 text-left">Password</label>
+                                    <div class="relative">
+                                        <input type="password" id="password" required placeholder="••••••••" class="w-full px-4 py-3.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-600 focus:border-teal-600 outline-none transition-all text-slate-800 shadow-[0_2px_10px_rgb(0,0,0,0.02)]">
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center justify-between pt-1 pb-2">
+                                    <div class="flex items-center">
+                                        <input type="checkbox" id="remember" class="w-4 h-4 text-teal-600 border-slate-300 rounded focus:ring-teal-600 cursor-pointer">
+                                        <label for="remember" class="ml-2 block text-sm text-slate-600 cursor-pointer">Ingat saya</label>
+                                    </div>
+                                    <a href="#" onclick="alert('Silakan hubungi admin untuk mereset password.')" class="text-sm font-semibold text-teal-600 hover:text-teal-700">Lupa Password?</a>
+                                </div>
+
+                                <button type="submit" id="login-btn" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold py-3.5 rounded-xl transition-all shadow-md flex justify-center items-center">
+                                    Log in
+                                </button>
+                            </form>
+
+                            <div class="mt-12 text-center lg:text-left">
+                                <p class="text-xs text-slate-400">Dengan masuk ke akun, Anda menyetujui <a href="#" class="underline hover:text-slate-600">Syarat Penggunaan</a> kami.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Side (Image/Graphic) - Hidden on Mobile, visible on lg -->
+                    <div class="hidden lg:block w-1/2 relative overflow-hidden bg-slate-100">
+                        <img src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Wedding Aesthetic" class="absolute inset-0 w-full h-full object-cover">
+                    </div>
+                </div>
+            `;
+            document.getElementById('app').innerHTML = html;
+        }
+
+        async function fetchDashboardData(fullRender = true) {
+            try {
+                const res = await apiGet('/api/client/dashboard');
+                if (res.success) {
+                    state.profile = res.profile || {};
+                    state.insight = res.insight || {};
+                    state.guests = res.guests || [];
+                    state.rsvps = res.rsvps || [];
+                    state.messages = res.messages || [];
+                    
+                    if (fullRender) buildDashboardShell();
+                    populateDashboardData();
+                }
+            } catch (err) {
+                showToast(err.message, "error");
+                if (err.message.toLowerCase().includes('token') || err.message.toLowerCase().includes('unauth')) {
+                    logout();
+                }
+            }
+        }
+
+        function buildDashboardShell() {
+            const html = `
+                <div class="lg:hidden fixed top-0 w-full bg-white border-b border-slate-100 z-40 px-5 py-5 flex justify-between items-center shadow-sm">
+                    <div class="flex items-center gap-3 text-teal-600 font-bold text-lg">
+                        <img src="https://raw.githubusercontent.com/langcdn/resource/main/nav/qobil_108175.png" alt="Logo" class="h-9 w-auto object-contain">
+                    </div>
+                </div>
+
+                <nav class="lg:hidden fixed bottom-0 w-full bg-white border-t border-slate-100 z-50 flex justify-around shadow-[0_-4px_20px_rgb(0,0,0,0.02)] pb-safe">
+                    <button onclick="switchSection('section-overview')" id="nav-mobile-section-overview" class="nav-btn text-teal-600 flex flex-col items-center gap-1 py-2 px-3 transition-colors w-1/4">
+                        <span class="material-symbols-rounded text-[28px]">grid_view</span>
+                        <span class="text-[10px] font-medium">Overview</span>
+                    </button>
+                    <button onclick="switchSection('section-guests')" id="nav-mobile-section-guests" class="nav-btn text-slate-500 hover:text-teal-600 flex flex-col items-center gap-1 py-2 px-3 transition-colors w-1/4">
+                        <span class="material-symbols-rounded text-[28px]">group</span>
+                        <span class="text-[10px] font-medium">Tamu</span>
+                    </button>
+                    <button onclick="switchSection('section-rsvp')" id="nav-mobile-section-rsvp" class="nav-btn text-slate-500 hover:text-teal-600 flex flex-col items-center gap-1 py-2 px-3 transition-colors w-1/4">
+                        <span class="material-symbols-rounded text-[28px]">drafts</span>
+                        <span class="text-[10px] font-medium">RSVP</span>
+                    </button>
+                    <button onclick="switchSection('section-profile')" id="nav-mobile-section-profile" class="nav-btn text-slate-500 hover:text-teal-600 flex flex-col items-center gap-1 py-2 px-3 transition-colors w-1/4">
+                        <span class="material-symbols-rounded text-[28px]">account_circle</span>
+                        <span class="text-[10px] font-medium">Profile</span>
+                    </button>
+                </nav>
+
+                <div class="flex min-h-screen pt-[60px] lg:pt-0 bg-slate-50/50">
+                    <aside class="w-64 bg-white border-r border-slate-100 hidden lg:flex flex-col fixed h-screen top-0 z-40">
+                        <div class="p-8 pb-4">
+                            <div class="flex items-center gap-3 text-teal-600 font-bold text-xl mb-1">
+                                <img src="https://raw.githubusercontent.com/langcdn/resource/main/nav/qobil_108175.png" alt="Logo" class="h-10 w-auto object-contain">
+                            </div>
+                        </div>
+                        <nav class="flex-1 px-4 py-4 space-y-1 overflow-y-auto">
+                            <button onclick="switchSection('section-overview')" id="nav-desktop-section-overview" class="nav-btn bg-slate-50 text-teal-600 w-full flex items-center gap-3 px-4 py-3 font-medium rounded-xl transition-colors text-left">
+                                <span class="material-symbols-rounded text-[20px]">grid_view</span> Overview
+                            </button>
+                            <button onclick="switchSection('section-guests')" id="nav-desktop-section-guests" class="nav-btn text-slate-600 hover:bg-slate-50 hover:text-teal-600 w-full flex items-center gap-3 px-4 py-3 font-medium rounded-xl transition-colors text-left">
+                                <span class="material-symbols-rounded text-[20px]">group</span> Tamu
+                            </button>
+                            <button onclick="switchSection('section-rsvp')" id="nav-desktop-section-rsvp" class="nav-btn text-slate-600 hover:bg-slate-50 hover:text-teal-600 w-full flex items-center gap-3 px-4 py-3 font-medium rounded-xl transition-colors text-left">
+                                <span class="material-symbols-rounded text-[20px]">drafts</span> RSVP
+                            </button>
+                            <button onclick="switchSection('section-profile')" id="nav-desktop-section-profile" class="nav-btn text-slate-600 hover:bg-slate-50 hover:text-teal-600 w-full flex items-center gap-3 px-4 py-3 font-medium rounded-xl transition-colors text-left">
+                                <span class="material-symbols-rounded text-[20px]">account_circle</span> Profile
+                            </button>
+                        </nav>
+                    </aside>
+
+                    <main class="flex-1 lg:ml-64 p-5 md:p-10 pb-24 lg:pb-10 relative">
+                        
+                        <section id="section-overview" class="dashboard-section space-y-8">
+                            <div>
+                                <h2 class="text-2xl font-bold text-slate-800 mb-6 md:pt-0 pt-5">Overview</h2>
+                                <div id="insight-container" class="grid grid-cols-2 lg:grid-cols-4 gap-4"></div>
+                            </div>
+
+                            <div class="pt-2">
+                                <h2 class="text-xl font-bold text-slate-800 mb-6">Fitur Premium</h2>
+                                <div class="bg-white p-6 rounded-3xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-slate-100">
+                                    <p class="text-sm text-slate-500 mb-6">Fitur ini membantu membagikan undangan, memindai QR, dan membuat laporan RSVP.</p>
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                        <button id="btn-export-excel" onclick="exportExcel()" class="flex items-center justify-center gap-2 bg-slate-50 hover:bg-slate-100 text-teal-600 font-semibold py-3 px-4 rounded-xl border border-slate-200 transition-colors">
+                                            <span class="material-symbols-rounded text-xl">table_view</span> Export Excel
+                                        </button>
+                                        <div class="relative">
+                                            <select id="wa-template" onchange="state.selectedTemplate = this.value" class="w-full h-full appearance-none bg-slate-50 hover:bg-slate-100 text-teal-600 font-semibold py-3 pl-4 pr-10 rounded-xl border border-slate-200 transition-colors outline-none cursor-pointer">
+                                                <option value="umum">Template Umum</option>
+                                                <option value="islami">Template Islami</option>
+                                                <option value="nasrani">Template Nasrani</option>
+                                                <option value="hindu">Template Hindu</option>
+                                            </select>
+                                            <span class="material-symbols-rounded absolute right-4 top-1/2 -translate-y-1/2 text-teal-600 pointer-events-none">expand_more</span>
+                                        </div>
+                                        <button onclick="openScanner()" class="flex items-center justify-center gap-2 bg-teal-600 hover:bg-teal-700 text-white font-semibold py-3 px-4 rounded-xl transition-colors">
+                                            <span class="material-symbols-rounded text-xl">qr_code_scanner</span> Scan QR Tamu
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="pt-2">
+                                <h2 class="text-xl font-bold text-slate-800 mb-6">Analytics Premium</h2>
+                                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                                    <div class="lg:col-span-2 bg-white p-6 rounded-3xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-slate-100">
+                                        <h3 class="text-lg font-bold text-slate-800 mb-6">Aktivitas Visitor / RSVP per Hari</h3>
+                                        <div class="relative h-[300px] w-full"><canvas id="visitorChart"></canvas></div>
+                                    </div>
+                                    <div class="bg-white p-6 rounded-3xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-slate-100">
+                                        <h3 class="text-lg font-bold text-slate-800 mb-6">Status Kehadiran Total</h3>
+                                        <div class="relative h-[250px] w-full flex justify-center items-center mt-4"><canvas id="statusChart"></canvas></div>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+                                    <div class="bg-white p-6 rounded-3xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-slate-100">
+                                        <h3 class="text-lg font-bold text-slate-800 mb-4">Statistik Harian</h3>
+                                        <div id="daily-stats-container" class="space-y-3"></div>
+                                    </div>
+                                    <div class="bg-white p-6 rounded-3xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-slate-100">
+                                        <h3 class="text-lg font-bold text-slate-800 mb-4">Top Tamu Paling Aktif</h3>
+                                        <div id="top-guests-container" class="space-y-3"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section id="section-profile" class="dashboard-section hidden flex flex-col min-h-[calc(100vh-8rem)]">
+                            <div class="flex-1 space-y-6">
+                                <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+                                    <h2 class="text-2xl font-bold text-slate-800 md:pt-0 pt-5">Profile Pengantin</h2>
+                                    <div class="flex gap-2">
+                                        <button onclick="openProfileModal()" class="bg-teal-600 hover:bg-teal-700 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition flex items-center justify-center gap-2 flex-1 sm:flex-none shadow-sm">
+                                            <span class="material-symbols-rounded text-[18px]">edit</span> Edit Profile
+                                        </button>
+                                    </div>
+                                </div>
+                                <div id="profile-container" class="space-y-6"></div>
+                            </div>
+                            
+                            <div class="pt-8 mt-auto">
+                                <div class="bg-red-50 rounded-3xl p-6 sm:p-8 border border-red-100 flex flex-col sm:flex-row items-center justify-between gap-6">
+                                    <div class="text-center sm:text-left">
+                                        <h4 class="font-bold text-red-800 text-lg sm:text-xl mb-1">Keluar dari Dashboard</h4>
+                                        <p class="text-sm text-red-600/80">Sesi Anda akan diakhiri dan Anda perlu login kembali untuk mengakses data.</p>
+                                    </div>
+                                    <button onclick="logout()" class="w-full sm:w-auto bg-red-500 hover:bg-red-600 text-white px-8 py-3.5 rounded-xl font-bold transition flex items-center justify-center gap-2 shadow-md shrink-0">
+                                        <span class="material-symbols-rounded text-[20px]">logout</span> Keluar Sekarang
+                                    </button>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section id="section-guests" class="dashboard-section hidden space-y-6">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                <h2 class="text-2xl font-bold text-slate-800 md:pt-0 pt-5">Tamu Undangan</h2>
+                                <button onclick="openAddGuestModal()" class="bg-teal-600 hover:bg-teal-700 text-white px-5 py-2.5 rounded-xl font-semibold transition flex items-center justify-center gap-2 shrink-0">
+                                    <span class="material-symbols-rounded text-lg">add_circle</span> Tambah Tamu
+                                </button>
+                            </div>
+
+                            <div class="bg-white p-4 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100">
+                                <div class="relative">
+                                    <span class="material-symbols-rounded absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-lg">search</span>
+                                    <input type="text" id="search-guest" oninput="filterGuests()" placeholder="Cari nama atau kategori tamu..." class="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none transition-all">
+                                </div>
+                            </div>
+
+                            <div id="guests-list-container" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5"></div>
+                        </section>
+
+                        <section id="section-rsvp" class="dashboard-section hidden space-y-10">
+                            <div class="space-y-6">
+                                <h2 class="text-2xl font-bold text-slate-800 md:pt-0 pt-5">Data RSVP</h2>
+                                <div class="bg-white p-4 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 flex flex-col md:flex-row gap-4">
+                                    <div class="flex-1 relative">
+                                        <span class="material-symbols-rounded absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-lg">search</span>
+                                        <input type="text" id="search-rsvp" oninput="filterRSVP()" placeholder="Cari nama RSVP..." class="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 outline-none transition-all">
+                                    </div>
+                                    <div class="w-full md:w-64">
+                                        <select id="filter-status-rsvp" onchange="filterRSVP()" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500 outline-none transition-all cursor-pointer">
+                                            <option value="semua">Semua Status</option>
+                                            <option value="hadir">Hadir</option>
+                                            <option value="tidak_hadir">Tidak Hadir</option>
+                                            <option value="ragu">Ragu-ragu</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div id="rsvp-list-container" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5"></div>
+                            </div>
+                        </section>
+
+                    </main>
+                </div>
+            `;
+            document.getElementById('app').innerHTML = html;
+        }
+
+        function populateDashboardData() {
+            const p = state.profile;
+            const i = state.insight;
+
+            const insightCards = [
+                { title: 'Total Tamu', value: i.total_guests, icon: 'group', color: 'text-blue-500', bg: 'bg-blue-50' },
+                { title: 'Visitor Unik', value: i.total_visitors, icon: 'visibility', color: 'text-purple-500', bg: 'bg-purple-50' },
+                { title: 'Total RSVP', value: i.total_rsvp, icon: 'drafts', color: 'text-teal-500', bg: 'bg-teal-50' },
+                { title: 'Orang Hadir', value: i.total_orang_hadir, icon: 'person_add', color: 'text-indigo-500', bg: 'bg-indigo-50' },
+                { title: 'Hadir', value: i.hadir, icon: 'check_circle', color: 'text-green-500', bg: 'bg-green-50' },
+                { title: 'Tidak Hadir', value: i.tidak_hadir, icon: 'cancel', color: 'text-red-500', bg: 'bg-red-50' },
+                { title: 'Ragu-ragu', value: i.ragu, icon: 'help', color: 'text-yellow-500', bg: 'bg-yellow-50' },
+                { title: 'Ucapan', value: i.total_messages, icon: 'forum', color: 'text-pink-500', bg: 'bg-pink-50' },
+            ];
+
+            document.getElementById('insight-container').innerHTML = insightCards.map(c => `
+                <div class="bg-white p-5 rounded-2xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-slate-100 flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-full ${c.bg} ${c.color} flex items-center justify-center shrink-0"><span class="material-symbols-rounded text-2xl">${c.icon}</span></div>
+                    <div>
+                        <p class="text-sm text-slate-500 font-medium">${c.title}</p>
+                        <h4 class="text-2xl font-bold text-slate-800">${c.value || 0}</h4>
+                    </div>
+                </div>
+            `).join('');
+
+            const statusBadgeProfile = p.is_active == 1
+                ? '<span class="bg-teal-100 text-teal-700 px-3 py-1 rounded-full text-xs font-bold border border-teal-200 shadow-sm flex items-center gap-1"><span class="w-1.5 h-1.5 bg-teal-500 rounded-full"></span> Aktif</span>'
+                : '<span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-bold border border-red-200 shadow-sm flex items-center gap-1"><span class="w-1.5 h-1.5 bg-red-500 rounded-full"></span> Nonaktif</span>';
+            
+            document.getElementById('profile-container').innerHTML = `
+                <div class="bg-white rounded-3xl overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100">
+                    <div class="h-32 relative overflow-hidden bg-slate-200">
+                        <img src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Cover Profile" class="absolute inset-0 w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-gradient-to-b from-transparent to-black/20"></div>
+                    </div>
+                    <div class="px-6 md:px-10 pb-10 relative">
+                        <div class="flex flex-col md:flex-row gap-6 md:items-end -mt-16 mb-8">
+                            <div class="w-32 h-32 rounded-full bg-white p-1.5 shadow-lg shrink-0 mx-auto md:mx-0 relative z-10">
+                                <div class="w-full h-full rounded-full bg-teal-50 flex items-center justify-center overflow-hidden border border-slate-100">
+                                    ${p.profile_photo ? `<img src="${escapeHtml(p.profile_photo)}" class="w-full h-full object-cover">` : `<span class="material-symbols-rounded text-6xl text-teal-300">account_circle</span>`}
+                                </div>
+                            </div>
+                            <div class="flex-1 text-center md:text-left mb-2">
+                                <div class="flex flex-col md:flex-row justify-center md:justify-start items-center gap-3 mb-1.5">
+                                    <h3 class="text-3xl font-extrabold text-slate-800 tracking-tight">${escapeHtml(p.couple_name)}</h3>
+                                    ${statusBadgeProfile}
+                                </div>
+                                <p class="text-slate-500 flex items-center justify-center md:justify-start gap-1.5 font-medium"><span class="material-symbols-rounded text-[18px]">mail</span> ${escapeHtml(p.email)}</p>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-5 border-t border-slate-100 pt-8">
+                            <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100 transition hover:shadow-md">
+                                <div class="flex items-center gap-2 mb-2 text-slate-400">
+                                    <span class="material-symbols-rounded text-[20px]">calendar_add_on</span>
+                                    <span class="text-xs font-semibold uppercase tracking-wider">Dibuat Pada</span>
+                                </div>
+                                <span class="font-bold text-slate-800 text-lg block">${formatDate(p.created_invitation_at)}</span>
+                            </div>
+                            <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100 transition hover:shadow-md">
+                                <div class="flex items-center gap-2 mb-2 text-slate-400">
+                                    <span class="material-symbols-rounded text-[20px]">event_busy</span>
+                                    <span class="text-xs font-semibold uppercase tracking-wider">Berakhir Pada</span>
+                                </div>
+                                <span class="font-bold text-slate-800 text-lg block">${formatDate(p.expired_at)}</span>
+                            </div>
+                            <div class="bg-[#f0f5f4] p-5 rounded-2xl border border-[#dce8e6] transition hover:shadow-md">
+                                <div class="flex items-center gap-2 mb-2 text-[#285e58]">
+                                    <span class="material-symbols-rounded text-[20px]">link</span>
+                                    <span class="text-xs font-semibold uppercase tracking-wider">Link Undangan</span>
+                                </div>
+                                <span class="font-bold text-[#1f4642] text-lg truncate block">${escapeHtml(p.slug)}.html</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            renderGuestsList();
+            renderRSVPList(state.rsvps);
+            renderAnalytics();
+        }
+
+        function renderGuestsList(guestsData = state.guests) {
+            const container = document.getElementById('guests-list-container');
+            const slug = state.profile?.slug || 'undangan';
+            
+            if (!guestsData || guestsData.length === 0) {
+                container.innerHTML = `<div class="col-span-full py-10 text-center text-slate-500 bg-white rounded-3xl border border-dashed border-slate-200">Belum ada tamu yang ditemukan.</div>`;
+                return;
+            }
+
+            container.innerHTML = guestsData.map(g => {
+                const link = `${window.location.origin}/${escapeHtml(slug)}.html?to=${escapeHtml(g.invitation_code)}`;
+                const hasPhone = !!g.phone;
+                return `
+                <div class="bg-white p-6 rounded-3xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-slate-100 flex flex-col h-full hover:shadow-md transition-shadow">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h4 class="font-bold text-slate-800 text-lg mb-0.5">${escapeHtml(g.name)}</h4>
+                            <span class="inline-block px-2 py-1 bg-slate-100 text-slate-600 text-xs rounded-md font-medium">${escapeHtml(g.category || 'Umum')}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-2 mb-6">
+                        <div class="flex items-center gap-2 text-sm text-slate-500">
+                            <span class="material-symbols-rounded text-slate-400 text-[18px]">phone</span> ${escapeHtml(g.phone || '-')}
+                        </div>
+                        <div class="flex items-center gap-2 text-sm text-slate-500">
+                            <span class="material-symbols-rounded text-slate-400 text-[18px]">qr_code_2</span> ${escapeHtml(g.invitation_code)}
+                        </div>
+                        <div class="flex items-center gap-2 text-xs text-slate-400 mt-2">
+                            <span class="material-symbols-rounded text-slate-400 text-[16px]">calendar_today</span> Dibuat: ${formatDate(g.created_at)}
+                        </div>
+                    </div>
+
+                    <div class="mt-auto grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <button onclick="copyText('${link}')" class="w-full py-2 bg-slate-50 hover:bg-slate-100 text-slate-700 font-semibold rounded-xl text-xs flex justify-center items-center gap-1.5 transition-colors"><span class="material-symbols-rounded text-sm">content_copy</span> Copy Link</button>
+                        <button onclick="generateWAlink('${escapeHtml(g.id)}')" ${!hasPhone ? 'disabled' : ''} class="w-full py-2 ${hasPhone ? 'bg-green-50 hover:bg-green-100 text-green-700' : 'bg-slate-50 text-slate-400 cursor-not-allowed'} font-semibold rounded-xl text-xs flex flex-col justify-center items-center transition-colors">
+                            <div class="flex items-center gap-1.5">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 fill-current" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.87-2.03-.97-.272-.099-.47-.149-.669.149-.198.297-.768.97-.941 1.168-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.305-.88-.653-1.474-1.45-1.647-1.748-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.52.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.52-.075-.149-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.396-.272.322-1.04 1.014-1.04 2.476 0 1.462 1.065 2.876 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg> 
+                                Kirim WA
+                            </div>
+                            ${!hasPhone ? '<span class="text-[9px] font-normal mt-0.5 leading-none">No HP belum diisi</span>' : ''}
+                        </button>
+                        <button onclick="openQRModal('${escapeHtml(g.id)}')" class="w-full py-2 bg-slate-50 hover:bg-slate-100 text-slate-700 font-semibold rounded-xl text-xs flex justify-center items-center gap-1.5 transition-colors"><span class="material-symbols-rounded text-sm">qr_code_scanner</span> QR Code</button>
+                        <div class="flex gap-2 w-full">
+                            <button onclick="openEditGuestModal('${escapeHtml(g.id)}')" class="w-full py-2 bg-slate-50 hover:bg-slate-100 text-teal-600 font-semibold rounded-xl text-xs flex justify-center items-center gap-1.5 transition-colors"><span class="material-symbols-rounded text-sm">edit</span> Edit</button>
+                            <button onclick="openDeleteGuestModal('${escapeHtml(g.id)}')" class="w-full py-2 bg-slate-50 hover:bg-slate-100 text-red-500 font-semibold rounded-xl text-xs flex justify-center items-center gap-1.5 transition-colors"><span class="material-symbols-rounded text-sm">delete</span> Hapus</button>
+                        </div>
+                    </div>
+                </div>
+            `}).join('');
+        }
+
+        function renderRSVPList(rsvpsData) {
+            const container = document.getElementById('rsvp-list-container');
+            if (!rsvpsData || rsvpsData.length === 0) {
+                container.innerHTML = `<div class="col-span-full py-10 text-center text-slate-500 bg-white rounded-3xl border border-dashed border-slate-200">Belum ada RSVP.</div>`;
+                return;
+            }
+            container.innerHTML = rsvpsData.map(r => `
+                <div class="bg-white p-6 rounded-3xl shadow-[0_4px_20px_rgb(0,0,0,0.03)] border border-slate-100 flex flex-col">
+                    <div class="flex justify-between items-start mb-4 gap-2">
+                        <div>
+                            <h4 class="font-bold text-slate-800 break-words">${escapeHtml(r.name || 'Anonim')}</h4>
+                            <div class="mt-1">${statusBadge(r.status)}</div>
+                        </div>
+                        <div class="flex gap-1 bg-slate-50 rounded-lg p-1 border border-slate-100 shrink-0">
+                            <button onclick="openEditRSVPModal('${escapeHtml(r.id)}')" class="p-2 text-slate-500 hover:text-teal-600 hover:bg-white rounded-md transition-all" title="Edit RSVP"><span class="material-symbols-rounded text-[18px]">edit</span></button>
+                            <button onclick="openDeleteRSVPModal('${escapeHtml(r.id)}')" class="p-2 text-slate-500 hover:text-red-500 hover:bg-white rounded-md transition-all" title="Hapus RSVP"><span class="material-symbols-rounded text-[18px]">delete</span></button>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <p class="text-sm text-slate-600 bg-slate-50 p-4 rounded-xl italic">"${escapeHtml(r.message || '-')}"</p>
+                    </div>
+                    <div class="mt-auto flex justify-between items-center text-xs text-slate-400 border-t border-slate-50 pt-4">
+                        <span class="flex items-center gap-1.5 font-medium"><span class="material-symbols-rounded text-sm">group</span> ${escapeHtml(r.guest_count || 1)} Orang</span>
+                        <span>${formatDate(r.created_at)}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function renderDashboard() {
+            document.getElementById('app').innerHTML = `<div class="min-h-screen flex flex-col items-center justify-center bg-slate-50 gap-4"><div class="spinner !w-10 !h-10 !border-4"></div><p class="text-slate-500 font-medium animate-pulse">Memuat dashboard...</p></div>`;
+            await fetchDashboardData(true);
+        }
+
+        function render() {
+            if (localStorage.getItem('client_token')) renderDashboard();
+            else renderLogin();
+        }
+
+        document.addEventListener('DOMContentLoaded', render);
+	</script>
+</body>
+
+</html>
