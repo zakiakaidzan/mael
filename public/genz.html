@@ -1,0 +1,1603 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Ruang Gen Z</title>
+    
+    <!-- Fonts: Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Icons: Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        rz_black: '#000000',      /* Pitch black typical of Threads */
+                        rz_gray: '#101010',       /* Very dark gray for subtle highlights */
+                        rz_border: '#262626',     /* Subtle thin borders */
+                        rz_text_secondary: '#777777',
+                        rz_red: '#ff3040'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #000000;
+            color: #f3f4f6;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        ::-webkit-scrollbar {
+            width: 0px;
+            background: transparent;
+        }
+        
+        .thread-line {
+            width: 2px;
+            background-color: #333638;
+            flex-grow: 1;
+            margin-top: 8px;
+            margin-bottom: 4px;
+            border-radius: 999px;
+        }
+
+        .modal-overlay {
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+        }
+
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Action Icon Animations */
+        .action-icon {
+            transition: transform 0.1s ease-in-out, color 0.2s;
+        }
+        .action-icon:active {
+            transform: scale(0.8);
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .toast-enter {
+            animation: slideUp 0.3s ease-out forwards;
+        }
+
+        /* Bottom Sheet Animation */
+        @keyframes slideUpSheet {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+        .animate-slide-up {
+            animation: slideUpSheet 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        
+        textarea {
+            resize: none;
+        }
+
+        /* Nav Tab Styling */
+        .tab-active {
+            color: white;
+            border-bottom: 1.5px solid white;
+        }
+        .tab-inactive {
+            color: #777777;
+            border-bottom: 1.5px solid #262626;
+        }
+    </style>
+</head>
+<body class="antialiased overflow-y-scroll no-scrollbar selection:bg-gray-700 selection:text-white">
+
+    <!-- App Shell -->
+    <div class="flex justify-center min-h-screen">
+        
+        <!-- Left Sidebar (Desktop) -->
+        <nav class="hidden sm:flex flex-col w-[68px] lg:w-[260px] h-screen sticky top-0 py-6 px-2 lg:px-6 shrink-0 z-40">
+            <div class="flex items-center justify-center lg:justify-start mb-8 lg:px-2">
+                <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/threads-white-icon.png" class="w-9 h-9" alt="Logo">
+            </div>
+            
+            <div class="flex flex-col gap-1 w-full" id="desktop-nav">
+                <!-- Nav items injected via JS based on auth state -->
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="w-full sm:w-[600px] min-h-screen border-x sm:border-rz_border border-transparent relative pb-20 sm:pb-0" id="main-content">
+            
+            <!-- Dynamic View Container -->
+            <div id="view-container" class="min-h-screen">
+                <!-- Content injected here -->
+            </div>
+        </main>
+
+        <!-- Bottom Navigation (Mobile) -->
+        <nav class="sm:hidden fixed bottom-0 left-0 right-0 bg-[#000000]/90 backdrop-blur-xl z-40" id="mobile-nav">
+             <div class="flex justify-around items-center h-16 px-2" id="mobile-nav-items">
+                <!-- Mobile nav items injected via JS -->
+             </div>
+        </nav>
+
+    </div>
+
+    <!-- Modals Container -->
+    <div id="modals">
+        <!-- Auth Modal -->
+        <div id="auth-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay">
+            <div class="bg-[#101010] border border-rz_border rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl relative">
+                <button onclick="app.closeModal('auth-modal')" class="absolute top-4 right-4 text-rz_text_secondary hover:text-white">
+                    <i class="ph ph-x text-2xl"></i>
+                </button>
+                <div class="flex text-center mt-2 px-4">
+                    <button id="tab-login" class="flex-1 py-4 font-semibold text-[15px] tab-active" onclick="app.switchAuthTab('login')">Login</button>
+                    <button id="tab-register" class="flex-1 py-4 font-semibold text-[15px] tab-inactive" onclick="app.switchAuthTab('register')">Register</button>
+                </div>
+                
+                <div class="p-6">
+                    <!-- Login Form -->
+                    <form id="form-login" onsubmit="app.handleLogin(event)" class="flex flex-col gap-3">
+                        <input type="email" id="login-email" placeholder="Email" required class="w-full bg-[#1a1a1a] border border-transparent rounded-xl px-4 py-3.5 text-[15px] text-white focus:outline-none focus:border-rz_border transition">
+                        <input type="password" id="login-password" placeholder="Password" required class="w-full bg-[#1a1a1a] border border-transparent rounded-xl px-4 py-3.5 text-[15px] text-white focus:outline-none focus:border-rz_border transition">
+                        <button type="submit" class="w-full bg-white text-black font-semibold rounded-xl py-3.5 mt-4 hover:bg-gray-200 transition text-[15px]" id="btn-login">Log in</button>
+                    </form>
+
+                    <!-- Register Form -->
+                    <form id="form-register" onsubmit="app.handleRegister(event)" class="hidden flex flex-col gap-3">
+                        <input type="text" id="reg-username" placeholder="Username" required minlength="3" class="w-full bg-[#1a1a1a] border border-transparent rounded-xl px-4 py-3.5 text-[15px] text-white focus:outline-none focus:border-rz_border transition">
+                        <input type="email" id="reg-email" placeholder="Email" required class="w-full bg-[#1a1a1a] border border-transparent rounded-xl px-4 py-3.5 text-[15px] text-white focus:outline-none focus:border-rz_border transition">
+                        <input type="password" id="reg-password" placeholder="Password" required minlength="6" class="w-full bg-[#1a1a1a] border border-transparent rounded-xl px-4 py-3.5 text-[15px] text-white focus:outline-none focus:border-rz_border transition">
+                        <button type="submit" class="w-full bg-white text-black font-semibold rounded-xl py-3.5 mt-4 hover:bg-gray-200 transition text-[15px]" id="btn-register">Sign up</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Composer Modal (Create/Edit Post) - Now Responsive Bottom Sheet -->
+        <div id="composer-modal" class="hidden fixed inset-0 z-50 flex flex-col justify-end sm:justify-center sm:items-center p-0 sm:p-4 modal-overlay" onclick="if(event.target === this) app.closeModal('composer-modal')">
+            <div class="bg-[#101010] border-t sm:border border-rz_border rounded-t-[24px] sm:rounded-2xl w-full h-auto max-h-[90vh] sm:max-h-[90vh] max-w-xl overflow-y-visible shadow-2xl relative flex flex-col animate-slide-up sm:animate-none pb-4 sm:pb-0">
+                
+                <!-- Handle Bar for Mobile -->
+                <div class="w-full flex justify-center pt-3 pb-1 sm:hidden cursor-pointer" onclick="app.closeModal('composer-modal')">
+                    <div class="w-12 h-1.5 bg-[#333638] rounded-full"></div>
+                </div>
+
+                <div class="flex justify-between items-center px-4 py-3 border-b border-rz_border sticky top-0 bg-[#101010]/90 backdrop-blur z-10 rounded-t-[24px] sm:rounded-t-2xl">
+                    <button onclick="app.closeModal('composer-modal')" class="text-white text-[15px] hidden sm:block">Batal</button>
+                    <div class="sm:hidden w-[50px]"></div> <!-- Spacer to center title on mobile -->
+                    <h2 class="font-bold text-[16px] text-center" id="composer-title">New thread</h2>
+                    <button onclick="app.submitPost()" id="btn-submit-post" class="text-white font-semibold opacity-50 cursor-not-allowed text-[15px] w-[50px] text-right">Post</button>
+                </div>
+                
+                <div class="p-4 flex gap-3 flex-1 overflow-y-auto no-scrollbar">
+                    <div class="flex flex-col items-center shrink-0">
+                        <img id="composer-avatar" src="https://ui-avatars.com/api/?name=User&background=333&color=fff" class="w-9 h-9 rounded-full object-cover">
+                        <div class="thread-line"></div>
+                        <img id="composer-avatar-small" src="https://ui-avatars.com/api/?name=User&background=333&color=fff" class="w-4 h-4 rounded-full object-cover opacity-50 mt-1">
+                    </div>
+                    <div class="flex-1 relative">
+                        <p class="font-semibold text-[15px] mb-1" id="composer-username">Username</p>
+                        <input type="hidden" id="composer-post-id">
+                        
+                        <input type="text" id="post-title" placeholder="Title (optional)" class="w-full bg-transparent text-white font-semibold outline-none placeholder-rz_text_secondary mb-2 text-[15px]">
+                        
+                        <div class="relative w-full">
+                            <textarea id="post-content" placeholder="Start a thread... (ketik @ untuk mention)" class="w-full bg-transparent text-white outline-none placeholder-rz_text_secondary min-h-[80px] text-[15px] leading-relaxed" oninput="app.checkComposerState(); app.handleMentionSearch(this, 'composer')" onblur="setTimeout(() => document.getElementById('composer-mention-list').classList.add('hidden'), 200)"></textarea>
+                            
+                            <!-- Autocomplete Suggestions -->
+                            <div id="composer-mention-list" class="hidden absolute top-full left-0 mt-1 bg-[#1a1a1a] border border-rz_border rounded-xl shadow-2xl max-h-48 overflow-y-auto z-50 w-[250px]"></div>
+                        </div>
+
+                        <div id="image-preview-container" class="hidden relative mt-2 w-fit mb-2">
+                            <img id="image-preview" src="" class="max-h-[300px] rounded-xl border border-rz_border object-cover">
+                            <button onclick="app.removeImage()" class="absolute top-2 right-2 bg-black/70 rounded-full p-1.5 text-white hover:bg-black">
+                                <i class="ph ph-x"></i>
+                            </button>
+                            <input type="hidden" id="post-image-url">
+                        </div>
+
+                        <div class="mt-2 flex gap-4 items-center">
+                            <label class="cursor-pointer text-rz_text_secondary hover:text-white flex items-center justify-center p-1">
+                                <i class="ph ph-paperclip text-[22px]"></i>
+                                <input type="file" id="post-image" accept="image/*" class="hidden" onchange="app.handleImageSelect(event)">
+                            </label>
+                            <select id="post-category" class="bg-transparent text-rz_text_secondary text-[14px] outline-none cursor-pointer">
+                                <option value="" class="bg-[#101010]">Add category</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Bottom anon setting -->
+                <div class="px-4 py-4 border-t border-rz_border flex items-center justify-between text-rz_text_secondary">
+                    <span class="text-[14px]">Anyone can reply & quote</span>
+                    <label class="flex items-center gap-2 text-[14px] cursor-pointer">
+                        <input type="checkbox" id="post-anonymous" class="accent-white w-4 h-4 rounded">
+                        Post Anonymously
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Profile Modal -->
+        <div id="profile-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay">
+            <div class="bg-[#101010] border border-rz_border rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl relative">
+                <div class="flex justify-between items-center px-4 py-3 border-b border-rz_border">
+                    <h2 class="font-bold text-[16px]">Edit profile</h2>
+                    <button onclick="app.closeModal('profile-modal')" class="text-rz_text_secondary hover:text-white"><i class="ph ph-x text-xl"></i></button>
+                </div>
+                <div class="p-6 flex flex-col gap-4">
+                    <div class="flex justify-between items-center p-4 bg-[#1a1a1a] rounded-xl border border-rz_border/50">
+                        <div>
+                            <p class="font-bold text-[15px]" id="edit-preview-name">Name</p>
+                            <p class="text-[14px]" id="edit-preview-user">@username</p>
+                        </div>
+                        <div class="relative group cursor-pointer shrink-0" onclick="document.getElementById('avatar-upload').click()">
+                            <img id="edit-avatar-preview" src="" class="w-14 h-14 rounded-full object-cover">
+                            <div class="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+                                <i class="ph ph-camera text-white"></i>
+                            </div>
+                            <input type="file" id="avatar-upload" accept="image/*" class="hidden" onchange="app.handleAvatarUpload(event)">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="text-[13px] font-semibold">Name</label>
+                        <input type="text" id="edit-display-name" class="w-full bg-transparent border-b border-rz_border py-2 text-[15px] text-white focus:outline-none focus:border-white transition">
+                    </div>
+                    <div>
+                        <label class="text-[13px] font-semibold">Username</label>
+                        <input type="text" id="edit-username" class="w-full bg-transparent border-b border-rz_border py-2 text-[15px] text-white focus:outline-none focus:border-white transition">
+                    </div>
+                    <div>
+                        <label class="text-[13px] font-semibold">Bio</label>
+                        <textarea id="edit-bio" rows="2" placeholder="+ Write bio" class="w-full bg-transparent border-b border-rz_border py-2 text-[15px] text-white focus:outline-none focus:border-white transition resize-none"></textarea>
+                    </div>
+                    <button onclick="app.saveProfile()" id="btn-save-profile" class="w-full bg-white text-black font-semibold rounded-xl py-3 mt-4 hover:bg-gray-200 transition text-[15px]">Done</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Post Detail Modal -->
+        <div id="detail-modal" class="hidden fixed inset-0 z-40 flex items-start sm:items-center justify-center p-0 sm:p-4 modal-overlay">
+            <div class="bg-[#000000] sm:bg-[#101010] sm:border border-rz_border rounded-none sm:rounded-2xl w-full h-full sm:h-[90vh] max-w-2xl overflow-hidden shadow-2xl relative flex flex-col">
+                <div class="flex items-center px-4 py-3 border-b border-rz_border sticky top-0 bg-[#000000]/90 sm:bg-[#101010]/90 backdrop-blur z-10">
+                    <button onclick="app.closeModal('detail-modal')" class="text-white mr-4"><i class="ph ph-arrow-left text-2xl"></i></button>
+                    <h2 class="font-bold flex-1 text-[16px]">Thread</h2>
+                </div>
+                <div class="flex-1 overflow-y-auto no-scrollbar pb-24" id="detail-content">
+                    <!-- Post and Comments injected here -->
+                </div>
+                <!-- Comment Input Area -->
+                <div class="absolute bottom-0 left-0 right-0 p-4 bg-[#000000] sm:bg-[#101010] border-t border-rz_border flex gap-3 items-center" id="comment-input-area">
+                    <!-- Dinamis Diubah via JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Menu Modal (Burger) -->
+        <div id="settings-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay" onclick="if(event.target === this) app.closeModal('settings-modal')">
+            <div class="bg-[#181818] border border-rz_border rounded-[18px] w-full max-w-[300px] overflow-hidden shadow-2xl relative flex flex-col">
+                <div class="flex flex-col text-[15px] font-semibold">
+                    <button class="text-left px-5 py-4 hover:bg-[#262626] transition flex justify-between items-center text-white">Tampilan <i class="ph ph-caret-right text-rz_text_secondary"></i></button>
+                    <button class="text-left px-5 py-4 hover:bg-[#262626] transition text-white border-b border-rz_border">Pengaturan</button>
+                    
+                    <button class="text-left px-5 py-4 hover:bg-[#262626] transition text-white" onclick="app.closeModal('settings-modal'); app.navigate('likes')">Disukai</button>
+                    <button class="text-left px-5 py-4 hover:bg-[#262626] transition text-white" onclick="app.closeModal('settings-modal'); app.navigate('reposts')">Reposts</button>
+                    <button class="text-left px-5 py-4 hover:bg-[#262626] transition text-white border-b border-rz_border">Arsip</button>
+                    
+                    <button class="text-left px-5 py-4 hover:bg-[#262626] transition text-white">Laporkan masalah</button>
+                    <button class="text-left px-5 py-4 text-rz_red hover:bg-[#262626] transition" onclick="app.logout(); app.closeModal('settings-modal')">Logout</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed bottom-24 sm:bottom-10 left-1/2 transform -translate-x-1/2 z-[100] flex flex-col gap-2 pointer-events-none w-full max-w-sm px-4"></div>
+
+    <!-- MAIN SCRIPT -->
+    <script>
+        const API_URL = "https://apigenz.rizkifundie.workers.dev";
+        
+        // --- STATE MANAGEMENT ---
+        const app = {
+            user: null,
+            token: localStorage.getItem('token') || null,
+            categories: [],
+            currentView: 'home',
+            currentParams: null,
+            isLiking: {}, 
+            isReposting: {},
+            currentDetailPostId: null,
+
+            // Configs for Navigation
+            navItems: [
+                { id: 'home', icon: 'ph-house', label: 'Home' },
+                { id: 'search', icon: 'ph-magnifying-glass', label: 'Search' },
+                { id: 'create', icon: 'ph-plus', label: 'Post', action: 'openComposer' },
+                { id: 'likes', icon: 'ph-heart', label: 'Activity', reqAuth: true },
+                { id: 'profile', icon: 'ph-user', label: 'Profile', reqAuth: true },
+            ]
+        };
+
+        // --- UTILS ---
+        
+        const util = {
+            formatDate: (dateString) => {
+                if (!dateString) return '';
+                const date = new Date(dateString.replace(' ', 'T') + '+07:00');
+                const now = new Date();
+                const diffSec = Math.floor((now - date) / 1000);
+                
+                if (diffSec < 60) return 'Just now';
+                if (diffSec < 3600) return `${Math.floor(diffSec/60)}m`;
+                if (diffSec < 86400) return `${Math.floor(diffSec/3600)}h`;
+                if (diffSec < 604800) return `${Math.floor(diffSec/86400)}d`;
+                if (diffSec < 31536000) return `${Math.floor(diffSec/604800)}w`;
+                
+                return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+            },
+            
+            escapeHTML: (str) => {
+                if (!str) return '';
+                const div = document.createElement('div');
+                div.textContent = str;
+                return div.innerHTML;
+            },
+
+            formatContent: (text) => {
+                if (!text) return '';
+                let escaped = util.escapeHTML(text).replace(/\n/g, '<br>');
+                // Mengubah pola @username menjadi link profil yang aman dan bold
+                escaped = escaped.replace(/@([a-zA-Z0-9_.]{3,30})/g, function(match, username) {
+                    const clean = username.toLowerCase();
+                    // Gunakan event.stopPropagation() agar klik mention di feed tidak membuka detail post
+                    return `<button type="button" onclick="event.stopPropagation(); app.closeModal('detail-modal'); app.navigate('profile', '${clean}')" class="font-semibold text-white hover:underline">${match}</button>`;
+                });
+                return escaped;
+            },
+
+            showToast: (msg, type = 'info') => {
+                const container = document.getElementById('toast-container');
+                const toast = document.createElement('div');
+                toast.className = `toast-enter px-4 py-3.5 rounded-xl shadow-lg text-[15px] font-medium flex items-center gap-2 ${type === 'error' ? 'bg-red-950 text-red-100 border border-red-900' : 'bg-white text-black'}`;
+                
+                const icon = type === 'error' ? 'ph-warning-circle' : (type === 'success' ? 'ph-check-circle' : 'ph-info');
+                toast.innerHTML = `<i class="ph ${icon} text-xl"></i> <span>${msg}</span>`;
+                
+                container.appendChild(toast);
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    toast.style.transform = 'translateY(100%)';
+                    toast.style.transition = 'all 0.3s ease';
+                    setTimeout(() => toast.remove(), 300);
+                }, 3000);
+            },
+
+            getAvatar: (url, name) => {
+                return url || `https://ui-avatars.com/api/?name=${encodeURIComponent(name || 'A')}&background=1a1a1a&color=fff&rounded=true`;
+            },
+
+            setLoading: (elementId, isLoading, originalText = '') => {
+                const el = document.getElementById(elementId);
+                if (!el) return;
+                if (isLoading) {
+                    el.disabled = true;
+                    el.dataset.ot = el.innerHTML;
+                    el.innerHTML = `<i class="ph ph-spinner animate-spin text-xl mx-auto"></i>`;
+                    el.classList.add('opacity-50', 'cursor-not-allowed');
+                } else {
+                    el.disabled = false;
+                    el.innerHTML = el.dataset.ot || originalText;
+                    el.classList.remove('opacity-50', 'cursor-not-allowed');
+                }
+            }
+        };
+
+        // --- API WRAPPER ---
+        async function api(endpoint, options = {}) {
+            const headers = {};
+            if (app.token) headers['Authorization'] = `Bearer ${app.token}`;
+            
+            if (!(options.body instanceof FormData)) {
+                headers['Content-Type'] = 'application/json';
+                if (options.body && typeof options.body === 'object') {
+                    options.body = JSON.stringify(options.body);
+                }
+            }
+
+            try {
+                const res = await fetch(`${API_URL}${endpoint}`, { ...options, headers });
+                const data = await res.json();
+                
+                if (!res.ok || data.success === false) {
+                    if (res.status === 401) {
+                        app.logout(false);
+                    }
+                    throw new Error(data.message || 'Terjadi kesalahan dari server');
+                }
+                return data;
+            } catch (err) {
+                console.error("API Error:", err);
+                throw err;
+            }
+        }
+
+        // --- CORE FUNCTIONS ---
+
+        app.init = async () => {
+            app.renderNav();
+            
+            if (app.token) {
+                try {
+                    const res = await api('/api/me');
+                    app.user = res.user;
+                } catch (e) {
+                    app.logout(false); 
+                }
+            }
+
+            try {
+                const resCat = await api('/api/categories');
+                app.categories = resCat.data || [];
+                const select = document.getElementById('post-category');
+                app.categories.forEach(c => {
+                    select.innerHTML += `<option value="${c.id}" class="bg-[#101010]">${c.name}</option>`;
+                });
+            } catch(e) {}
+
+            app.renderNav(); 
+            app.navigate('home');
+        };
+
+        app.renderNav = () => {
+            const desk = document.getElementById('desktop-nav');
+            const mob = document.getElementById('mobile-nav-items');
+            desk.innerHTML = '';
+            mob.innerHTML = '';
+
+            const isAuth = !!app.user;
+
+            app.navItems.forEach(item => {
+                if (item.reqAuth && !isAuth) return;
+                
+                // For activity, map 'likes', 'mentions' and 'reposts' to the same tab visually
+                const isActive = app.currentView === item.id || (item.id === 'likes' && (app.currentView === 'mentions' || app.currentView === 'reposts'));
+                const iconClass = isActive ? `ph-fill ${item.icon}` : `ph ${item.icon}`;
+                
+                // Desktop Item
+                const dBtn = document.createElement('a');
+                dBtn.href = '#';
+                dBtn.className = `flex items-center gap-4 p-3 lg:px-4 rounded-xl transition group ${isActive ? 'text-white font-bold' : 'text-rz_text_secondary hover:bg-[#1a1a1a] hover:text-white'}`;
+                
+                if(item.action) {
+                    dBtn.onclick = (e) => { e.preventDefault(); app[item.action](); };
+                } else {
+                    let param = item.id === 'profile' ? app.user?.username : null;
+                    dBtn.onclick = (e) => { e.preventDefault(); app.navigate(item.id, param); };
+                }
+
+                dBtn.innerHTML = `
+                    <div class="relative w-10 h-10 flex justify-center items-center rounded-lg">
+                        <i class="${iconClass} text-[28px] transition-transform group-hover:scale-105 group-active:scale-95"></i>
+                    </div>
+                    <span class="hidden lg:block text-[16px]">${item.label}</span>
+                `;
+                desk.appendChild(dBtn);
+
+                // Mobile Item
+                const mBtn = document.createElement('a');
+                mBtn.href = '#';
+                mBtn.className = `flex flex-col items-center justify-center w-14 h-14 transition ${isActive ? 'text-white' : 'text-rz_text_secondary'}`;
+                
+                if(item.action) {
+                    mBtn.onclick = (e) => { e.preventDefault(); app[item.action](); };
+                } else {
+                    let param = item.id === 'profile' ? app.user?.username : null;
+                    mBtn.onclick = (e) => { e.preventDefault(); app.navigate(item.id, param); };
+                }
+                mBtn.innerHTML = `<i class="${iconClass} text-[30px] transition-transform active:scale-90"></i>`;
+                mob.appendChild(mBtn);
+            });
+
+            // Auth buttons desktop
+            if (isAuth) {
+                const logoutBtn = document.createElement('a');
+                logoutBtn.href = '#';
+                logoutBtn.className = `flex items-center gap-4 p-3 lg:px-4 mt-auto text-rz_text_secondary hover:bg-[#1a1a1a] rounded-xl transition group`;
+                logoutBtn.onclick = (e) => { e.preventDefault(); app.openSettingsModal(); };
+                logoutBtn.innerHTML = `<div class="relative w-10 h-10 flex justify-center items-center"><i class="ph ph-list text-[28px] group-hover:text-white"></i></div><span class="hidden lg:block text-[16px]">Lainnya</span>`;
+                desk.appendChild(logoutBtn);
+                
+                document.getElementById('composer-avatar').src = util.getAvatar(app.user.avatar_url, app.user.display_name);
+                document.getElementById('composer-username').textContent = app.user.display_name;
+
+            } else {
+                const loginBtn = document.createElement('a');
+                loginBtn.href = '#';
+                loginBtn.className = `flex items-center gap-4 p-3 lg:px-4 mt-auto text-rz_text_secondary hover:bg-[#1a1a1a] rounded-xl transition group`;
+                loginBtn.onclick = (e) => { e.preventDefault(); app.openAuthModal(); };
+                loginBtn.innerHTML = `<div class="relative w-10 h-10 flex justify-center items-center"><i class="ph ph-sign-in text-[28px] group-hover:text-white"></i></div><span class="hidden lg:block text-[16px]">Log in</span>`;
+                desk.appendChild(loginBtn);
+            }
+        };
+
+        app.navigate = (view, params = null) => {
+            app.currentView = view;
+            app.currentParams = params;
+            app.renderNav();
+            window.scrollTo(0,0);
+            
+            const container = document.getElementById('view-container');
+            container.innerHTML = `<div class="flex justify-center p-12"><i class="ph ph-spinner animate-spin text-3xl text-rz_text_secondary"></i></div>`;
+
+            // Setup Header text
+            let headerHTML = '';
+
+            switch(view) {
+                case 'home':
+                    headerHTML = `
+                        <header class="sticky top-0 z-30 bg-[#000000]/80 backdrop-blur-xl pb-2 pt-6 flex justify-center items-center cursor-pointer" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+                            <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/threads-white-icon.png" class="w-[36px] h-[36px]" alt="Logo">
+                        </header>
+                    `;
+                    app.loadFeed(headerHTML);
+                    break;
+                case 'search':
+                    headerHTML = `
+                        <header class="sticky top-0 z-30 bg-[#000000]/90 backdrop-blur-xl p-4 sm:pt-6">
+                            <h1 class="font-bold text-3xl mb-4">Search</h1>
+                            <div class="relative">
+                                <i class="ph ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-rz_text_secondary text-xl"></i>
+                                <input type="text" id="search-input" placeholder="Search" class="w-full bg-[#1a1a1a] rounded-[14px] py-2.5 pl-12 pr-4 text-[16px] text-white focus:outline-none" onkeyup="if(event.key==='Enter') app.doSearch()">
+                            </div>
+                        </header>
+                    `;
+                    app.renderSearchView(headerHTML);
+                    break;
+                case 'likes':
+                case 'mentions':
+                case 'reposts':
+                    headerHTML = `
+                        <header class="sticky top-0 z-30 bg-[#000000]/90 backdrop-blur-xl p-4 sm:pt-6 border-b border-rz_border">
+                            <h1 class="font-bold text-3xl mb-4">Activity</h1>
+                            <div class="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+                                <button class="px-5 py-1.5 rounded-lg border ${view === 'likes' ? 'bg-white text-black border-white font-semibold' : 'border-rz_border text-white hover:bg-[#1a1a1a]'} text-[15px]" onclick="app.navigate('likes')">Likes</button>
+                                <button class="px-5 py-1.5 rounded-lg border ${view === 'mentions' ? 'bg-white text-black border-white font-semibold' : 'border-rz_border text-white hover:bg-[#1a1a1a]'} text-[15px]" onclick="app.navigate('mentions')">Mentions</button>
+                                <button class="px-5 py-1.5 rounded-lg border ${view === 'reposts' ? 'bg-white text-black border-white font-semibold' : 'border-rz_border text-white hover:bg-[#1a1a1a]'} text-[15px]" onclick="app.navigate('reposts')">Reposts</button>
+                            </div>
+                        </header>
+                    `;
+                    if(view === 'likes') app.loadLikes(headerHTML);
+                    else if(view === 'mentions') app.loadMentions(headerHTML);
+                    else app.loadReposts(headerHTML);
+                    break;
+                case 'profile':
+                    // Profile has custom header built in loadProfile
+                    app.loadProfile(params);
+                    break;
+            }
+        };
+
+        // --- AUTH & SETTINGS ---
+        app.openAuthModal = () => {
+            document.getElementById('auth-modal').classList.remove('hidden');
+            app.switchAuthTab('login');
+        };
+
+        app.closeModal = (id) => {
+            document.getElementById(id).classList.add('hidden');
+        };
+
+        app.openSettingsModal = () => {
+            document.getElementById('settings-modal').classList.remove('hidden');
+        };
+
+        app.switchAuthTab = (tab) => {
+            const isLogin = tab === 'login';
+            document.getElementById('form-login').classList.toggle('hidden', !isLogin);
+            document.getElementById('form-register').classList.toggle('hidden', isLogin);
+            
+            document.getElementById('tab-login').className = `flex-1 py-4 font-semibold text-[15px] ${isLogin ? 'tab-active' : 'tab-inactive'}`;
+            document.getElementById('tab-register').className = `flex-1 py-4 font-semibold text-[15px] ${!isLogin ? 'tab-active' : 'tab-inactive'}`;
+        };
+
+        app.handleLogin = async (e) => {
+            e.preventDefault();
+            util.setLoading('btn-login', true);
+            try {
+                const res = await api('/api/login', {
+                    method: 'POST',
+                    body: {
+                        email: document.getElementById('login-email').value,
+                        password: document.getElementById('login-password').value
+                    }
+                });
+                app.token = res.token;
+                app.user = res.user;
+                localStorage.setItem('token', res.token);
+                app.closeModal('auth-modal');
+                app.renderNav();
+                app.navigate('home'); 
+            } catch (err) {
+                util.showToast(err.message, 'error');
+            } finally {
+                util.setLoading('btn-login', false, 'Log in');
+            }
+        };
+
+        app.handleRegister = async (e) => {
+            e.preventDefault();
+            util.setLoading('btn-register', true);
+            try {
+                const res = await api('/api/register', {
+                    method: 'POST',
+                    body: {
+                        username: document.getElementById('reg-username').value,
+                        email: document.getElementById('reg-email').value,
+                        password: document.getElementById('reg-password').value
+                    }
+                });
+                app.token = res.token;
+                app.user = res.user;
+                localStorage.setItem('token', res.token);
+                app.closeModal('auth-modal');
+                app.renderNav();
+                app.navigate('home');
+            } catch (err) {
+                util.showToast(err.message, 'error');
+            } finally {
+                util.setLoading('btn-register', false, 'Sign up');
+            }
+        };
+
+        app.logout = (showMsg = true) => {
+            app.token = null;
+            app.user = null;
+            localStorage.removeItem('token');
+            app.renderNav();
+            app.navigate('home');
+        };
+
+        // --- MENTION AUTOCOMPLETE ---
+
+        let mentionSearchTimeout;
+
+        app.handleMentionSearch = (inputEl, context) => {
+            clearTimeout(mentionSearchTimeout);
+            const val = inputEl.value;
+            const cursorPos = inputEl.selectionStart;
+            
+            // Mencari pola @ yang belum selesai di-ketik (mengambil dari kursor mundur ke belakang)
+            const textBeforeCursor = val.substring(0, cursorPos);
+            const match = textBeforeCursor.match(/@([a-zA-Z0-9_.]{1,30})$/);
+            
+            const listId = context === 'composer' ? 'composer-mention-list' : 'comment-mention-list';
+            const listEl = document.getElementById(listId);
+
+            if (match) {
+                const query = match[1];
+                if (query.length >= 1) {
+                    mentionSearchTimeout = setTimeout(async () => {
+                        try {
+                            const res = await api(`/api/search/users?q=${encodeURIComponent(query)}`);
+                            if (res.data && res.data.length > 0) {
+                                let html = '';
+                                res.data.slice(0, 5).forEach(u => { // Batasi 5 hasil saja
+                                    html += `
+                                        <div class="px-4 py-2.5 hover:bg-[#262626] cursor-pointer flex items-center gap-3 transition" 
+                                             onmousedown="app.insertMention('${u.username}', '${context}'); event.preventDefault();">
+                                            <img src="${util.getAvatar(u.avatar_url, u.display_name)}" class="w-8 h-8 rounded-full object-cover">
+                                            <div class="flex flex-col text-left">
+                                                <span class="font-bold text-white text-[14px] leading-tight">${util.escapeHTML(u.display_name)}</span> 
+                                                <span class="text-rz_text_secondary text-[13px] leading-tight">@${u.username}</span>
+                                            </div>
+                                        </div>
+                                    `;
+                                });
+                                listEl.innerHTML = html;
+                                listEl.classList.remove('hidden');
+                            } else {
+                                listEl.classList.add('hidden');
+                            }
+                        } catch(e) {}
+                    }, 300); // debounce
+                } else {
+                    listEl.classList.add('hidden');
+                }
+            } else {
+                listEl.classList.add('hidden');
+            }
+        };
+
+        app.insertMention = (username, context) => {
+            const inputId = context === 'composer' ? 'post-content' : 'comment-input';
+            const inputEl = document.getElementById(inputId);
+            const val = inputEl.value;
+            const cursorPos = inputEl.selectionStart;
+            
+            // Mencari indeks '@' terakhir sebelum kursor
+            const textBeforeCursor = val.substring(0, cursorPos);
+            const match = textBeforeCursor.match(/@[a-zA-Z0-9_.]+$/);
+            
+            if (match) {
+                const startIdx = match.index;
+                const textAfterCursor = val.substring(cursorPos);
+                
+                // Menggabungkan bagian sebelum '@', masukkan mention baru, dan sambung dengan sisa teks
+                const newValue = val.substring(0, startIdx) + '@' + username + ' ' + textAfterCursor;
+                inputEl.value = newValue;
+                
+                // Menyesuaikan posisi kursor setelah spasi
+                const newCursorPos = startIdx + username.length + 2; 
+                inputEl.focus();
+                inputEl.setSelectionRange(newCursorPos, newCursorPos);
+            }
+            
+            const listId = context === 'composer' ? 'composer-mention-list' : 'comment-mention-list';
+            document.getElementById(listId).classList.add('hidden');
+            
+            // Update tombol submit di composer jika ada perubahan
+            if (context === 'composer') app.checkComposerState();
+        };
+
+        // --- RENDER HELPERS (Threads Style) ---
+
+        app.createPostHTML = (post, isDetail = false) => {
+            const isOwner = app.user && (app.user.id === post.user_id || app.user.role === 'admin');
+            const avatar = post.is_anonymous ? util.getAvatar(null, 'A') : util.getAvatar(post.author_avatar_url, post.author_display_name);
+            const name = post.is_anonymous ? 'Anonymous' : util.escapeHTML(post.author_display_name);
+            const time = util.formatDate(post.created_at);
+            
+            const likeIconClass = post.liked_by_me ? 'ph-fill ph-heart text-rz_red' : 'ph ph-heart text-white hover:text-rz_text_secondary';
+            const repostIconClass = post.reposted_by_me ? 'ph-bold ph-arrows-clockwise text-[#00c853]' : 'ph ph-arrows-clockwise text-white hover:text-rz_text_secondary';
+            
+            const userClickAttr = post.is_anonymous ? '' : `onclick="app.navigate('profile', '${post.author}')" class="cursor-pointer hover:underline font-semibold"`;
+
+            let imageHtml = '';
+            if (post.image_url) {
+                imageHtml = `<img src="${util.escapeHTML(post.image_url)}" class="mt-3 rounded-xl border border-rz_border max-h-[400px] w-auto object-cover" onclick="window.open(this.src, '_blank')">`;
+            }
+
+            let actionMenu = '';
+            if (isOwner) {
+                actionMenu = `
+                    <div class="relative group inline-block">
+                        <button class="text-rz_text_secondary hover:text-white p-1 ml-2"><i class="ph ph-dots-three text-xl"></i></button>
+                        <div class="absolute right-0 mt-1 w-32 bg-[#1a1a1a] border border-rz_border rounded-lg shadow-xl hidden group-hover:block z-20 overflow-hidden">
+                            <button onclick="app.openEditPost('${post.id}')" class="w-full text-left px-4 py-3 text-[14px] hover:bg-[#262626]">Edit</button>
+                            <button onclick="app.deletePost('${post.id}')" class="w-full text-left px-4 py-3 text-[14px] text-red-500 hover:bg-[#262626]">Delete</button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // The thread line only shown in feed view, simulating connections
+            let threadLineHtml = '';
+            if (!isDetail && post.total_comments > 0) {
+                 threadLineHtml = `
+                    <div class="thread-line"></div>
+                    <img src="https://ui-avatars.com/api/?name=R&background=333&color=fff" class="w-4 h-4 rounded-full mt-1 mb-2 opacity-60">
+                 `;
+            } else if (!isDetail) {
+                 // Empty spacer to keep layout balanced
+                 threadLineHtml = `<div class="flex-grow min-h-[16px]"></div>`;
+            }
+
+            return `
+                <div class="${isDetail ? 'pt-4 pb-2 px-4' : 'px-4 py-3 border-b border-rz_border'} transition" id="post-${post.id}">
+                    <div class="flex gap-3">
+                        <div class="flex flex-col items-center shrink-0 w-9">
+                            <img src="${avatar}" class="w-9 h-9 rounded-full object-cover ${post.is_anonymous ? '' : 'cursor-pointer'}" ${post.is_anonymous ? '' : `onclick="app.navigate('profile', '${post.author}')"`}>
+                            ${threadLineHtml}
+                        </div>
+                        <div class="flex-1 min-w-0 pb-1">
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-center flex-wrap gap-1">
+                                    <span class="text-[15px]" ${userClickAttr}>${name}</span>
+                                    ${post.is_anonymous ? '' : `<i class="ph-fill ph-check-circle text-blue-500 text-[14px]"></i>`}
+                                </div>
+                                <div class="flex items-center text-rz_text_secondary text-[14px]">
+                                    <span>${time}</span>
+                                    ${actionMenu}
+                                </div>
+                            </div>
+                            
+                            <div class="cursor-pointer mt-0.5" onclick="app.openDetail('${post.id}')">
+                                ${post.title ? `<h3 class="font-bold text-[15px] mb-1">${util.formatContent(post.title)}</h3>` : ''}
+                                <div class="text-[15px] leading-relaxed break-words whitespace-pre-wrap">${util.formatContent(post.content)}</div>
+                            </div>
+                            
+                            ${imageHtml}
+                            
+                            <div class="flex gap-4 mt-3 mb-2 text-white">
+                                <button onclick="app.toggleLike('${post.id}')" class="flex items-center gap-1.5 p-1 -ml-1 action-icon like-btn hover:bg-[#1a1a1a] rounded-full transition px-2" data-id="${post.id}">
+                                    <i class="${likeIconClass} text-[20px] like-icon"></i>
+                                    <span class="text-[13px] text-rz_text_secondary like-count">${post.total_likes > 0 ? post.total_likes : ''}</span>
+                                </button>
+                                <button onclick="app.openDetail('${post.id}')" class="flex items-center gap-1.5 p-1 action-icon hover:bg-[#1a1a1a] rounded-full transition px-2">
+                                    <i class="ph ph-chat-circle text-[20px]"></i>
+                                    <span class="text-[13px] text-rz_text_secondary comment-count">${post.total_comments > 0 ? post.total_comments : ''}</span>
+                                </button>
+                                <button onclick="app.toggleRepost('${post.id}')" class="flex items-center gap-1.5 p-1 action-icon repost-btn hover:bg-[#1a1a1a] rounded-full transition px-2" data-id="${post.id}">
+                                    <i class="${repostIconClass} text-[20px] repost-icon"></i>
+                                    <span class="text-[13px] text-rz_text_secondary repost-count">${post.total_reposts > 0 ? post.total_reposts : ''}</span>
+                                </button>
+                                <button onclick="app.copyLink('${post.id}')" class="p-1 action-icon hover:bg-[#1a1a1a] rounded-full transition px-2">
+                                    <i class="ph ph-paper-plane-tilt text-[20px]"></i>
+                                </button>
+                            </div>
+                            
+                            ${post.category_name ? `
+                            <div class="text-rz_text_secondary text-[14px] flex items-center gap-1.5 cursor-pointer mt-1" onclick="app.openDetail('${post.id}')">
+                                <span class="bg-[#1a1a1a] px-2 py-0.5 rounded text-[12px]">${util.escapeHTML(post.category_name)}</span>
+                            </div>` : ''}
+                        </div>
+                    </div>
+                </div>
+            `;
+        };
+
+        app.createCommentHTML = (comment) => {
+            const avatar = util.getAvatar(comment.author_avatar_url, comment.author_display_name);
+            const time = util.formatDate(comment.created_at);
+            return `
+                <div class="px-4 py-3 border-b border-rz_border">
+                    <div class="flex gap-3">
+                        <div class="flex flex-col items-center shrink-0 w-9">
+                            <img src="${avatar}" class="w-9 h-9 rounded-full object-cover cursor-pointer" onclick="app.closeModal('detail-modal'); app.navigate('profile', '${comment.author}')">
+                            <div class="flex-grow min-h-[16px]"></div>
+                        </div>
+                        <div class="flex-1 pb-1">
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-center gap-1 flex-wrap">
+                                    <span class="font-semibold text-[15px] cursor-pointer hover:underline" onclick="app.closeModal('detail-modal'); app.navigate('profile', '${comment.author}')">${util.escapeHTML(comment.author_display_name)}</span>
+                                    <span class="text-rz_text_secondary text-[14px] ml-1">@${comment.author}</span>
+                                </div>
+                                <span class="text-rz_text_secondary text-[14px] shrink-0 ml-2">${time}</span>
+                            </div>
+                            <div class="text-[15px] leading-relaxed mt-0.5 break-words">${util.formatContent(comment.content)}</div>
+                            
+                            <div class="flex gap-3 mt-2 text-rz_text_secondary">
+                                <button class="p-1 -ml-1 hover:text-white transition"><i class="ph ph-heart text-[20px]"></i></button>
+                                <button class="p-1 hover:text-white transition"><i class="ph ph-chat-circle text-[20px]"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        };
+
+        app.createUserHTML = (user) => {
+            return `
+                <div class="flex items-center justify-between px-4 py-3 border-b border-rz_border cursor-pointer hover:bg-[#101010]" onclick="app.navigate('profile', '${user.username}')">
+                    <div class="flex items-center gap-3">
+                        <img src="${util.getAvatar(user.avatar_url, user.display_name)}" class="w-10 h-10 rounded-full object-cover">
+                        <div>
+                            <p class="font-semibold text-[15px] flex items-center gap-1">${util.escapeHTML(user.display_name)} <i class="ph-fill ph-check-circle text-blue-500 text-[13px]"></i></p>
+                            <p class="text-rz_text_secondary text-[14px]">@${user.username} · ${Math.floor(Math.random()*100)+1}k followers</p>
+                        </div>
+                    </div>
+                    <button class="px-5 py-1.5 bg-transparent border border-rz_border rounded-xl text-[14px] font-semibold text-white">Lihat</button>
+                </div>
+            `;
+        };
+
+        app.renderEmpty = (msg) => {
+            return `<div class="p-10 text-center text-rz_text_secondary text-[15px]">${msg}</div>`;
+        };
+
+        // --- VIEWS ---
+
+        app.loadFeed = async (headerHTML) => {
+            const container = document.getElementById('view-container');
+            try {
+                const res = await api('/api/posts');
+                let html = headerHTML;
+                
+                // Add Quick Composer CTA if logged in
+                if (app.user) {
+                    html += `
+                        <div class="px-4 py-4 border-b border-rz_border flex items-center gap-3 cursor-text" onclick="app.openComposer()">
+                            <img src="${util.getAvatar(app.user.avatar_url, app.user.display_name)}" class="w-9 h-9 rounded-full object-cover">
+                            <span class="text-rz_text_secondary text-[15px]">Start a thread...</span>
+                            <button class="ml-auto px-4 py-1.5 bg-[#1a1a1a] text-white font-semibold rounded-full text-[14px]">Post</button>
+                        </div>
+                    `;
+                }
+
+                if (res.data.length === 0) {
+                    html += app.renderEmpty('No threads yet.');
+                } else {
+                    res.data.forEach(post => { html += app.createPostHTML(post); });
+                }
+                container.innerHTML = html;
+                app.postsData = res.data; 
+            } catch (err) {
+                container.innerHTML = headerHTML + app.renderEmpty('Failed to load feed.');
+            }
+        };
+
+        app.loadLikes = async (headerHTML) => {
+            const container = document.getElementById('view-container');
+            try {
+                const res = await api('/api/me/likes');
+                let html = headerHTML;
+                if (res.data.length === 0) {
+                    html += app.renderEmpty('No liked posts yet.');
+                } else {
+                    res.data.forEach(post => { html += app.createPostHTML(post); });
+                    app.postsData = res.data;
+                }
+                container.innerHTML = html;
+            } catch (err) {
+                container.innerHTML = headerHTML + app.renderEmpty('Failed to load likes.');
+            }
+        };
+
+        app.loadReposts = async (headerHTML) => {
+            const container = document.getElementById('view-container');
+            try {
+                const res = await api('/api/me/reposts');
+                let html = headerHTML;
+                if (res.data.length === 0) {
+                    html += app.renderEmpty('Belum ada postingan yang kamu repost.');
+                } else {
+                    res.data.forEach(post => { html += app.createPostHTML(post); });
+                    app.postsData = res.data;
+                }
+                container.innerHTML = html;
+            } catch (err) {
+                container.innerHTML = headerHTML + app.renderEmpty('Failed to load reposts.');
+            }
+        };
+
+        app.loadMentions = async (headerHTML) => {
+            const container = document.getElementById('view-container');
+            try {
+                const res = await api('/api/me/mentions');
+                let html = headerHTML;
+                if (res.data.length === 0) {
+                    html += app.renderEmpty('No mentions yet.');
+                } else {
+                    res.data.forEach(m => {
+                        // Membedakan apakah mention dari komentar atau postingan
+                        const isComment = !!m.comment_id;
+                        const actionText = isComment ? 'menyebut Anda dalam komentar' : 'menyebut Anda dalam utas';
+                        const avatar = util.getAvatar(m.mentioned_by_avatar_url, m.mentioned_by_display_name);
+                        
+                        // Menentukan judul / konten yang relevan untuk ditampilkan
+                        const contentToDisplay = isComment ? m.comment_content : m.post_content;
+                        const titleHtml = !isComment && m.post_title ? `<h4 class="font-bold text-[14px] text-white mb-1 mt-1">${util.formatContent(m.post_title)}</h4>` : '';
+                        
+                        html += `
+                            <div class="px-4 py-3 border-b border-rz_border cursor-pointer hover:bg-[#101010]" onclick="app.openDetail('${m.post_id}')">
+                                <div class="flex items-start gap-3">
+                                    <div class="relative shrink-0 w-10">
+                                        <img src="${avatar}" class="w-10 h-10 rounded-full object-cover">
+                                        <div class="absolute -bottom-1 -right-1 bg-[#000000] rounded-full p-0.5">
+                                            <i class="ph-fill ${isComment ? 'ph-chat-circle text-blue-500' : 'ph-at text-purple-500'} text-[14px]"></i>
+                                        </div>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="flex justify-between">
+                                            <span class="font-semibold text-[15px]">${util.escapeHTML(m.mentioned_by_display_name)}</span> 
+                                            <span class="text-rz_text_secondary text-[14px]">${util.formatDate(m.created_at)}</span>
+                                        </div>
+                                        <p class="text-[14px] text-rz_text_secondary mb-1">${actionText}</p>
+                                        <div class="text-[15px] text-gray-200">
+                                            ${titleHtml}
+                                            ${util.formatContent(contentToDisplay)}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+                container.innerHTML = html;
+            } catch (err) {
+                container.innerHTML = headerHTML + app.renderEmpty('Failed to load mentions.');
+            }
+        };
+
+        app.renderSearchView = (headerHTML) => {
+            const container = document.getElementById('view-container');
+            container.innerHTML = headerHTML + `
+                <div id="search-results" class="pb-10">
+                    <div class="p-10 text-center text-rz_text_secondary text-[15px]">Type something to search</div>
+                </div>
+            `;
+            // Default to users as per threads UI
+            app.currentSearchTab = 'users'; 
+        };
+
+        app.doSearch = async () => {
+            const q = document.getElementById('search-input').value.trim();
+            if (!q) return;
+            
+            const resContainer = document.getElementById('search-results');
+            resContainer.innerHTML = `<div class="p-10 text-center"><i class="ph ph-spinner animate-spin text-2xl text-rz_text_secondary"></i></div>`;
+            
+            try {
+                const resUsers = await api(`/api/search/users?q=${encodeURIComponent(q)}`);
+                const resPosts = await api(`/api/search/posts?q=${encodeURIComponent(q)}`);
+                
+                let html = '';
+                
+                if (resUsers.data.length > 0) {
+                    html += `<div class="px-4 py-2 font-semibold text-[16px] border-b border-rz_border">Users</div>`;
+                    resUsers.data.forEach(u => { html += app.createUserHTML(u); });
+                }
+                
+                if (resPosts.data.length > 0) {
+                    html += `<div class="px-4 py-2 font-semibold text-[16px] border-b border-rz_border mt-2">Threads</div>`;
+                    resPosts.data.forEach(p => { html += app.createPostHTML(p); });
+                    app.postsData = resPosts.data;
+                }
+
+                if(!html) {
+                    html = app.renderEmpty('No results found.');
+                }
+                resContainer.innerHTML = html;
+
+            } catch (err) {
+                resContainer.innerHTML = app.renderEmpty('Search failed.');
+            }
+        };
+
+        app.switchProfileTab = async (tab, targetUser) => {
+            document.getElementById('tab-profile-threads').className = `flex-1 text-center py-3 font-semibold text-[15px] ${tab === 'threads' ? 'tab-active' : 'tab-inactive'} cursor-pointer`;
+            document.getElementById('tab-profile-replies').className = `flex-1 text-center py-3 font-semibold text-[15px] ${tab === 'replies' ? 'tab-active' : 'tab-inactive'} cursor-pointer`;
+            document.getElementById('tab-profile-reposts').className = `flex-1 text-center py-3 font-semibold text-[15px] ${tab === 'reposts' ? 'tab-active' : 'tab-inactive'} cursor-pointer`;
+
+            const timeline = document.getElementById('profile-timeline');
+            timeline.innerHTML = `<div class="p-10 text-center"><i class="ph ph-spinner animate-spin text-2xl text-rz_text_secondary"></i></div>`;
+
+            try {
+                let endpoint = `/api/users/${targetUser}/posts`;
+                if (tab === 'reposts') {
+                    endpoint = `/api/users/${targetUser}/reposts`;
+                } else if (tab === 'replies') {
+                    timeline.innerHTML = app.renderEmpty('Replies will be available soon.');
+                    return;
+                }
+
+                const resPosts = await api(endpoint);
+                if (resPosts.data.length === 0) {
+                    timeline.innerHTML = app.renderEmpty(tab === 'reposts' ? 'No reposts yet.' : 'No threads yet.');
+                } else {
+                    let phtml = '';
+                    resPosts.data.forEach(p => { phtml += app.createPostHTML(p); });
+                    timeline.innerHTML = phtml;
+                    app.postsData = resPosts.data;
+                }
+            } catch (err) {
+                timeline.innerHTML = app.renderEmpty('Failed to load ' + tab);
+            }
+        };
+
+        app.loadProfile = async (username) => {
+            const container = document.getElementById('view-container');
+            const targetUser = username || app.user?.username;
+            
+            if (!targetUser) {
+                container.innerHTML = app.renderEmpty('User not found');
+                return;
+            }
+
+            try {
+                const resUser = await api(`/api/users/${targetUser}`);
+                const u = resUser.user;
+                const isMe = app.user && app.user.username === u.username;
+
+                let headerHTML = `
+                    <header class="sticky top-0 z-30 bg-[#000000]/80 backdrop-blur-xl px-4 pb-2 pt-6 flex justify-between items-center min-h-[60px]">
+                        <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/threads-white-icon.png" class="w-[30px] h-[30px] cursor-pointer" alt="Logo" onclick="app.navigate('home')">
+                        ${isMe ? `
+                        <div class="flex flex-col gap-[6px] cursor-pointer py-2 pl-4 pr-1 hover:opacity-70 transition" onclick="app.openSettingsModal()">
+                            <div class="w-6 h-[2px] bg-white rounded-full"></div>
+                            <div class="w-6 h-[2px] bg-white rounded-full"></div>
+                        </div>` : '<div class="h-[28px]"></div>'}
+                    </header>
+                    
+                    <div class="px-4 pt-2 pb-4">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h2 class="text-[26px] font-bold leading-tight">${util.escapeHTML(u.display_name)}</h2>
+                                <div class="flex items-center gap-2 mt-1">
+                                    <span class="text-[15px]">${util.escapeHTML(u.username)}</span>
+                                    <span class="text-[12px] bg-[#1a1a1a] text-rz_text_secondary px-2 py-0.5 rounded-full">threads.net</span>
+                                </div>
+                            </div>
+                            <img src="${util.getAvatar(u.avatar_url, u.display_name)}" class="w-[72px] h-[72px] rounded-full object-cover">
+                        </div>
+                        
+                        <div class="text-[15px] mb-4 whitespace-pre-wrap leading-relaxed">${util.formatContent(u.bio)}</div>
+                        
+                        <div class="flex items-center gap-2 text-[15px] text-rz_text_secondary mb-4">
+                            <span>${u.stats.total_posts} postingan</span>
+                            <span>·</span>
+                            <span>${u.stats.total_likes_received} suka</span>
+                        </div>
+                        
+                        ${isMe ? 
+                        `<button onclick="app.openEditProfile()" class="w-full bg-transparent border border-rz_border text-white font-semibold py-1.5 rounded-xl text-[15px] hover:bg-[#101010]">Edit profile</button>` : 
+                        `<button class="w-full bg-white text-black font-semibold py-1.5 rounded-xl text-[15px]">Follow</button>`
+                        }
+                    </div>
+                    
+                    <!-- Profile Tabs -->
+                    <div class="flex border-b border-rz_border">
+                        <div id="tab-profile-threads" class="flex-1 text-center py-3 font-semibold text-[15px] tab-active cursor-pointer" onclick="app.switchProfileTab('threads', '${targetUser}')">Threads</div>
+                        <div id="tab-profile-replies" class="flex-1 text-center py-3 font-semibold text-[15px] tab-inactive cursor-pointer" onclick="app.switchProfileTab('replies', '${targetUser}')">Replies</div>
+                        <div id="tab-profile-reposts" class="flex-1 text-center py-3 font-semibold text-[15px] tab-inactive cursor-pointer" onclick="app.switchProfileTab('reposts', '${targetUser}')">Reposts</div>
+                    </div>
+                    <div id="profile-timeline">
+                        <div class="p-10 text-center"><i class="ph ph-spinner animate-spin text-2xl text-rz_text_secondary"></i></div>
+                    </div>
+                `;
+                container.innerHTML = headerHTML;
+
+                // Load initial tab: threads
+                app.switchProfileTab('threads', targetUser);
+
+            } catch (err) {
+                container.innerHTML = app.renderEmpty('Failed to load profile.');
+            }
+        };
+
+        // --- INTERACTIONS ---
+
+        app.toggleLike = async (id) => {
+            if (!app.user) return app.openAuthModal();
+            if (app.isLiking[id]) return;
+            
+            app.isLiking[id] = true;
+            const btn = document.querySelector(`.like-btn[data-id="${id}"]`);
+            const icon = btn.querySelector('.like-icon');
+            const postEl = document.getElementById(`post-${id}`);
+            const countSpan = postEl ? postEl.querySelector('.like-count') : null;
+            
+            // Optimistic UI update
+            const isCurrentlyLiked = icon.classList.contains('ph-fill');
+            const currentCount = countSpan ? parseInt(countSpan.textContent || '0') : 0;
+            
+            if (isCurrentlyLiked) {
+                 icon.className = 'ph ph-heart text-white text-[22px] like-icon';
+                 if(countSpan) countSpan.textContent = currentCount > 1 ? currentCount - 1 : '';
+            } else {
+                 icon.className = 'ph-fill ph-heart text-rz_red text-[22px] like-icon';
+                 if(countSpan) countSpan.textContent = currentCount + 1;
+            }
+
+            try {
+                const method = app.currentView === 'likes' ? 'DELETE' : 'POST';
+                const endpoint = `/api/posts/${id}/like`;
+
+                const res = await api(endpoint, { method });
+                
+                // Confirm UI
+                if (res.liked || res.liked_by_me === 1) {
+                    icon.className = 'ph-fill ph-heart text-rz_red text-[22px] like-icon';
+                } else {
+                    icon.className = 'ph ph-heart text-white hover:text-rz_text_secondary text-[22px] like-icon';
+                    if (app.currentView === 'likes') {
+                        if(postEl) postEl.style.display = 'none';
+                    }
+                }
+                if(countSpan) countSpan.textContent = res.total_likes > 0 ? res.total_likes : '';
+                
+            } catch (err) {
+                // Revert optimistic on fail
+                if (isCurrentlyLiked) {
+                    icon.className = 'ph-fill ph-heart text-rz_red text-[22px] like-icon';
+                    if(countSpan) countSpan.textContent = currentCount > 0 ? currentCount : '';
+                } else {
+                    icon.className = 'ph ph-heart text-white text-[22px] like-icon';
+                    if(countSpan) countSpan.textContent = currentCount > 0 ? currentCount : '';
+                }
+                util.showToast(err.message, 'error');
+            } finally {
+                app.isLiking[id] = false;
+            }
+        };
+
+        app.toggleRepost = async (id) => {
+            if (!app.user) return app.openAuthModal();
+            if (app.isReposting[id]) return;
+            
+            app.isReposting[id] = true;
+            const btn = document.querySelector(`.repost-btn[data-id="${id}"]`);
+            const icon = btn.querySelector('.repost-icon');
+            const postEl = document.getElementById(`post-${id}`);
+            const countSpan = postEl ? postEl.querySelector('.repost-count') : null;
+            
+            // Optimistic UI update
+            const isCurrentlyReposted = icon.classList.contains('ph-bold');
+            const currentCount = countSpan ? parseInt(countSpan.textContent || '0') : 0;
+            
+            if (isCurrentlyReposted) {
+                 icon.className = 'ph ph-arrows-clockwise text-white text-[22px] repost-icon';
+                 if(countSpan) countSpan.textContent = currentCount > 1 ? currentCount - 1 : '';
+            } else {
+                 icon.className = 'ph-bold ph-arrows-clockwise text-[#00c853] text-[22px] repost-icon';
+                 if(countSpan) countSpan.textContent = currentCount + 1;
+            }
+
+            try {
+                const method = 'POST';
+                const endpoint = `/api/posts/${id}/repost`;
+
+                const res = await api(endpoint, { method });
+                
+                // Confirm UI
+                if (res.reposted || res.reposted_by_me === 1) {
+                    icon.className = 'ph-bold ph-arrows-clockwise text-[#00c853] text-[22px] repost-icon';
+                    util.showToast('Postingan berhasil direpost', 'success');
+                } else {
+                    icon.className = 'ph ph-arrows-clockwise text-white hover:text-rz_text_secondary text-[22px] repost-icon';
+                    util.showToast('Repost dibatalkan');
+                    if (app.currentView === 'reposts') {
+                        if(postEl) postEl.style.display = 'none';
+                    }
+                }
+                if(countSpan) countSpan.textContent = res.total_reposts > 0 ? res.total_reposts : '';
+
+                // Update cache
+                const postCache = (app.postsData || []).find(p => p.id === id);
+                if (postCache) {
+                    postCache.reposted_by_me = res.reposted_by_me;
+                    postCache.total_reposts = res.total_reposts;
+                }
+                
+            } catch (err) {
+                // Revert optimistic on fail
+                if (isCurrentlyReposted) {
+                    icon.className = 'ph-bold ph-arrows-clockwise text-[#00c853] text-[22px] repost-icon';
+                    if(countSpan) countSpan.textContent = currentCount > 0 ? currentCount : '';
+                } else {
+                    icon.className = 'ph ph-arrows-clockwise text-white text-[22px] repost-icon';
+                    if(countSpan) countSpan.textContent = currentCount > 0 ? currentCount : '';
+                }
+                util.showToast(err.message, 'error');
+            } finally {
+                app.isReposting[id] = false;
+            }
+        };
+
+        app.copyLink = (id) => {
+            const url = `${window.location.origin}/#post-${id}`;
+            navigator.clipboard.writeText(url).then(() => {
+                util.showToast('Copied', 'success');
+            }).catch(() => {
+                const input = document.createElement('input');
+                input.value = url;
+                document.body.appendChild(input);
+                input.select();
+                document.execCommand('copy');
+                document.body.removeChild(input);
+                util.showToast('Copied', 'success');
+            });
+        };
+
+        // --- DETAIL & COMMENTS ---
+
+        app.openDetail = async (id) => {
+            app.currentDetailPostId = id;
+            document.getElementById('detail-modal').classList.remove('hidden');
+            const content = document.getElementById('detail-content');
+            const inputArea = document.getElementById('comment-input-area');
+
+            // Render Input Area secara Dinamis berdasarkan Auth State
+            if (app.user) {
+                inputArea.innerHTML = `
+                    <img id="comment-my-avatar" src="${util.getAvatar(app.user.avatar_url, app.user.display_name)}" class="w-9 h-9 rounded-full object-cover shrink-0">
+                    <div class="relative flex-1">
+                        <input type="text" id="comment-input" placeholder="Tulis reply... (ketik @ untuk mention)" class="w-full bg-[#1a1a1a] rounded-full px-4 py-2.5 text-[15px] text-white focus:outline-none" oninput="app.handleMentionSearch(this, 'comment')" onblur="setTimeout(() => { const el = document.getElementById('comment-mention-list'); if(el) el.classList.add('hidden'); }, 200)">
+                        
+                        <!-- Autocomplete Suggestions for Comments -->
+                        <div id="comment-mention-list" class="hidden absolute bottom-full left-0 mb-2 bg-[#1a1a1a] border border-rz_border rounded-xl shadow-2xl max-h-48 overflow-y-auto z-50 w-full sm:w-[250px]"></div>
+                    </div>
+                    <button onclick="app.submitComment()" class="text-white font-semibold disabled:opacity-50 px-2 py-1 bg-transparent rounded-full"><i class="ph-fill ph-arrow-circle-up text-[30px]"></i></button>
+                `;
+            } else {
+                inputArea.innerHTML = `
+                    <div class="w-full text-center py-2">
+                        <button onclick="app.closeModal('detail-modal'); app.openAuthModal()" class="text-blue-500 font-semibold text-[15px] hover:underline">Login untuk membalas thread ini.</button>
+                    </div>
+                `;
+            }
+
+            content.innerHTML = `<div class="p-10 text-center"><i class="ph ph-spinner animate-spin text-2xl text-rz_text_secondary"></i></div>`;
+            
+            try {
+                let post = (app.postsData || []).find(p => p.id === id);
+                if (!post) {
+                     content.innerHTML = app.renderEmpty('Postingan tidak ditemukan di sesi ini.');
+                     return;
+                }
+
+                let html = app.createPostHTML(post, true);
+                html += `<div class="border-t border-rz_border mt-2" id="comments-container">
+                            <div class="p-4 text-center"><i class="ph ph-spinner animate-spin"></i> Memuat replies...</div>
+                         </div>`;
+                content.innerHTML = html;
+
+                const resCom = await api(`/api/posts/${id}/comments`);
+                const comContainer = document.getElementById('comments-container');
+                if (resCom.data.length === 0) {
+                    comContainer.innerHTML = `<div class="p-6 text-center text-rz_text_secondary text-[15px]">Belum ada replies. Jadi yang pertama membalas.</div>`;
+                } else {
+                    let chtml = '';
+                    resCom.data.forEach(c => { chtml += app.createCommentHTML(c); });
+                    comContainer.innerHTML = chtml;
+                }
+
+            } catch (err) {
+                content.innerHTML = app.renderEmpty('Gagal memuat replies. Coba lagi.');
+            }
+        };
+
+        app.submitComment = async () => {
+            if (!app.user) return app.openAuthModal();
+            const id = app.currentDetailPostId;
+            const input = document.getElementById('comment-input');
+            const val = input.value.trim();
+            if (!val) return;
+
+            const btn = input.nextElementSibling; // the submit button
+            if(btn) btn.disabled = true;
+            input.disabled = true;
+
+            try {
+                await api(`/api/posts/${id}/comments`, {
+                    method: 'POST',
+                    body: { content: val }
+                });
+                input.value = '';
+                util.showToast('Reply berhasil dikirim.', 'success');
+                
+                // Refresh hitungan komentar di tampilan feed secara langsung (DOM Update)
+                const postEl = document.getElementById(`post-${id}`);
+                if (postEl) {
+                    const countEls = postEl.querySelectorAll('.comment-count');
+                    countEls.forEach(el => {
+                        el.textContent = parseInt(el.textContent || '0') + 1;
+                    });
+                }
+
+                // Perbarui data post di cache state kita
+                const postCache = (app.postsData || []).find(p => p.id === id);
+                if(postCache) postCache.total_comments++;
+
+                // Load ulang data replies di Modal Detail
+                app.openDetail(id);
+            } catch (err) {
+                util.showToast(err.message, 'error');
+            } finally {
+                if(btn) btn.disabled = false;
+                input.disabled = false;
+            }
+        };
+
+        // --- COMPOSER ---
+
+        let composerImageFile = null;
+
+        app.openComposer = () => {
+            if (!app.user) return app.openAuthModal();
+            document.getElementById('composer-modal').classList.remove('hidden');
+            document.getElementById('composer-title').textContent = 'New thread';
+            document.getElementById('composer-post-id').value = '';
+            document.getElementById('post-title').value = '';
+            document.getElementById('post-content').value = '';
+            document.getElementById('post-category').value = '';
+            document.getElementById('post-anonymous').checked = false;
+            app.removeImage();
+            app.checkComposerState();
+        };
+
+        app.openEditPost = (id) => {
+            if (!app.user) return;
+            const post = app.postsData.find(p => p.id === id);
+            if (!post) return;
+
+            document.getElementById('composer-modal').classList.remove('hidden');
+            document.getElementById('composer-title').textContent = 'Edit thread';
+            document.getElementById('composer-post-id').value = id;
+            document.getElementById('post-title').value = post.title || '';
+            document.getElementById('post-content').value = post.content || '';
+            document.getElementById('post-category').value = post.category_id || '';
+            document.getElementById('post-anonymous').checked = post.is_anonymous == 1;
+            
+            app.removeImage();
+            if (post.image_url) {
+                document.getElementById('post-image-url').value = post.image_url;
+                document.getElementById('image-preview').src = post.image_url;
+                document.getElementById('image-preview-container').classList.remove('hidden');
+            }
+
+            app.checkComposerState();
+        };
+
+        app.checkComposerState = () => {
+            const content = document.getElementById('post-content').value.trim();
+            const btn = document.getElementById('btn-submit-post');
+            
+            const ta = document.getElementById('post-content');
+            ta.style.height = 'auto';
+            ta.style.height = (ta.scrollHeight) + 'px';
+
+            if (content.length > 0) {
+                btn.classList.remove('opacity-50', 'cursor-not-allowed', 'text-rz_text_secondary');
+                btn.classList.add('text-blue-500', 'font-bold');
+            } else {
+                btn.classList.add('opacity-50', 'cursor-not-allowed');
+                btn.classList.remove('text-blue-500', 'font-bold');
+            }
+        };
+
+        app.handleImageSelect = (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            if (!file.type.startsWith('image/')) {
+                return util.showToast('Select valid image', 'error');
+            }
+            if (file.size > 32 * 1024 * 1024) {
+                return util.showToast('Max size 32MB', 'error');
+            }
+
+            composerImageFile = file;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                document.getElementById('image-preview').src = e.target.result;
+                document.getElementById('image-preview-container').classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+        };
+
+        app.removeImage = () => {
+            composerImageFile = null;
+            document.getElementById('post-image').value = '';
+            document.getElementById('post-image-url').value = '';
+            document.getElementById('image-preview-container').classList.add('hidden');
+        };
+
+        app.submitPost = async () => {
+            const content = document.getElementById('post-content').value.trim();
+            if (!content) return;
+
+            util.setLoading('btn-submit-post', true);
+
+            try {
+                let imageUrl = document.getElementById('post-image-url').value;
+
+                if (composerImageFile) {
+                    const fd = new FormData();
+                    fd.append('image', composerImageFile);
+                    const resImg = await api('/api/upload', { method: 'POST', body: fd });
+                    imageUrl = resImg.url;
+                }
+
+                const payload = {
+                    title: document.getElementById('post-title').value.trim(),
+                    content: content,
+                    category_id: document.getElementById('post-category').value,
+                    image_url: imageUrl,
+                    is_anonymous: document.getElementById('post-anonymous').checked
+                };
+
+                const postId = document.getElementById('composer-post-id').value;
+                const method = postId ? 'PUT' : 'POST';
+                const endpoint = postId ? `/api/posts/${postId}` : `/api/posts`;
+
+                await api(endpoint, { method, body: payload });
+                
+                util.showToast(postId ? 'Updated' : 'Posted', 'success');
+                app.closeModal('composer-modal');
+                if (app.currentView === 'home' || (app.currentView === 'profile' && !app.currentParams)) {
+                    app.navigate(app.currentView, app.currentParams);
+                }
+            } catch (err) {
+                util.showToast(err.message, 'error');
+            } finally {
+                util.setLoading('btn-submit-post', false, 'Post');
+            }
+        };
+
+        app.deletePost = async (id) => {
+            if (!confirm('Delete thread?')) return;
+            try {
+                await api(`/api/posts/${id}`, { method: 'DELETE' });
+                document.getElementById(`post-${id}`).remove();
+                util.showToast('Deleted');
+            } catch (err) {
+                util.showToast(err.message, 'error');
+            }
+        };
+
+        // --- PROFILE EDIT ---
+
+        app.openEditProfile = () => {
+            if (!app.user) return;
+            document.getElementById('profile-modal').classList.remove('hidden');
+            document.getElementById('edit-username').value = app.user.username;
+            document.getElementById('edit-display-name').value = app.user.display_name;
+            document.getElementById('edit-bio').value = app.user.bio || '';
+            document.getElementById('edit-preview-name').textContent = app.user.display_name;
+            document.getElementById('edit-preview-user').textContent = '@' + app.user.username;
+            document.getElementById('edit-avatar-preview').src = util.getAvatar(app.user.avatar_url, app.user.display_name);
+        };
+
+        app.handleAvatarUpload = async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            if (!file.type.startsWith('image/')) return util.showToast('Select valid image', 'error');
+
+            const fd = new FormData();
+            fd.append('image', file);
+            
+            const prevSrc = document.getElementById('edit-avatar-preview').src;
+            document.getElementById('edit-avatar-preview').src = 'https://i.gifer.com/ZKZg.gif'; 
+
+            try {
+                const res = await api('/api/profile/avatar', { method: 'POST', body: fd });
+                app.user = res.user;
+                document.getElementById('edit-avatar-preview').src = res.url;
+                util.showToast('Profile photo updated', 'success');
+                app.renderNav(); 
+            } catch (err) {
+                document.getElementById('edit-avatar-preview').src = prevSrc;
+                util.showToast(err.message, 'error');
+            }
+        };
+
+        app.saveProfile = async () => {
+            util.setLoading('btn-save-profile', true);
+            try {
+                const res = await api('/api/profile', {
+                    method: 'PUT',
+                    body: {
+                        username: document.getElementById('edit-username').value.trim(),
+                        display_name: document.getElementById('edit-display-name').value.trim(),
+                        bio: document.getElementById('edit-bio').value.trim()
+                    }
+                });
+                app.user = res.user;
+                util.showToast('Profile updated', 'success');
+                app.closeModal('profile-modal');
+                app.renderNav();
+                app.navigate('profile', app.user.username); 
+            } catch (err) {
+                util.showToast(err.message, 'error');
+            } finally {
+                util.setLoading('btn-save-profile', false, 'Done');
+            }
+        };
+
+        // --- STARTUP ---
+        document.addEventListener('DOMContentLoaded', app.init);
+
+    </script>
+</body>
+</html>
