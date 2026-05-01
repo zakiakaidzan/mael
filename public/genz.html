@@ -127,23 +127,23 @@
 <body class="antialiased overflow-y-scroll no-scrollbar selection:bg-gray-700 selection:text-white">
 
 	<!-- App Shell -->
-	<div class="flex justify-center min-h-screen">
+	<div class="flex justify-center min-h-screen max-w-[1200px] mx-auto">
 
 		<!-- Left Sidebar (Desktop) -->
 		<nav
-			class="hidden sm:flex flex-col w-[68px] lg:w-[260px] h-screen sticky top-0 py-6 px-2 lg:px-6 shrink-0 z-40">
-			<div class="flex items-center justify-center lg:justify-start mb-8 lg:px-2">
+			class="hidden sm:flex flex-col w-[68px] lg:w-[220px] h-screen sticky top-0 py-6 px-2 lg:px-6 shrink-0 z-40 lg:items-end">
+			<div class="flex items-center justify-center lg:justify-end mb-8 w-full pr-2">
 				<img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/threads-white-icon.png" class="w-9 h-9" alt="Logo">
             </div>
 
-				<div class="flex flex-col gap-1 w-full" id="desktop-nav">
+				<div class="flex flex-col gap-1 w-full lg:items-end" id="desktop-nav">
 					<!-- Nav items injected via JS based on auth state -->
 				</div>
 		</nav>
 
 		<!-- Main Content Area -->
 		<main
-			class="w-full sm:w-[600px] min-h-screen border-x sm:border-rz_border border-transparent relative pb-20 sm:pb-0"
+			class="w-full sm:w-[600px] min-h-screen border-x sm:border-rz_border border-transparent relative pb-20 sm:pb-0 shrink-0"
 			id="main-content">
 
 			<!-- Dynamic View Container -->
@@ -152,9 +152,56 @@
 			</div>
 		</main>
 
+		<!-- Right Sidebar (Desktop) -->
+		<aside
+			class="hidden lg:flex flex-col w-[300px] h-screen sticky top-0 py-8 px-8 shrink-0 z-40 overflow-y-auto no-scrollbar">
+			<div class="flex flex-col gap-8">
+				<!-- Kategori -->
+				<div>
+					<h3 class="font-bold text-white mb-4 text-[15px]">Kategori</h3>
+					<ul class="flex flex-col gap-3 text-[14px] text-rz_text_secondary font-medium">
+						<li class="hover:text-white cursor-pointer transition">Curhat</li>
+						<li class="hover:text-white cursor-pointer transition">Kerja</li>
+						<li class="hover:text-white cursor-pointer transition">Meme</li>
+						<li class="hover:text-white cursor-pointer transition">Random Talk</li>
+						<li class="hover:text-white cursor-pointer transition">Relationship</li>
+						<li class="hover:text-white cursor-pointer transition">Sekolah/Kuliah</li>
+					</ul>
+				</div>
+
+				<!-- Aturan Komunitas -->
+				<div>
+					<h3 class="font-bold text-white mb-4 text-[15px]">Aturan komunitas</h3>
+					<ul class="flex flex-col gap-3 text-[14px] text-rz_text_secondary">
+						<li class="flex items-start gap-3">
+							<span class="font-bold text-white text-[13px] bg-[#1a1a1a] w-5 h-5 flex items-center justify-center rounded shrink-0">1</span>
+							<span class="leading-tight mt-0.5">Jangan doxing.</span></li>
+						<li class="flex items-start gap-3">
+							<span class="font-bold text-white text-[13px] bg-[#1a1a1a] w-5 h-5 flex items-center justify-center rounded shrink-0">2</span>
+							<span class="leading-tight mt-0.5">Jangan bullying.</span></li>
+						<li class="flex items-start gap-3">
+							<span class="font-bold text-white text-[13px] bg-[#1a1a1a] w-5 h-5 flex items-center justify-center rounded shrink-0">3</span>
+							<span class="leading-tight mt-0.5">Jangan spam.</span></li>
+						<li class="flex items-start gap-3">
+							<span class="font-bold text-white text-[13px] bg-[#1a1a1a] w-5 h-5 flex items-center justify-center rounded shrink-0">4</span>
+							<span class="leading-tight mt-0.5">Jangan upload konten dewasa.</span></li>
+						<li class="flex items-start gap-3">
+							<span class="font-bold text-white text-[13px] bg-[#1a1a1a] w-5 h-5 flex items-center justify-center rounded shrink-0">5</span>
+							<span class="leading-tight mt-0.5">Saling jaga suasana.</span></li>
+					</ul>
+				</div>
+
+				<!-- Footer -->
+				<div class="text-[13px] text-rz_text_secondary font-medium">
+					&copy; 2026 Ruang Gen Z
+				</div>
+			</div>
+		</aside>
+
 		<!-- Bottom Navigation (Mobile) -->
-		<nav class="sm:hidden fixed bottom-0 left-0 right-0 bg-[#000000]/90 backdrop-blur-xl z-40" id="mobile-nav">
-			<div class="flex justify-around items-center h-16 px-2" id="mobile-nav-items">
+		<nav class="sm:hidden fixed bottom-0 left-0 right-0 bg-[#000000]/90 backdrop-blur-xl z-40 border-t border-rz_border"
+			id="mobile-nav">
+			<div class="flex justify-around items-center h-[60px] px-2" id="mobile-nav-items">
 				<!-- Mobile nav items injected via JS -->
 			</div>
 		</nav>
@@ -188,7 +235,7 @@
 							<input type="email" id="login-email" placeholder="Email" required class="w-full bg-[#101010] border border-rz_border rounded-[14px] px-5 py-4 text-[15px] text-white focus:outline-none focus:border-gray-500 transition">
                         </div>
 							<div class="relative w-full">
-								<input type="password" id="login-password" placeholder="Password" required class="w-full bg-[#101010] border border-rz_border rounded-[14px] px-5 py-4 pr-12 text-[15px] text-white focus:outline-none focus:border-gray-500 transition">
+								<input type="password" id="login-password" placeholder="Kata Sandi" required class="w-full bg-[#101010] border border-rz_border rounded-[14px] px-5 py-4 pr-12 text-[15px] text-white focus:outline-none focus:border-gray-500 transition">
 								<button type="button" onclick="app.togglePassword('login-password', 'login-eye')" class="absolute right-4 top-1/2 -translate-y-1/2 text-rz_text_secondary hover:text-white p-1">
                                 <i id="login-eye" class="ph ph-eye text-xl"></i>
                             </button>
@@ -206,7 +253,7 @@
 								<input type="email" id="reg-email" placeholder="Email" required class="w-full bg-[#101010] border border-rz_border rounded-[14px] px-5 py-4 text-[15px] text-white focus:outline-none focus:border-gray-500 transition">
                         </div>
 								<div class="relative w-full">
-									<input type="password" id="reg-password" placeholder="Password (min 6 karakter)" required minlength="6" class="w-full bg-[#101010] border border-rz_border rounded-[14px] px-5 py-4 pr-12 text-[15px] text-white focus:outline-none focus:border-gray-500 transition">
+									<input type="password" id="reg-password" placeholder="Kata Sandi (min 6 karakter)" required minlength="6" class="w-full bg-[#101010] border border-rz_border rounded-[14px] px-5 py-4 pr-12 text-[15px] text-white focus:outline-none focus:border-gray-500 transition">
 									<button type="button" onclick="app.togglePassword('reg-password', 'reg-eye')" class="absolute right-4 top-1/2 -translate-y-1/2 text-rz_text_secondary hover:text-white p-1">
                                 <i id="reg-eye" class="ph ph-eye text-xl"></i>
                             </button>
@@ -225,16 +272,12 @@
 			<!-- Right Side: Aesthetic Banner (Hidden on Mobile) -->
 			<div
 				class="hidden lg:flex flex-1 relative bg-[#0a0a0a] items-center justify-center overflow-hidden border-l border-rz_border">
-				<!-- Cool abstract dark background image -->
 				<img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover opacity-40 mix-blend-screen" alt="Abstract Background">
-
-				<!-- Gradient overlays for fading effect -->
 				<div class="absolute inset-0 bg-gradient-to-r from-rz_black via-transparent to-transparent opacity-80">
 				</div>
 				<div class="absolute inset-0 bg-gradient-to-t from-rz_black via-transparent to-transparent opacity-50">
 				</div>
 
-				<!-- Overlay content -->
 				<div class="relative z-10 p-12 text-center">
 					<img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/threads-white-icon.png" class="w-24 h-24 mx-auto mb-8 opacity-20" alt="Watermark Logo">
 					<h1 class="text-4xl font-bold text-white/90 mb-4 tracking-tight">Ruang Gen Z</h1>
@@ -273,8 +316,8 @@
 					class="flex justify-between items-center px-4 py-3 border-b border-rz_border sticky top-0 bg-[#101010]/90 backdrop-blur z-10 rounded-t-[24px] sm:rounded-t-2xl">
 					<button onclick="app.closeModal('composer-modal')" class="text-white text-[15px] hidden sm:block hover:opacity-70">Batal</button>
 					<div class="sm:hidden w-[50px]"></div> <!-- Spacer to center title on mobile -->
-					<h2 class="font-bold text-[16px] text-center" id="composer-title">New thread</h2>
-					<button onclick="app.submitPost()" id="btn-submit-post" class="text-white font-semibold opacity-50 cursor-not-allowed text-[15px] w-[50px] text-right hover:opacity-70 transition">Post</button>
+					<h2 class="font-bold text-[16px] text-center" id="composer-title">Buat Utas</h2>
+					<button onclick="app.submitPost()" id="btn-submit-post" class="text-white font-semibold opacity-50 cursor-not-allowed text-[15px] w-[50px] text-right hover:opacity-70 transition">Posting</button>
 				</div>
 
 				<div class="p-4 flex gap-3 flex-1 overflow-y-auto no-scrollbar">
@@ -287,10 +330,10 @@
 							<p class="font-semibold text-[15px] mb-1" id="composer-username">Username</p>
 							<input type="hidden" id="composer-post-id">
 
-							<input type="text" id="post-title" placeholder="Title (optional)" class="w-full bg-transparent text-white font-semibold outline-none placeholder-rz_text_secondary mb-2 text-[15px]">
+							<input type="text" id="post-title" placeholder="Judul (opsional)" class="w-full bg-transparent text-white font-semibold outline-none placeholder-rz_text_secondary mb-2 text-[15px]">
 
 							<div class="relative w-full">
-								<textarea id="post-content" placeholder="Start a thread... (ketik @ untuk mention)" class="w-full bg-transparent text-white outline-none placeholder-rz_text_secondary min-h-[80px] text-[15px] leading-relaxed" oninput="app.checkComposerState(); app.handleMentionSearch(this, 'composer')" onblur="setTimeout(() => { const el = document.getElementById('composer-mention-list'); if(el) el.classList.add('hidden'); }, 200)"></textarea>
+								<textarea id="post-content" placeholder="Mulai utas... (ketik @ untuk mention)" class="w-full bg-transparent text-white outline-none placeholder-rz_text_secondary min-h-[80px] text-[15px] leading-relaxed" oninput="app.checkComposerState(); app.handleMentionSearch(this, 'composer')" onblur="setTimeout(() => { const el = document.getElementById('composer-mention-list'); if(el) el.classList.add('hidden'); }, 200)"></textarea>
 
 								<!-- Autocomplete Suggestions -->
 								<div id="composer-mention-list"
@@ -308,24 +351,19 @@
 
 								<div class="mt-2 flex gap-4 items-center">
 									<label class="cursor-pointer text-rz_text_secondary hover:text-white flex items-center justify-center p-1 transition">
-                                <i class="ph ph-paperclip text-[22px]"></i>
+                                <i class="ph ph-image text-[22px]"></i>
                                 <input type="file" id="post-image" accept="image/*" class="hidden" onchange="app.handleImageSelect(event)">
                             </label>
 									<select id="post-category" class="bg-transparent text-rz_text_secondary text-[14px] outline-none cursor-pointer">
-                                <option value="" class="bg-[#101010]">Add category</option>
+                                <option value="" class="bg-[#101010]">Pilih Kategori</option>
                             </select>
 								</div>
 							</div>
 						</div>
 
-						<!-- Bottom anon setting -->
-						<div
-							class="px-4 py-4 border-t border-rz_border flex items-center justify-between text-rz_text_secondary">
-							<span class="text-[14px]">Anyone can reply & quote</span>
-							<label class="flex items-center gap-2 text-[14px] cursor-pointer">
-                        <input type="checkbox" id="post-anonymous" class="accent-white w-4 h-4 rounded">
-                        Post Anonymously
-                    </label>
+						<!-- Bottom setting -->
+						<div class="px-4 py-4 border-t border-rz_border flex items-center text-rz_text_secondary">
+							<span class="text-[14px]">Siapa saja dapat membalas & mengutip</span>
 						</div>
 					</div>
 				</div>
@@ -336,14 +374,14 @@
 					<div
 						class="bg-[#101010] border border-rz_border rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl relative">
 						<div class="flex justify-between items-center px-4 py-3 border-b border-rz_border">
-							<h2 class="font-bold text-[16px]">Edit profile</h2>
+							<h2 class="font-bold text-[16px]">Edit profil</h2>
 							<button onclick="app.closeModal('profile-modal')" class="text-rz_text_secondary hover:text-white transition"><i class="ph ph-x text-xl"></i></button>
 						</div>
 						<div class="p-6 flex flex-col gap-4">
 							<div
 								class="flex justify-between items-center p-4 bg-[#1a1a1a] rounded-xl border border-rz_border/50">
 								<div>
-									<p class="font-bold text-[15px]" id="edit-preview-name">Name</p>
+									<p class="font-bold text-[15px]" id="edit-preview-name">Nama</p>
 									<p class="text-[14px]" id="edit-preview-user">@username</p>
 								</div>
 								<div class="relative group cursor-pointer shrink-0"
@@ -357,7 +395,7 @@
                         </div>
 								</div>
 								<div>
-									<label class="text-[13px] font-semibold">Name</label>
+									<label class="text-[13px] font-semibold">Nama Tampilan</label>
 									<input type="text" id="edit-display-name" class="w-full bg-transparent border-b border-rz_border py-2 text-[15px] text-white focus:outline-none focus:border-white transition">
                     </div>
 									<div>
@@ -366,9 +404,9 @@
                     </div>
 										<div>
 											<label class="text-[13px] font-semibold">Bio</label>
-											<textarea id="edit-bio" rows="2" placeholder="+ Write bio" class="w-full bg-transparent border-b border-rz_border py-2 text-[15px] text-white focus:outline-none focus:border-white transition resize-none"></textarea>
+											<textarea id="edit-bio" rows="2" placeholder="+ Tulis bio" class="w-full bg-transparent border-b border-rz_border py-2 text-[15px] text-white focus:outline-none focus:border-white transition resize-none"></textarea>
 										</div>
-										<button onclick="app.saveProfile()" id="btn-save-profile" class="w-full bg-white text-black font-semibold rounded-xl py-3 mt-4 hover:bg-gray-200 transition text-[15px]">Done</button>
+										<button onclick="app.saveProfile()" id="btn-save-profile" class="w-full bg-white text-black font-semibold rounded-xl py-3 mt-4 hover:bg-gray-200 transition text-[15px]">Simpan</button>
 									</div>
 								</div>
 							</div>
@@ -411,7 +449,7 @@
 									<div
 										class="flex justify-between items-center px-4 py-3 border-b border-rz_border sticky top-0 bg-[#101010]/90 backdrop-blur z-10 rounded-t-[24px] sm:rounded-t-2xl">
 										<h2 class="font-bold text-[16px] text-center w-full" id="follow-modal-title">
-											Followers</h2>
+											Pengikut</h2>
 										<button onclick="app.closeModal('follow-modal')" class="absolute right-4 text-rz_text_secondary hover:text-white hidden sm:block transition"><i class="ph ph-x text-xl"></i></button>
 									</div>
 									<div class="flex-1 overflow-y-auto no-scrollbar pb-4" id="follow-modal-content">
@@ -431,11 +469,11 @@
 										<button class="text-left px-5 py-4 hover:bg-[#262626] transition text-white border-b border-rz_border">Pengaturan</button>
 
 										<button class="text-left px-5 py-4 hover:bg-[#262626] transition text-white" onclick="app.closeModal('settings-modal'); app.navigate('activity', 'likes')">Disukai</button>
-										<button class="text-left px-5 py-4 hover:bg-[#262626] transition text-white" onclick="app.closeModal('settings-modal'); app.navigate('activity', 'reposts')">Reposts</button>
+										<button class="text-left px-5 py-4 hover:bg-[#262626] transition text-white" onclick="app.closeModal('settings-modal'); app.navigate('activity', 'reposts')">Repost</button>
 										<button class="text-left px-5 py-4 hover:bg-[#262626] transition text-white border-b border-rz_border" onclick="app.closeModal('settings-modal'); app.navigate('activity', 'saved')">Tersimpan</button>
 
 										<button class="text-left px-5 py-4 hover:bg-[#262626] transition text-white">Laporkan masalah</button>
-										<button class="text-left px-5 py-4 text-rz_red hover:bg-[#262626] transition" onclick="app.logout(); app.closeModal('settings-modal')">Logout</button>
+										<button class="text-left px-5 py-4 text-rz_red hover:bg-[#262626] transition" onclick="app.logout(); app.closeModal('settings-modal')">Keluar</button>
 									</div>
 								</div>
 							</div>
@@ -466,11 +504,11 @@
 
             // Configs for Navigation
             navItems: [
-                { id: 'home', icon: 'ph-house', label: 'Home' },
-                { id: 'search', icon: 'ph-magnifying-glass', label: 'Search' },
-                { id: 'create', icon: 'ph-plus', label: 'Post', action: 'openComposer' },
-                { id: 'activity', icon: 'ph-heart', label: 'Activity', reqAuth: true },
-                { id: 'profile', icon: 'ph-user', label: 'Profile', reqAuth: true },
+                { id: 'home', icon: 'ph-house', label: 'Beranda' },
+                { id: 'search', icon: 'ph-magnifying-glass', label: 'Cari' },
+                { id: 'create', icon: 'ph-plus', label: 'Buat', action: 'openComposer' },
+                { id: 'activity', icon: 'ph-heart', label: 'Aktivitas', reqAuth: true },
+                { id: 'profile', icon: 'ph-user', label: 'Profil', reqAuth: true },
             ]
         };
 
@@ -486,8 +524,8 @@
                 if (diffSec < 60) return 'Baru saja';
                 if (diffSec < 3600) return `${Math.floor(diffSec/60)}m`;
                 if (diffSec < 86400) return `${Math.floor(diffSec/3600)}j`;
-                if (diffSec < 604800) return `${Math.floor(diffSec/86400)}d`;
-                if (diffSec < 31536000) return `${Math.floor(diffSec/604800)}w`;
+                if (diffSec < 604800) return `${Math.floor(diffSec/86400)}h`;
+                if (diffSec < 31536000) return `${Math.floor(diffSec/604800)}mgg`;
                 
                 return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
             },
@@ -621,13 +659,14 @@
             app.navItems.forEach(item => {
                 if (item.reqAuth && !isAuth) return;
                 
-                const isActive = app.currentView === item.id;
+                // For activity, map 'likes', 'mentions' and 'reposts' to the same tab visually
+                const isActive = app.currentView === item.id || (item.id === 'activity' && (app.currentView === 'mentions' || app.currentView === 'reposts' || app.currentView === 'likes' || app.currentView === 'saved'));
                 const iconClass = isActive ? `ph-fill ${item.icon}` : `ph ${item.icon}`;
                 
                 // Desktop Item
                 const dBtn = document.createElement('a');
                 dBtn.href = '#';
-                dBtn.className = `flex items-center gap-4 p-3 lg:px-4 rounded-xl transition group ${isActive ? 'text-white font-bold' : 'text-rz_text_secondary hover:bg-[#1a1a1a] hover:text-white'}`;
+                dBtn.className = `flex items-center gap-4 p-3 lg:pr-5 lg:pl-4 rounded-xl transition group ${isActive ? 'text-white font-bold' : 'text-rz_text_secondary hover:bg-[#1a1a1a] hover:text-white'}`;
                 
                 if(item.action) {
                     dBtn.onclick = (e) => { e.preventDefault(); app[item.action](); };
@@ -663,7 +702,7 @@
             if (isAuth) {
                 const logoutBtn = document.createElement('a');
                 logoutBtn.href = '#';
-                logoutBtn.className = `flex items-center gap-4 p-3 lg:px-4 mt-auto text-rz_text_secondary hover:bg-[#1a1a1a] rounded-xl transition group`;
+                logoutBtn.className = `flex items-center gap-4 p-3 lg:pr-5 lg:pl-4 mt-auto text-rz_text_secondary hover:bg-[#1a1a1a] rounded-xl transition group`;
                 logoutBtn.onclick = (e) => { e.preventDefault(); app.openSettingsModal(); };
                 logoutBtn.innerHTML = `<div class="relative w-10 h-10 flex justify-center items-center"><i class="ph ph-list text-[28px] group-hover:text-white"></i></div><span class="hidden lg:block text-[16px]">Lainnya</span>`;
                 desk.appendChild(logoutBtn);
@@ -674,9 +713,9 @@
             } else {
                 const loginBtn = document.createElement('a');
                 loginBtn.href = '#';
-                loginBtn.className = `flex items-center gap-4 p-3 lg:px-4 mt-auto text-rz_text_secondary hover:bg-[#1a1a1a] rounded-xl transition group`;
+                loginBtn.className = `flex items-center gap-4 p-3 lg:pr-5 lg:pl-4 mt-auto text-rz_text_secondary hover:bg-[#1a1a1a] rounded-xl transition group`;
                 loginBtn.onclick = (e) => { e.preventDefault(); app.openAuthModal(); };
-                loginBtn.innerHTML = `<div class="relative w-10 h-10 flex justify-center items-center"><i class="ph ph-sign-in text-[28px] group-hover:text-white"></i></div><span class="hidden lg:block text-[16px]">Log in</span>`;
+                loginBtn.innerHTML = `<div class="relative w-10 h-10 flex justify-center items-center"><i class="ph ph-sign-in text-[28px] group-hover:text-white"></i></div><span class="hidden lg:block text-[16px]">Masuk</span>`;
                 desk.appendChild(loginBtn);
             }
         };
@@ -735,10 +774,10 @@
                             <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/threads-white-icon.png" class="w-[32px] h-[32px]" alt="Logo">
                         </header>
                         <div class="p-4 sm:pt-6">
-                            <h1 class="font-bold text-3xl mb-4 hidden sm:block">Search</h1>
+                            <h1 class="font-bold text-3xl mb-4 hidden sm:block">Cari</h1>
                             <div class="relative">
                                 <i class="ph ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-rz_text_secondary text-xl"></i>
-                                <input type="text" id="search-input" placeholder="Search" class="w-full bg-[#1a1a1a] rounded-[14px] py-2.5 pl-12 pr-4 text-[16px] text-white focus:outline-none transition border border-transparent focus:border-rz_border" onkeyup="if(event.key==='Enter') app.doSearch()">
+                                <input type="text" id="search-input" placeholder="Cari pengguna atau utas..." class="w-full bg-[#1a1a1a] rounded-[14px] py-2.5 pl-12 pr-4 text-[16px] text-white focus:outline-none transition border border-transparent focus:border-rz_border" onkeyup="if(event.key==='Enter') app.doSearch()">
                             </div>
                         </div>
                     `;
@@ -748,14 +787,15 @@
                     const subView = params || 'mentions';
                     headerHTML = `
                         <header class="sticky top-0 z-30 bg-[#000000]/80 backdrop-blur-xl h-[64px] flex justify-center items-center border-b border-rz_border">
-                            <h1 class="font-bold text-[16px]">Aktivitas</h1>
+                            <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/threads-white-icon.png" class="w-[32px] h-[32px]" alt="Logo">
                         </header>
                         <div class="px-4 py-3 border-b border-rz_border">
+                            <h1 class="font-bold text-3xl mb-4 hidden sm:block">Aktivitas</h1>
                             <div class="flex gap-2 overflow-x-auto no-scrollbar pb-1">
-                                <button class="px-5 py-1.5 rounded-[10px] border ${subView === 'mentions' ? 'bg-white text-black border-white font-semibold' : 'border-rz_border text-white hover:bg-[#1a1a1a]'} text-[14px] transition" onclick="app.navigate('activity', 'mentions')">Mentions</button>
-                                <button class="px-5 py-1.5 rounded-[10px] border ${subView === 'likes' ? 'bg-white text-black border-white font-semibold' : 'border-rz_border text-white hover:bg-[#1a1a1a]'} text-[14px] transition" onclick="app.navigate('activity', 'likes')">Likes</button>
-                                <button class="px-5 py-1.5 rounded-[10px] border ${subView === 'reposts' ? 'bg-white text-black border-white font-semibold' : 'border-rz_border text-white hover:bg-[#1a1a1a]'} text-[14px] transition" onclick="app.navigate('activity', 'reposts')">Reposts</button>
-                                <button class="px-5 py-1.5 rounded-[10px] border ${subView === 'saved' ? 'bg-white text-black border-white font-semibold' : 'border-rz_border text-white hover:bg-[#1a1a1a]'} text-[14px] transition" onclick="app.navigate('activity', 'saved')">Tersimpan</button>
+                                <button class="px-5 py-1.5 rounded-[10px] border ${subView === 'mentions' ? 'bg-white text-black border-white font-semibold' : 'border-rz_border text-white hover:bg-[#1a1a1a]'} text-[14px] transition shrink-0" onclick="app.navigate('activity', 'mentions')">Sebutan</button>
+                                <button class="px-5 py-1.5 rounded-[10px] border ${subView === 'likes' ? 'bg-white text-black border-white font-semibold' : 'border-rz_border text-white hover:bg-[#1a1a1a]'} text-[14px] transition shrink-0" onclick="app.navigate('activity', 'likes')">Disukai</button>
+                                <button class="px-5 py-1.5 rounded-[10px] border ${subView === 'reposts' ? 'bg-white text-black border-white font-semibold' : 'border-rz_border text-white hover:bg-[#1a1a1a]'} text-[14px] transition shrink-0" onclick="app.navigate('activity', 'reposts')">Repost</button>
+                                <button class="px-5 py-1.5 rounded-[10px] border ${subView === 'saved' ? 'bg-white text-black border-white font-semibold' : 'border-rz_border text-white hover:bg-[#1a1a1a]'} text-[14px] transition shrink-0" onclick="app.navigate('activity', 'saved')">Tersimpan</button>
                             </div>
                         </div>
                     `;
@@ -958,7 +998,7 @@
         app.createPostHTML = (post, isDetail = false) => {
             const isOwner = app.user && (app.user.id === post.user_id || app.user.role === 'admin');
             const avatar = post.is_anonymous ? util.getAvatar(null, 'A') : util.getAvatar(post.author_avatar_url, post.author_display_name);
-            const name = post.is_anonymous ? 'Anonymous' : util.escapeHTML(post.author_display_name);
+            const name = post.is_anonymous ? 'Anonim' : util.escapeHTML(post.author_display_name);
             const time = util.formatDate(post.created_at);
             
             const likeIconClass = post.liked_by_me ? 'ph-fill ph-heart text-rz_red' : 'ph ph-heart text-white hover:text-rz_text_secondary';
@@ -979,7 +1019,7 @@
                         <button class="text-rz_text_secondary hover:text-white p-1 ml-2 transition"><i class="ph ph-dots-three text-xl"></i></button>
                         <div class="absolute right-0 mt-1 w-32 bg-[#1a1a1a] border border-rz_border rounded-lg shadow-xl hidden group-hover:block z-20 overflow-hidden">
                             <button onclick="app.openEditPost('${post.id}')" class="w-full text-left px-4 py-3 text-[14px] hover:bg-[#262626] transition">Edit</button>
-                            <button onclick="app.deletePost('${post.id}')" class="w-full text-left px-4 py-3 text-[14px] text-red-500 hover:bg-[#262626] transition">Delete</button>
+                            <button onclick="app.deletePost('${post.id}')" class="w-full text-left px-4 py-3 text-[14px] text-red-500 hover:bg-[#262626] transition">Hapus</button>
                         </div>
                     </div>
                 `;
@@ -1119,15 +1159,15 @@
                     html += `
                         <div class="px-4 py-4 border-b border-rz_border flex items-center gap-3 cursor-text hover:bg-[#080808] transition" onclick="app.openComposer()">
                             <img src="${util.getAvatar(app.user.avatar_url, app.user.display_name)}" class="w-9 h-9 rounded-full object-cover">
-                            <span class="text-rz_text_secondary text-[15px]">Start a thread...</span>
-                            <button class="ml-auto px-4 py-1.5 bg-[#1a1a1a] text-white font-semibold rounded-full text-[14px] hover:bg-[#262626] transition">Post</button>
+                            <span class="text-rz_text_secondary text-[15px]">Mulai utas...</span>
+                            <button class="ml-auto px-4 py-1.5 bg-[#1a1a1a] text-white font-semibold rounded-full text-[14px] hover:bg-[#262626] transition">Posting</button>
                         </div>
                     `;
                 }
 
                 const dataList = res.data || [];
                 if (dataList.length === 0) {
-                    html += app.renderEmpty('No threads yet.');
+                    html += app.renderEmpty('Belum ada utas.');
                 } else {
                     dataList.forEach(post => { html += app.createPostHTML(post); });
                 }
@@ -1147,7 +1187,7 @@
                 let html = headerHTML;
                 const dataList = res.data || [];
                 if (dataList.length === 0) {
-                    html += app.renderEmpty('No liked posts yet.');
+                    html += app.renderEmpty('Belum ada postingan yang disukai.');
                 } else {
                     dataList.forEach(post => { html += app.createPostHTML(post); });
                     app.postsData = dataList;
@@ -1167,7 +1207,7 @@
                 let html = headerHTML;
                 const dataList = res.data || [];
                 if (dataList.length === 0) {
-                    html += app.renderEmpty('Belum ada postingan yang kamu repost.');
+                    html += app.renderEmpty('Belum ada postingan yang dibagikan ulang.');
                 } else {
                     dataList.forEach(post => { html += app.createPostHTML(post); });
                     app.postsData = dataList;
@@ -1187,7 +1227,7 @@
                 let html = headerHTML;
                 const dataList = res.data || [];
                 if (dataList.length === 0) {
-                    html += app.renderEmpty('Belum ada postingan yang kamu simpan.');
+                    html += app.renderEmpty('Belum ada postingan yang tersimpan.');
                 } else {
                     dataList.forEach(post => { html += app.createPostHTML(post); });
                     app.postsData = dataList;
@@ -1207,12 +1247,12 @@
                 let html = headerHTML;
                 const dataList = res.data || [];
                 if (dataList.length === 0) {
-                    html += app.renderEmpty('No mentions yet.');
+                    html += app.renderEmpty('Belum ada sebutan.');
                 } else {
                     dataList.forEach(m => {
                         // Membedakan apakah mention dari komentar atau postingan
                         const isComment = !!m.comment_id;
-                        const actionText = isComment ? 'menyebut Anda dalam komentar' : 'menyebut Anda dalam utas';
+                        const actionText = isComment ? 'menyebut Anda dalam balasan' : 'menyebut Anda dalam utas';
                         const avatar = util.getAvatar(m.mentioned_by_avatar_url, m.mentioned_by_display_name);
                         
                         // Menentukan judul / konten yang relevan untuk ditampilkan
@@ -1276,23 +1316,23 @@
                 let html = '';
                 
                 if (resUsers.data && resUsers.data.length > 0) {
-                    html += `<div class="px-4 py-2 font-semibold text-[16px] border-b border-rz_border">Users</div>`;
+                    html += `<div class="px-4 py-2 font-semibold text-[16px] border-b border-rz_border">Pengguna</div>`;
                     resUsers.data.forEach(u => { html += app.createUserHTML(u); });
                 }
                 
                 if (resPosts.data && resPosts.data.length > 0) {
-                    html += `<div class="px-4 py-2 font-semibold text-[16px] border-b border-rz_border mt-2">Threads</div>`;
+                    html += `<div class="px-4 py-2 font-semibold text-[16px] border-b border-rz_border mt-2">Utas</div>`;
                     resPosts.data.forEach(p => { html += app.createPostHTML(p); });
                     app.postsData = resPosts.data;
                 }
 
                 if(!html) {
-                    html = app.renderEmpty('Tidak ada hasil ditemukan.');
+                    html = app.renderEmpty('Tidak ada hasil.');
                 }
                 resContainer.innerHTML = html;
 
             } catch (err) {
-                resContainer.innerHTML = app.renderEmpty(`Search failed.<br><span class="text-xs text-red-400 mt-2 block">Error: ${err.message}</span>`);
+                resContainer.innerHTML = app.renderEmpty(`Pencarian gagal.<br><span class="text-xs text-red-400 mt-2 block">Error: ${err.message}</span>`);
             }
         };
 
@@ -1309,14 +1349,14 @@
                 if (tab === 'reposts') {
                     endpoint = `/api/users/${targetUser}/reposts`;
                 } else if (tab === 'replies') {
-                    timeline.innerHTML = app.renderEmpty('Replies will be available soon.');
+                    timeline.innerHTML = app.renderEmpty('Balasan belum tersedia.');
                     return;
                 }
 
                 const resPosts = await api(endpoint);
                 const dataList = resPosts.data || [];
                 if (dataList.length === 0) {
-                    timeline.innerHTML = app.renderEmpty(tab === 'reposts' ? 'No reposts yet.' : 'No threads yet.');
+                    timeline.innerHTML = app.renderEmpty(tab === 'reposts' ? 'Belum ada repost.' : 'Belum ada utas.');
                 } else {
                     let phtml = '';
                     dataList.forEach(p => { phtml += app.createPostHTML(p); });
@@ -1334,7 +1374,7 @@
             const targetUser = username || app.user?.username;
             
             if (!targetUser) {
-                container.innerHTML = app.renderEmpty('User not found');
+                container.innerHTML = app.renderEmpty('Pengguna tidak ditemukan');
                 return;
             }
 
@@ -1345,12 +1385,12 @@
 
                 let followBtnHtml = '';
                 if (isMe) {
-                    followBtnHtml = `<button onclick="app.openEditProfile()" class="w-full bg-transparent border border-rz_border text-white font-semibold py-1.5 rounded-xl text-[15px] hover:bg-[#1a1a1a] transition">Edit profile</button>`;
+                    followBtnHtml = `<button onclick="app.openEditProfile()" class="w-full bg-transparent border border-rz_border text-white font-semibold py-1.5 rounded-xl text-[15px] hover:bg-[#1a1a1a] transition">Edit profil</button>`;
                 } else {
                     if (u.followed_by_me) {
-                        followBtnHtml = `<button onclick="app.toggleFollow('${u.username}')" id="btn-profile-follow" class="w-full bg-transparent border border-rz_border text-white font-semibold py-1.5 rounded-xl text-[15px] hover:bg-[#1a1a1a] transition">Following</button>`;
+                        followBtnHtml = `<button onclick="app.toggleFollow('${u.username}')" id="btn-profile-follow" class="w-full bg-transparent border border-rz_border text-white font-semibold py-1.5 rounded-xl text-[15px] hover:bg-[#1a1a1a] transition">Mengikuti</button>`;
                     } else {
-                        followBtnHtml = `<button onclick="app.toggleFollow('${u.username}')" id="btn-profile-follow" class="w-full bg-white text-black font-semibold py-1.5 rounded-xl text-[15px] hover:bg-gray-200 transition">Follow</button>`;
+                        followBtnHtml = `<button onclick="app.toggleFollow('${u.username}')" id="btn-profile-follow" class="w-full bg-white text-black font-semibold py-1.5 rounded-xl text-[15px] hover:bg-gray-200 transition">Ikuti</button>`;
                     }
                 }
 
@@ -1384,11 +1424,11 @@
                         <div class="text-[15px] mb-4 whitespace-pre-wrap leading-relaxed">${util.formatContent(u.bio)}</div>
                         
                         <div class="flex items-center gap-2 text-[15px] text-rz_text_secondary mb-4">
-                            <span>${u.stats.total_posts || 0} postingan</span>
+                            <span>${u.stats.total_posts || 0} utas</span>
                             <span>·</span>
-                            <span class="cursor-pointer hover:underline transition" onclick="app.openFollowModal('followers', '${u.username}')"><span id="profile-followers-count">${u.stats.total_followers || 0}</span> followers</span>
+                            <span class="cursor-pointer hover:underline transition" onclick="app.openFollowModal('followers', '${u.username}')"><span id="profile-followers-count">${u.stats.total_followers || 0}</span> pengikut</span>
                             <span>·</span>
-                            <span class="cursor-pointer hover:underline transition" onclick="app.openFollowModal('following', '${u.username}')"><span id="profile-following-count">${u.stats.total_following || 0}</span> following</span>
+                            <span class="cursor-pointer hover:underline transition" onclick="app.openFollowModal('following', '${u.username}')"><span id="profile-following-count">${u.stats.total_following || 0}</span> mengikuti</span>
                         </div>
                         
                         ${followBtnHtml}
@@ -1396,9 +1436,9 @@
                     
                     <!-- Profile Tabs -->
                     <div class="flex border-b border-rz_border">
-                        <div id="tab-profile-threads" class="flex-1 text-center py-3 font-semibold text-[15px] tab-active cursor-pointer transition" onclick="app.switchProfileTab('threads', '${targetUser}')">Threads</div>
-                        <div id="tab-profile-replies" class="flex-1 text-center py-3 font-semibold text-[15px] tab-inactive cursor-pointer transition" onclick="app.switchProfileTab('replies', '${targetUser}')">Replies</div>
-                        <div id="tab-profile-reposts" class="flex-1 text-center py-3 font-semibold text-[15px] tab-inactive cursor-pointer transition" onclick="app.switchProfileTab('reposts', '${targetUser}')">Reposts</div>
+                        <div id="tab-profile-threads" class="flex-1 text-center py-3 font-semibold text-[15px] tab-active cursor-pointer transition" onclick="app.switchProfileTab('threads', '${targetUser}')">Utas</div>
+                        <div id="tab-profile-replies" class="flex-1 text-center py-3 font-semibold text-[15px] tab-inactive cursor-pointer transition" onclick="app.switchProfileTab('replies', '${targetUser}')">Balasan</div>
+                        <div id="tab-profile-reposts" class="flex-1 text-center py-3 font-semibold text-[15px] tab-inactive cursor-pointer transition" onclick="app.switchProfileTab('reposts', '${targetUser}')">Repost</div>
                     </div>
                     <div id="profile-timeline">
                         <div class="p-10 text-center"><i class="ph ph-spinner animate-spin text-2xl text-rz_text_secondary"></i></div>
@@ -1410,7 +1450,7 @@
                 app.switchProfileTab('threads', targetUser);
 
             } catch (err) {
-                container.innerHTML = app.renderEmpty('Failed to load profile.');
+                container.innerHTML = app.renderEmpty('Gagal memuat profil.');
             }
         };
 
@@ -1501,10 +1541,10 @@
                 // Confirm UI
                 if (res.reposted || res.reposted_by_me === 1) {
                     icon.className = 'ph-bold ph-arrows-clockwise text-[#00c853] text-[22px] repost-icon';
-                    util.showToast('Postingan berhasil direpost', 'success');
+                    util.showToast('Berhasil membagikan ulang', 'success');
                 } else {
                     icon.className = 'ph ph-arrows-clockwise text-white hover:text-rz_text_secondary text-[22px] repost-icon';
-                    util.showToast('Repost dibatalkan');
+                    util.showToast('Batal dibagikan ulang');
                     if (app.currentView === 'activity' && app.currentParams === 'reposts') {
                         if(postEl) postEl.style.display = 'none';
                     }
@@ -1563,7 +1603,7 @@
                     util.showToast('Postingan disimpan');
                 } else {
                     icon.className = 'ph ph-bookmark text-white hover:text-rz_text_secondary text-[20px] save-icon';
-                    util.showToast('Postingan dihapus dari simpanan');
+                    util.showToast('Dihapus dari simpanan');
                     if (app.currentView === 'activity' && app.currentParams === 'saved') {
                         if(postEl) postEl.style.display = 'none';
                     }
@@ -1605,12 +1645,12 @@
 
                 if (res.following || res.followed_by_me === 1) {
                     if(btn) {
-                        btn.textContent = 'Following';
+                        btn.textContent = 'Mengikuti';
                         btn.className = 'w-full bg-transparent border border-rz_border text-white font-semibold py-1.5 rounded-xl text-[15px] hover:bg-[#1a1a1a] transition';
                     }
                 } else {
                     if(btn) {
-                        btn.textContent = 'Follow';
+                        btn.textContent = 'Ikuti';
                         btn.className = 'w-full bg-white text-black font-semibold py-1.5 rounded-xl text-[15px] hover:bg-gray-200 transition';
                     }
                 }
@@ -1631,14 +1671,14 @@
 
         app.openFollowModal = async (type, username) => {
             document.getElementById('follow-modal').classList.remove('hidden');
-            document.getElementById('follow-modal-title').textContent = type === 'followers' ? 'Followers' : 'Following';
+            document.getElementById('follow-modal-title').textContent = type === 'followers' ? 'Pengikut' : 'Mengikuti';
             const content = document.getElementById('follow-modal-content');
             content.innerHTML = `<div class="p-10 text-center"><i class="ph ph-spinner animate-spin text-2xl text-rz_text_secondary"></i></div>`;
 
             try {
                 const res = await api(`/api/users/${username}/${type}`);
                 if (!res.data || res.data.length === 0) {
-                    content.innerHTML = app.renderEmpty(type === 'followers' ? 'Belum ada followers.' : 'Belum mengikuti siapa pun.');
+                    content.innerHTML = app.renderEmpty(type === 'followers' ? 'Belum ada pengikut.' : 'Belum mengikuti siapa pun.');
                 } else {
                     let html = '';
                     res.data.forEach(u => {
@@ -1679,7 +1719,7 @@
                 inputArea.innerHTML = `
                     <img id="comment-my-avatar" src="${util.getAvatar(app.user.avatar_url, app.user.display_name)}" class="w-9 h-9 rounded-full object-cover shrink-0">
                     <div class="relative flex-1">
-                        <input type="text" id="comment-input" placeholder="Tulis reply... (ketik @ untuk mention)" class="w-full bg-[#1a1a1a] rounded-full px-4 py-2.5 text-[15px] text-white focus:outline-none" oninput="app.handleMentionSearch(this, 'comment')" onblur="setTimeout(() => { const el = document.getElementById('comment-mention-list'); if(el) el.classList.add('hidden'); }, 200)">
+                        <input type="text" id="comment-input" placeholder="Balas ke pengguna... (ketik @ untuk mention)" class="w-full bg-[#1a1a1a] rounded-full px-4 py-2.5 text-[15px] text-white focus:outline-none" oninput="app.handleMentionSearch(this, 'comment')" onblur="setTimeout(() => { const el = document.getElementById('comment-mention-list'); if(el) el.classList.add('hidden'); }, 200)">
                         
                         <!-- Autocomplete Suggestions for Comments -->
                         <div id="comment-mention-list" class="hidden absolute bottom-full left-0 mb-2 bg-[#1a1a1a] border border-rz_border rounded-xl shadow-2xl max-h-48 overflow-y-auto z-50 w-full sm:w-[250px]"></div>
@@ -1689,7 +1729,7 @@
             } else {
                 inputArea.innerHTML = `
                     <div class="w-full text-center py-2">
-                        <button onclick="app.closeModal('detail-modal'); app.openAuthModal()" class="text-blue-500 font-semibold text-[15px] hover:underline transition">Login untuk membalas thread ini.</button>
+                        <button onclick="app.closeModal('detail-modal'); app.openAuthModal()" class="text-blue-500 font-semibold text-[15px] hover:underline transition">Masuk untuk membalas utas ini.</button>
                     </div>
                 `;
             }
@@ -1705,14 +1745,14 @@
 
                 let html = app.createPostHTML(post, true);
                 html += `<div class="border-t border-rz_border mt-2" id="comments-container">
-                            <div class="p-4 text-center"><i class="ph ph-spinner animate-spin"></i> Memuat replies...</div>
+                            <div class="p-4 text-center"><i class="ph ph-spinner animate-spin"></i> Memuat balasan...</div>
                          </div>`;
                 content.innerHTML = html;
 
                 const resCom = await api(`/api/posts/${id}/comments`);
                 const comContainer = document.getElementById('comments-container');
                 if (!resCom.data || resCom.data.length === 0) {
-                    comContainer.innerHTML = `<div class="p-6 text-center text-rz_text_secondary text-[15px]">Belum ada replies. Jadi yang pertama membalas.</div>`;
+                    comContainer.innerHTML = `<div class="p-6 text-center text-rz_text_secondary text-[15px]">Belum ada balasan. Jadilah yang pertama membalas.</div>`;
                 } else {
                     let chtml = '';
                     resCom.data.forEach(c => { chtml += app.createCommentHTML(c); });
@@ -1720,7 +1760,7 @@
                 }
 
             } catch (err) {
-                content.innerHTML = app.renderEmpty('Gagal memuat replies. Coba lagi.');
+                content.innerHTML = app.renderEmpty('Gagal memuat balasan. Coba lagi.');
             }
         };
 
@@ -1741,7 +1781,7 @@
                     body: { content: val }
                 });
                 input.value = '';
-                util.showToast('Reply berhasil dikirim.', 'success');
+                util.showToast('Balasan terkirim.', 'success');
                 
                 // Refresh hitungan komentar di tampilan feed secara langsung (DOM Update)
                 const postEl = document.getElementById(`post-${id}`);
@@ -1773,12 +1813,11 @@
         app.openComposer = () => {
             if (!app.user) return app.openAuthModal();
             document.getElementById('composer-modal').classList.remove('hidden');
-            document.getElementById('composer-title').textContent = 'New thread';
+            document.getElementById('composer-title').textContent = 'Buat Utas';
             document.getElementById('composer-post-id').value = '';
             document.getElementById('post-title').value = '';
             document.getElementById('post-content').value = '';
             document.getElementById('post-category').value = '';
-            document.getElementById('post-anonymous').checked = false;
             app.removeImage();
             app.checkComposerState();
         };
@@ -1789,12 +1828,11 @@
             if (!post) return;
 
             document.getElementById('composer-modal').classList.remove('hidden');
-            document.getElementById('composer-title').textContent = 'Edit thread';
+            document.getElementById('composer-title').textContent = 'Edit Utas';
             document.getElementById('composer-post-id').value = id;
             document.getElementById('post-title').value = post.title || '';
             document.getElementById('post-content').value = post.content || '';
             document.getElementById('post-category').value = post.category_id || '';
-            document.getElementById('post-anonymous').checked = post.is_anonymous == 1;
             
             app.removeImage();
             if (post.image_url) {
@@ -1827,10 +1865,10 @@
             const file = e.target.files[0];
             if (!file) return;
             if (!file.type.startsWith('image/')) {
-                return util.showToast('Select valid image', 'error');
+                return util.showToast('Pilih gambar yang valid', 'error');
             }
             if (file.size > 32 * 1024 * 1024) {
-                return util.showToast('Max size 32MB', 'error');
+                return util.showToast('Ukuran maksimum 32MB', 'error');
             }
 
             composerImageFile = file;
@@ -1870,7 +1908,7 @@
                     content: content,
                     category_id: document.getElementById('post-category').value,
                     image_url: imageUrl,
-                    is_anonymous: document.getElementById('post-anonymous').checked
+                    is_anonymous: false // Hilang dari UI, otomatis false
                 };
 
                 const postId = document.getElementById('composer-post-id').value;
@@ -1879,7 +1917,7 @@
 
                 await api(endpoint, { method, body: payload });
                 
-                util.showToast(postId ? 'Updated' : 'Posted', 'success');
+                util.showToast(postId ? 'Diperbarui' : 'Berhasil memposting', 'success');
                 app.closeModal('composer-modal');
                 if (app.currentView === 'home' || (app.currentView === 'profile' && !app.currentParams)) {
                     app.navigate(app.currentView, app.currentParams);
@@ -1887,17 +1925,17 @@
             } catch (err) {
                 util.showToast(err.message, 'error');
             } finally {
-                util.setLoading('btn-submit-post', false, 'Post');
+                util.setLoading('btn-submit-post', false, 'Posting');
             }
         };
 
         app.deletePost = (id) => {
-            app.confirm('Hapus Thread', 'Apakah Anda yakin ingin menghapus thread ini?', async () => {
+            app.confirm('Hapus Utas', 'Apakah Anda yakin ingin menghapus utas ini?', async () => {
                 try {
                     await api(`/api/posts/${id}`, { method: 'DELETE' });
                     const postEl = document.getElementById(`post-${id}`);
                     if(postEl) postEl.remove();
-                    util.showToast('Thread dihapus');
+                    util.showToast('Utas dihapus');
                     // Jika dihapus dari dalam modal detail, tutup modalnya
                     if(app.currentDetailPostId === id) {
                         app.closeModal('detail-modal');
@@ -1924,7 +1962,7 @@
         app.handleAvatarUpload = async (e) => {
             const file = e.target.files[0];
             if (!file) return;
-            if (!file.type.startsWith('image/')) return util.showToast('Select valid image', 'error');
+            if (!file.type.startsWith('image/')) return util.showToast('Pilih gambar yang valid', 'error');
 
             const fd = new FormData();
             fd.append('image', file);
@@ -1936,7 +1974,7 @@
                 const res = await api('/api/profile/avatar', { method: 'POST', body: fd });
                 app.user = res.user;
                 document.getElementById('edit-avatar-preview').src = res.url;
-                util.showToast('Profile photo updated', 'success');
+                util.showToast('Foto profil diperbarui', 'success');
                 app.renderNav(); 
             } catch (err) {
                 document.getElementById('edit-avatar-preview').src = prevSrc;
@@ -1956,14 +1994,14 @@
                     }
                 });
                 app.user = res.user;
-                util.showToast('Profile updated', 'success');
+                util.showToast('Profil diperbarui', 'success');
                 app.closeModal('profile-modal');
                 app.renderNav();
                 app.navigate('profile', app.user.username); 
             } catch (err) {
                 util.showToast(err.message, 'error');
             } finally {
-                util.setLoading('btn-save-profile', false, 'Done');
+                util.setLoading('btn-save-profile', false, 'Simpan');
             }
         };
 
