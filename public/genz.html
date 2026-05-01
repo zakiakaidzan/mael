@@ -127,16 +127,20 @@
 <body class="antialiased overflow-y-scroll no-scrollbar selection:bg-gray-700 selection:text-white">
 
 	<!-- App Shell -->
-	<div class="flex justify-center min-h-screen max-w-[1200px] mx-auto">
+	<div class="flex justify-between w-full max-w-[1250px] mx-auto min-h-screen">
 
 		<!-- Left Sidebar (Desktop) -->
 		<nav
-			class="hidden sm:flex flex-col w-[68px] lg:w-[220px] h-screen sticky top-0 py-6 px-2 lg:px-6 shrink-0 z-40 lg:items-end">
-			<div class="flex items-center justify-center lg:justify-end mb-8 w-full pr-2">
-				<img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/threads-white-icon.png" class="w-9 h-9" alt="Logo">
-            </div>
+			class="hidden sm:flex flex-col w-[80px] lg:w-[260px] h-screen sticky top-0 py-8 px-2 lg:px-6 shrink-0 z-40 items-center lg:items-start">
+			<!-- Logo Sidebar Kiri -->
+			<div class="flex items-center justify-center lg:justify-start mb-8 w-full px-3">
+				<div class="w-8 h-8 flex justify-center items-center">
+					<img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/threads-white-icon.png" class="w-[32px] h-[32px] cursor-pointer hover:opacity-80 transition" alt="Logo" onclick="app.navigate('home')">
+                </div>
+				</div>
 
-				<div class="flex flex-col gap-1 w-full lg:items-end" id="desktop-nav">
+				<!-- Navigasi Utama -->
+				<div class="flex flex-col gap-2 w-full" id="desktop-nav">
 					<!-- Nav items injected via JS based on auth state -->
 				</div>
 		</nav>
@@ -154,19 +158,31 @@
 
 		<!-- Right Sidebar (Desktop) -->
 		<aside
-			class="hidden lg:flex flex-col w-[300px] h-screen sticky top-0 py-8 px-8 shrink-0 z-40 overflow-y-auto no-scrollbar">
+			class="hidden lg:flex flex-col w-[300px] h-screen sticky top-0 pt-14 pb-8 px-6 shrink-0 z-40 overflow-y-auto no-scrollbar">
 			<div class="flex flex-col gap-8">
-				<!-- Kategori -->
+				<!-- Kategori (Mode Grid) -->
 				<div>
 					<h3 class="font-bold text-white mb-4 text-[15px]">Kategori</h3>
-					<ul class="flex flex-col gap-3 text-[14px] text-rz_text_secondary font-medium">
-						<li class="hover:text-white cursor-pointer transition">Curhat</li>
-						<li class="hover:text-white cursor-pointer transition">Kerja</li>
-						<li class="hover:text-white cursor-pointer transition">Meme</li>
-						<li class="hover:text-white cursor-pointer transition">Random Talk</li>
-						<li class="hover:text-white cursor-pointer transition">Relationship</li>
-						<li class="hover:text-white cursor-pointer transition">Sekolah/Kuliah</li>
-					</ul>
+					<div class="grid grid-cols-2 gap-2.5 text-[13px] text-center font-medium">
+						<div
+							class="bg-[#1a1a1a] text-white hover:bg-[#262626] rounded-xl py-2.5 cursor-pointer transition">
+							Curhat</div>
+						<div
+							class="bg-[#1a1a1a] text-white hover:bg-[#262626] rounded-xl py-2.5 cursor-pointer transition">
+							Kerja</div>
+						<div
+							class="bg-[#1a1a1a] text-white hover:bg-[#262626] rounded-xl py-2.5 cursor-pointer transition">
+							Meme</div>
+						<div
+							class="bg-[#1a1a1a] text-white hover:bg-[#262626] rounded-xl py-2.5 cursor-pointer transition">
+							Random Talk</div>
+						<div
+							class="bg-[#1a1a1a] text-white hover:bg-[#262626] rounded-xl py-2.5 cursor-pointer transition">
+							Relationship</div>
+						<div
+							class="bg-[#1a1a1a] text-white hover:bg-[#262626] rounded-xl py-2.5 cursor-pointer transition">
+							Sekolah</div>
+					</div>
 				</div>
 
 				<!-- Aturan Komunitas -->
@@ -417,11 +433,19 @@
 								<div
 									class="bg-[#000000] sm:bg-[#101010] sm:border border-rz_border rounded-none sm:rounded-2xl w-full h-full sm:h-[90vh] max-w-2xl overflow-hidden shadow-2xl relative flex flex-col">
 									<div
-										class="flex items-center px-4 h-[64px] border-b border-rz_border sticky top-0 bg-[#000000]/90 sm:bg-[#101010]/90 backdrop-blur z-10 justify-between">
+										class="flex items-center px-4 h-[64px] border-b border-rz_border sticky top-0 bg-[#000000]/90 sm:bg-[#101010]/90 backdrop-blur z-10 justify-between sm:hidden">
 										<button onclick="app.closeModal('detail-modal')" class="text-white w-[32px] flex justify-start hover:opacity-70 transition"><i class="ph ph-arrow-left text-2xl"></i></button>
 										<img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/threads-white-icon.png" class="w-[32px] h-[32px]" alt="Logo">
 										<div class="w-[32px]"></div> <!-- Spacer for centering -->
 									</div>
+									<!-- Desktop Header Detail Modal -->
+									<div
+										class="hidden sm:flex items-center px-4 h-[64px] border-b border-rz_border sticky top-0 bg-[#101010]/90 backdrop-blur z-10 justify-between">
+										<button onclick="app.closeModal('detail-modal')" class="text-white w-[32px] flex justify-start hover:opacity-70 transition"><i class="ph ph-arrow-left text-2xl"></i></button>
+										<h2 class="font-bold flex-1 text-center text-[16px]">Utas</h2>
+										<div class="w-[32px]"></div>
+									</div>
+
 									<div class="flex-1 overflow-y-auto no-scrollbar pb-24" id="detail-content">
 										<!-- Post and Comments injected here -->
 									</div>
@@ -659,14 +683,13 @@
             app.navItems.forEach(item => {
                 if (item.reqAuth && !isAuth) return;
                 
-                // For activity, map 'likes', 'mentions' and 'reposts' to the same tab visually
                 const isActive = app.currentView === item.id || (item.id === 'activity' && (app.currentView === 'mentions' || app.currentView === 'reposts' || app.currentView === 'likes' || app.currentView === 'saved'));
                 const iconClass = isActive ? `ph-fill ${item.icon}` : `ph ${item.icon}`;
                 
                 // Desktop Item
                 const dBtn = document.createElement('a');
                 dBtn.href = '#';
-                dBtn.className = `flex items-center gap-4 p-3 lg:pr-5 lg:pl-4 rounded-xl transition group ${isActive ? 'text-white font-bold' : 'text-rz_text_secondary hover:bg-[#1a1a1a] hover:text-white'}`;
+                dBtn.className = `flex items-center lg:justify-start justify-center gap-4 p-3 w-full rounded-xl transition group ${isActive ? 'text-white font-bold' : 'text-rz_text_secondary hover:bg-[#1a1a1a] hover:text-white'}`;
                 
                 if(item.action) {
                     dBtn.onclick = (e) => { e.preventDefault(); app[item.action](); };
@@ -676,7 +699,7 @@
                 }
 
                 dBtn.innerHTML = `
-                    <div class="relative w-10 h-10 flex justify-center items-center rounded-lg">
+                    <div class="relative flex justify-center items-center w-8 h-8 shrink-0">
                         <i class="${iconClass} text-[28px] transition-transform group-hover:scale-105 group-active:scale-95"></i>
                     </div>
                     <span class="hidden lg:block text-[16px]">${item.label}</span>
@@ -702,9 +725,14 @@
             if (isAuth) {
                 const logoutBtn = document.createElement('a');
                 logoutBtn.href = '#';
-                logoutBtn.className = `flex items-center gap-4 p-3 lg:pr-5 lg:pl-4 mt-auto text-rz_text_secondary hover:bg-[#1a1a1a] rounded-xl transition group`;
+                logoutBtn.className = `flex items-center lg:justify-start justify-center gap-4 p-3 w-full mt-auto text-rz_text_secondary hover:bg-[#1a1a1a] rounded-xl transition group`;
                 logoutBtn.onclick = (e) => { e.preventDefault(); app.openSettingsModal(); };
-                logoutBtn.innerHTML = `<div class="relative w-10 h-10 flex justify-center items-center"><i class="ph ph-list text-[28px] group-hover:text-white"></i></div><span class="hidden lg:block text-[16px]">Lainnya</span>`;
+                logoutBtn.innerHTML = `
+                    <div class="relative flex justify-center items-center w-8 h-8 shrink-0">
+                        <i class="ph ph-list text-[28px] group-hover:text-white"></i>
+                    </div>
+                    <span class="hidden lg:block text-[16px]">Lainnya</span>
+                `;
                 desk.appendChild(logoutBtn);
                 
                 document.getElementById('composer-avatar').src = util.getAvatar(app.user.avatar_url, app.user.display_name);
@@ -713,9 +741,14 @@
             } else {
                 const loginBtn = document.createElement('a');
                 loginBtn.href = '#';
-                loginBtn.className = `flex items-center gap-4 p-3 lg:pr-5 lg:pl-4 mt-auto text-rz_text_secondary hover:bg-[#1a1a1a] rounded-xl transition group`;
+                loginBtn.className = `flex items-center lg:justify-start justify-center gap-4 p-3 w-full mt-auto text-rz_text_secondary hover:bg-[#1a1a1a] rounded-xl transition group`;
                 loginBtn.onclick = (e) => { e.preventDefault(); app.openAuthModal(); };
-                loginBtn.innerHTML = `<div class="relative w-10 h-10 flex justify-center items-center"><i class="ph ph-sign-in text-[28px] group-hover:text-white"></i></div><span class="hidden lg:block text-[16px]">Masuk</span>`;
+                loginBtn.innerHTML = `
+                    <div class="relative flex justify-center items-center w-8 h-8 shrink-0">
+                        <i class="ph ph-sign-in text-[28px] group-hover:text-white"></i>
+                    </div>
+                    <span class="hidden lg:block text-[16px]">Masuk</span>
+                `;
                 desk.appendChild(loginBtn);
             }
         };
@@ -762,7 +795,7 @@
             switch(view) {
                 case 'home':
                     headerHTML = `
-                        <header class="sticky top-0 z-30 bg-[#000000]/80 backdrop-blur-xl h-[64px] flex justify-center items-center cursor-pointer" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+                        <header class="sticky top-0 z-30 bg-[#000000]/80 backdrop-blur-xl h-[64px] flex justify-center items-center cursor-pointer sm:hidden" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
                             <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/threads-white-icon.png" class="w-[32px] h-[32px]" alt="Logo">
                         </header>
                     `;
@@ -770,10 +803,10 @@
                     break;
                 case 'search':
                     headerHTML = `
-                        <header class="sticky top-0 z-30 bg-[#000000]/80 backdrop-blur-xl h-[64px] flex justify-center items-center">
+                        <header class="sticky top-0 z-30 bg-[#000000]/80 backdrop-blur-xl h-[64px] flex justify-center items-center sm:hidden">
                             <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/threads-white-icon.png" class="w-[32px] h-[32px]" alt="Logo">
                         </header>
-                        <div class="p-4 sm:pt-6">
+                        <div class="p-4 sm:pt-8">
                             <h1 class="font-bold text-3xl mb-4 hidden sm:block">Cari</h1>
                             <div class="relative">
                                 <i class="ph ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-rz_text_secondary text-xl"></i>
@@ -786,11 +819,11 @@
                 case 'activity':
                     const subView = params || 'mentions';
                     headerHTML = `
-                        <header class="sticky top-0 z-30 bg-[#000000]/80 backdrop-blur-xl h-[64px] flex justify-center items-center border-b border-rz_border">
+                        <header class="sticky top-0 z-30 bg-[#000000]/80 backdrop-blur-xl h-[64px] flex justify-center items-center border-b border-rz_border sm:hidden">
                             <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/threads-white-icon.png" class="w-[32px] h-[32px]" alt="Logo">
                         </header>
                         <div class="px-4 py-3 border-b border-rz_border">
-                            <h1 class="font-bold text-3xl mb-4 hidden sm:block">Aktivitas</h1>
+                            <h1 class="font-bold text-3xl mb-4 hidden sm:block mt-2">Aktivitas</h1>
                             <div class="flex gap-2 overflow-x-auto no-scrollbar pb-1">
                                 <button class="px-5 py-1.5 rounded-[10px] border ${subView === 'mentions' ? 'bg-white text-black border-white font-semibold' : 'border-rz_border text-white hover:bg-[#1a1a1a]'} text-[14px] transition shrink-0" onclick="app.navigate('activity', 'mentions')">Sebutan</button>
                                 <button class="px-5 py-1.5 rounded-[10px] border ${subView === 'likes' ? 'bg-white text-black border-white font-semibold' : 'border-rz_border text-white hover:bg-[#1a1a1a]'} text-[14px] transition shrink-0" onclick="app.navigate('activity', 'likes')">Disukai</button>
@@ -856,23 +889,58 @@
 
         app.handleLogin = async (e) => {
             e.preventDefault();
+
+            const emailInput = document.getElementById('login-email');
+            const passwordInput = document.getElementById('login-password');
+            const email = emailInput.value.trim().toLowerCase();
+            const password = passwordInput.value;
+
+            if (!email || !password) {
+                util.showToast("Email dan password wajib diisi", "error");
+                return;
+            }
+
             util.setLoading('btn-login', true);
+
             try {
-                const res = await api('/api/login', {
-                    method: 'POST',
-                    body: {
-                        email: document.getElementById('login-email').value,
-                        password: document.getElementById('login-password').value
-                    }
+                const res = await fetch(`${API_URL}/api/login`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ email, password })
                 });
-                app.token = res.token;
-                app.user = res.user;
-                localStorage.setItem('token', res.token);
+
+                let data;
+                try {
+                    data = await res.json();
+                } catch(e) {
+                    util.showToast("Response API tidak valid", "error");
+                    return;
+                }
+
+                if (!res.ok || !data.success) {
+                    util.showToast(data.message || "Email atau password salah", "error");
+                    return;
+                }
+
+                if (!data.token || !data.user) {
+                    util.showToast("Response login tidak valid", "error");
+                    return;
+                }
+
+                localStorage.setItem("token", data.token);
+                app.token = data.token;
+                app.user = data.user;
+
+                util.showToast(data.message || "Login berhasil", "success");
+
                 app.closeModal('auth-modal');
                 app.renderNav();
                 app.navigate('home'); 
-            } catch (err) {
-                util.showToast(err.message, 'error');
+
+            } catch (error) {
+                util.showToast("Gagal terhubung ke server. Coba lagi.", "error");
             } finally {
                 util.setLoading('btn-login', false, 'Masuk');
             }
@@ -880,24 +948,77 @@
 
         app.handleRegister = async (e) => {
             e.preventDefault();
+            
+            const usernameInput = document.getElementById('reg-username');
+            const emailInput = document.getElementById('reg-email');
+            const passwordInput = document.getElementById('reg-password');
+            
+            const username = usernameInput.value.trim();
+            const email = emailInput.value.trim().toLowerCase();
+            const password = passwordInput.value;
+
+            if (!username || !email || !password) {
+                util.showToast("Username, email, dan password wajib diisi", "error");
+                return;
+            }
+
+            if (username.length < 3) {
+                util.showToast("Username minimal 3 karakter", "error");
+                usernameInput.focus();
+                return;
+            }
+
+            if (password.length < 6) {
+                util.showToast("Password minimal 6 karakter", "error");
+                passwordInput.focus();
+                return;
+            }
+
             util.setLoading('btn-register', true);
+
             try {
-                const res = await api('/api/register', {
-                    method: 'POST',
-                    body: {
-                        username: document.getElementById('reg-username').value,
-                        email: document.getElementById('reg-email').value,
-                        password: document.getElementById('reg-password').value
-                    }
+                const res = await fetch(`${API_URL}/api/register`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ username, email, password })
                 });
-                app.token = res.token;
-                app.user = res.user;
-                localStorage.setItem('token', res.token);
+
+                let data;
+                try {
+                    data = await res.json();
+                } catch(e) {
+                    util.showToast("Response API tidak valid", "error");
+                    return;
+                }
+
+                if (!res.ok || !data.success) {
+                    util.showToast(data.message || "Register gagal", "error");
+                    
+                    if (data.code === 'USERNAME_TAKEN') usernameInput.focus();
+                    else if (data.code === 'EMAIL_TAKEN') emailInput.focus();
+                    
+                    return;
+                }
+
+                if (!data.token || !data.user) {
+                    util.showToast("Response register tidak valid", "error");
+                    return;
+                }
+
+                localStorage.setItem("token", data.token);
+                app.token = data.token;
+                app.user = data.user;
+
+                util.showToast(data.message || "Register berhasil", "success");
+
                 app.closeModal('auth-modal');
                 app.renderNav();
                 app.navigate('home');
-            } catch (err) {
-                util.showToast(err.message, 'error');
+
+            } catch (error) {
+                util.showToast("Gagal terhubung ke server. Coba lagi.", "error");
             } finally {
                 util.setLoading('btn-register', false, 'Daftar');
             }
@@ -1154,15 +1275,20 @@
                 const res = await api('/api/posts');
                 let html = headerHTML;
                 
+                // Spacer for desktop to avoid sticking to the top
+                html += `<div class="hidden sm:block h-8 w-full"></div>`;
+                
                 // Add Quick Composer CTA if logged in
                 if (app.user) {
                     html += `
-                        <div class="px-4 py-4 border-b border-rz_border flex items-center gap-3 cursor-text hover:bg-[#080808] transition" onclick="app.openComposer()">
+                        <div class="px-4 py-4 border-b border-t sm:border-t-0 border-rz_border flex items-center gap-3 cursor-text hover:bg-[#080808] transition" onclick="app.openComposer()">
                             <img src="${util.getAvatar(app.user.avatar_url, app.user.display_name)}" class="w-9 h-9 rounded-full object-cover">
                             <span class="text-rz_text_secondary text-[15px]">Mulai utas...</span>
                             <button class="ml-auto px-4 py-1.5 bg-[#1a1a1a] text-white font-semibold rounded-full text-[14px] hover:bg-[#262626] transition">Posting</button>
                         </div>
                     `;
+                } else {
+                    html += `<div class="hidden sm:block h-6 w-full border-b border-rz_border"></div>`;
                 }
 
                 const dataList = res.data || [];
@@ -1395,7 +1521,7 @@
                 }
 
                 let headerHTML = `
-                    <header class="sticky top-0 z-30 bg-[#000000]/80 backdrop-blur-xl h-[64px] px-4 flex justify-between items-center">
+                    <header class="sticky top-0 z-30 bg-[#000000]/80 backdrop-blur-xl h-[64px] px-4 flex justify-between items-center sm:hidden">
                         ${!isMe ? `
                         <button onclick="app.navigate('home')" class="w-[32px] flex justify-start text-white hover:opacity-70 transition">
                             <i class="ph ph-arrow-left text-2xl"></i>
@@ -1409,7 +1535,10 @@
                         </div>
                     </header>
                     
-                    <div class="px-4 pt-2 pb-4">
+                    <!-- Desktop Spacer -->
+                    <div class="hidden sm:block h-8 w-full"></div>
+                    
+                    <div class="px-4 pt-2 pb-4 sm:pt-4">
                         <div class="flex justify-between items-start mb-4">
                             <div>
                                 <h2 class="text-[26px] font-bold leading-tight">${util.escapeHTML(u.display_name)}</h2>
