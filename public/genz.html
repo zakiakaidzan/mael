@@ -278,9 +278,10 @@
         <!-- Post Detail Modal -->
         <div id="detail-modal" class="hidden fixed inset-0 z-40 flex items-start sm:items-center justify-center p-0 sm:p-4 modal-overlay">
             <div class="bg-[#000000] sm:bg-[#101010] sm:border border-rz_border rounded-none sm:rounded-2xl w-full h-full sm:h-[90vh] max-w-2xl overflow-hidden shadow-2xl relative flex flex-col">
-                <div class="flex items-center px-4 py-3 border-b border-rz_border sticky top-0 bg-[#000000]/90 sm:bg-[#101010]/90 backdrop-blur z-10">
-                    <button onclick="app.closeModal('detail-modal')" class="text-white mr-4"><i class="ph ph-arrow-left text-2xl"></i></button>
-                    <h2 class="font-bold flex-1 text-[16px]">Thread</h2>
+                <div class="flex items-center px-4 h-[64px] border-b border-rz_border sticky top-0 bg-[#000000]/90 sm:bg-[#101010]/90 backdrop-blur z-10 justify-between">
+                    <button onclick="app.closeModal('detail-modal')" class="text-white w-[32px] flex justify-start hover:opacity-70 transition"><i class="ph ph-arrow-left text-2xl"></i></button>
+                    <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/threads-white-icon.png" class="w-[32px] h-[32px]" alt="Logo">
+                    <div class="w-[32px]"></div> <!-- Spacer for centering -->
                 </div>
                 <div class="flex-1 overflow-y-auto no-scrollbar pb-24" id="detail-content">
                     <!-- Post and Comments injected here -->
@@ -288,6 +289,25 @@
                 <!-- Comment Input Area -->
                 <div class="absolute bottom-0 left-0 right-0 p-4 bg-[#000000] sm:bg-[#101010] border-t border-rz_border flex gap-3 items-center" id="comment-input-area">
                     <!-- Dinamis Diubah via JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Follow/Following Modal -->
+        <div id="follow-modal" class="hidden fixed inset-0 z-50 flex flex-col justify-end sm:justify-center sm:items-center p-0 sm:p-4 modal-overlay" onclick="if(event.target === this) app.closeModal('follow-modal')">
+            <div class="bg-[#101010] border-t sm:border border-rz_border rounded-t-[24px] sm:rounded-2xl w-full h-auto max-h-[80vh] sm:max-h-[80vh] max-w-md overflow-hidden shadow-2xl relative flex flex-col animate-slide-up sm:animate-none">
+                
+                <!-- Handle Bar for Mobile -->
+                <div class="w-full flex justify-center pt-3 pb-1 sm:hidden cursor-pointer" onclick="app.closeModal('follow-modal')">
+                    <div class="w-12 h-1.5 bg-[#333638] rounded-full"></div>
+                </div>
+
+                <div class="flex justify-between items-center px-4 py-3 border-b border-rz_border sticky top-0 bg-[#101010]/90 backdrop-blur z-10 rounded-t-[24px] sm:rounded-t-2xl">
+                    <h2 class="font-bold text-[16px] text-center w-full" id="follow-modal-title">Followers</h2>
+                    <button onclick="app.closeModal('follow-modal')" class="absolute right-4 text-rz_text_secondary hover:text-white hidden sm:block"><i class="ph ph-x text-xl"></i></button>
+                </div>
+                <div class="flex-1 overflow-y-auto no-scrollbar pb-4" id="follow-modal-content">
+                    <!-- User list goes here -->
                 </div>
             </div>
         </div>
@@ -301,7 +321,7 @@
                     
                     <button class="text-left px-5 py-4 hover:bg-[#262626] transition text-white" onclick="app.closeModal('settings-modal'); app.navigate('likes')">Disukai</button>
                     <button class="text-left px-5 py-4 hover:bg-[#262626] transition text-white" onclick="app.closeModal('settings-modal'); app.navigate('reposts')">Reposts</button>
-                    <button class="text-left px-5 py-4 hover:bg-[#262626] transition text-white border-b border-rz_border">Arsip</button>
+                    <button class="text-left px-5 py-4 hover:bg-[#262626] transition text-white border-b border-rz_border" onclick="app.closeModal('settings-modal'); app.navigate('saved')">Tersimpan</button>
                     
                     <button class="text-left px-5 py-4 hover:bg-[#262626] transition text-white">Laporkan masalah</button>
                     <button class="text-left px-5 py-4 text-rz_red hover:bg-[#262626] transition" onclick="app.logout(); app.closeModal('settings-modal')">Logout</button>
@@ -327,6 +347,8 @@
             currentParams: null,
             isLiking: {}, 
             isReposting: {},
+            isSaving: {},
+            isFollowing: {},
             currentDetailPostId: null,
 
             // Configs for Navigation
@@ -556,21 +578,24 @@
             switch(view) {
                 case 'home':
                     headerHTML = `
-                        <header class="sticky top-0 z-30 bg-[#000000]/80 backdrop-blur-xl pb-2 pt-6 flex justify-center items-center cursor-pointer" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
-                            <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/threads-white-icon.png" class="w-[36px] h-[36px]" alt="Logo">
+                        <header class="sticky top-0 z-30 bg-[#000000]/80 backdrop-blur-xl h-[64px] flex justify-center items-center cursor-pointer" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+                            <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/threads-white-icon.png" class="w-[32px] h-[32px]" alt="Logo">
                         </header>
                     `;
                     app.loadFeed(headerHTML);
                     break;
                 case 'search':
                     headerHTML = `
-                        <header class="sticky top-0 z-30 bg-[#000000]/90 backdrop-blur-xl p-4 sm:pt-6">
-                            <h1 class="font-bold text-3xl mb-4">Search</h1>
+                        <header class="sticky top-0 z-30 bg-[#000000]/80 backdrop-blur-xl h-[64px] flex justify-center items-center">
+                            <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/threads-white-icon.png" class="w-[32px] h-[32px]" alt="Logo">
+                        </header>
+                        <div class="p-4 sm:pt-6">
+                            <h1 class="font-bold text-3xl mb-4 hidden sm:block">Search</h1>
                             <div class="relative">
                                 <i class="ph ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-rz_text_secondary text-xl"></i>
                                 <input type="text" id="search-input" placeholder="Search" class="w-full bg-[#1a1a1a] rounded-[14px] py-2.5 pl-12 pr-4 text-[16px] text-white focus:outline-none" onkeyup="if(event.key==='Enter') app.doSearch()">
                             </div>
-                        </header>
+                        </div>
                     `;
                     app.renderSearchView(headerHTML);
                     break;
@@ -578,18 +603,32 @@
                 case 'mentions':
                 case 'reposts':
                     headerHTML = `
-                        <header class="sticky top-0 z-30 bg-[#000000]/90 backdrop-blur-xl p-4 sm:pt-6 border-b border-rz_border">
-                            <h1 class="font-bold text-3xl mb-4">Activity</h1>
+                        <header class="sticky top-0 z-30 bg-[#000000]/80 backdrop-blur-xl h-[64px] flex justify-center items-center border-b border-rz_border">
+                            <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/threads-white-icon.png" class="w-[32px] h-[32px]" alt="Logo">
+                        </header>
+                        <div class="px-4 py-3 border-b border-rz_border">
+                            <h1 class="font-bold text-3xl mb-4 hidden sm:block">Activity</h1>
                             <div class="flex gap-2 overflow-x-auto no-scrollbar pb-1">
                                 <button class="px-5 py-1.5 rounded-lg border ${view === 'likes' ? 'bg-white text-black border-white font-semibold' : 'border-rz_border text-white hover:bg-[#1a1a1a]'} text-[15px]" onclick="app.navigate('likes')">Likes</button>
                                 <button class="px-5 py-1.5 rounded-lg border ${view === 'mentions' ? 'bg-white text-black border-white font-semibold' : 'border-rz_border text-white hover:bg-[#1a1a1a]'} text-[15px]" onclick="app.navigate('mentions')">Mentions</button>
                                 <button class="px-5 py-1.5 rounded-lg border ${view === 'reposts' ? 'bg-white text-black border-white font-semibold' : 'border-rz_border text-white hover:bg-[#1a1a1a]'} text-[15px]" onclick="app.navigate('reposts')">Reposts</button>
                             </div>
-                        </header>
+                        </div>
                     `;
                     if(view === 'likes') app.loadLikes(headerHTML);
                     else if(view === 'mentions') app.loadMentions(headerHTML);
                     else app.loadReposts(headerHTML);
+                    break;
+                case 'saved':
+                    headerHTML = `
+                        <header class="sticky top-0 z-30 bg-[#000000]/80 backdrop-blur-xl h-[64px] flex justify-center items-center border-b border-rz_border">
+                            <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/threads-white-icon.png" class="w-[32px] h-[32px]" alt="Logo">
+                        </header>
+                        <div class="px-4 py-3 border-b border-rz_border">
+                            <h1 class="font-bold text-2xl">Tersimpan</h1>
+                        </div>
+                    `;
+                    app.loadSaved(headerHTML);
                     break;
                 case 'profile':
                     // Profile has custom header built in loadProfile
@@ -770,6 +809,7 @@
             
             const likeIconClass = post.liked_by_me ? 'ph-fill ph-heart text-rz_red' : 'ph ph-heart text-white hover:text-rz_text_secondary';
             const repostIconClass = post.reposted_by_me ? 'ph-bold ph-arrows-clockwise text-[#00c853]' : 'ph ph-arrows-clockwise text-white hover:text-rz_text_secondary';
+            const saveIconClass = post.saved_by_me ? 'ph-fill ph-bookmark text-white' : 'ph ph-bookmark text-white hover:text-rz_text_secondary';
             
             const userClickAttr = post.is_anonymous ? '' : `onclick="app.navigate('profile', '${post.author}')" class="cursor-pointer hover:underline font-semibold"`;
 
@@ -829,18 +869,21 @@
                             
                             ${imageHtml}
                             
-                            <div class="flex gap-4 mt-3 mb-2 text-white">
-                                <button onclick="app.toggleLike('${post.id}')" class="flex items-center gap-1.5 p-1 -ml-1 action-icon like-btn hover:bg-[#1a1a1a] rounded-full transition px-2" data-id="${post.id}">
+                            <div class="flex gap-2 mt-3 mb-2 text-white">
+                                <button onclick="app.toggleLike('${post.id}')" class="flex items-center gap-1 p-1 action-icon like-btn hover:bg-[#1a1a1a] rounded-full transition px-2" data-id="${post.id}">
                                     <i class="${likeIconClass} text-[20px] like-icon"></i>
                                     <span class="text-[13px] text-rz_text_secondary like-count">${post.total_likes > 0 ? post.total_likes : ''}</span>
                                 </button>
-                                <button onclick="app.openDetail('${post.id}')" class="flex items-center gap-1.5 p-1 action-icon hover:bg-[#1a1a1a] rounded-full transition px-2">
+                                <button onclick="app.openDetail('${post.id}')" class="flex items-center gap-1 p-1 action-icon hover:bg-[#1a1a1a] rounded-full transition px-2">
                                     <i class="ph ph-chat-circle text-[20px]"></i>
                                     <span class="text-[13px] text-rz_text_secondary comment-count">${post.total_comments > 0 ? post.total_comments : ''}</span>
                                 </button>
-                                <button onclick="app.toggleRepost('${post.id}')" class="flex items-center gap-1.5 p-1 action-icon repost-btn hover:bg-[#1a1a1a] rounded-full transition px-2" data-id="${post.id}">
+                                <button onclick="app.toggleRepost('${post.id}')" class="flex items-center gap-1 p-1 action-icon repost-btn hover:bg-[#1a1a1a] rounded-full transition px-2" data-id="${post.id}">
                                     <i class="${repostIconClass} text-[20px] repost-icon"></i>
                                     <span class="text-[13px] text-rz_text_secondary repost-count">${post.total_reposts > 0 ? post.total_reposts : ''}</span>
+                                </button>
+                                <button onclick="app.toggleSave('${post.id}')" class="flex items-center gap-1 p-1 action-icon save-btn hover:bg-[#1a1a1a] rounded-full transition px-2" data-id="${post.id}">
+                                    <i class="${saveIconClass} text-[20px] save-icon"></i>
                                 </button>
                                 <button onclick="app.copyLink('${post.id}')" class="p-1 action-icon hover:bg-[#1a1a1a] rounded-full transition px-2">
                                     <i class="ph ph-paper-plane-tilt text-[20px]"></i>
@@ -887,14 +930,17 @@
             `;
         };
 
-        app.createUserHTML = (user) => {
+        app.createUserHTML = (user, clickAction = null) => {
+            const defaultClick = `app.closeModal('follow-modal'); app.navigate('profile', '${user.username}')`;
+            const action = clickAction || defaultClick;
+            
             return `
-                <div class="flex items-center justify-between px-4 py-3 border-b border-rz_border cursor-pointer hover:bg-[#101010]" onclick="app.navigate('profile', '${user.username}')">
+                <div class="flex items-center justify-between px-4 py-3 border-b border-rz_border cursor-pointer hover:bg-[#101010]" onclick="${action}">
                     <div class="flex items-center gap-3">
                         <img src="${util.getAvatar(user.avatar_url, user.display_name)}" class="w-10 h-10 rounded-full object-cover">
                         <div>
-                            <p class="font-semibold text-[15px] flex items-center gap-1">${util.escapeHTML(user.display_name)} <i class="ph-fill ph-check-circle text-blue-500 text-[13px]"></i></p>
-                            <p class="text-rz_text_secondary text-[14px]">@${user.username} · ${Math.floor(Math.random()*100)+1}k followers</p>
+                            <p class="font-semibold text-[15px] flex items-center gap-1">${util.escapeHTML(user.display_name)} ${user.role === 'admin' ? '<i class="ph-fill ph-check-circle text-blue-500 text-[13px]"></i>' : ''}</p>
+                            <p class="text-rz_text_secondary text-[14px]">@${user.username}</p>
                         </div>
                     </div>
                     <button class="px-5 py-1.5 bg-transparent border border-rz_border rounded-xl text-[14px] font-semibold text-white">Lihat</button>
@@ -968,6 +1014,23 @@
                 container.innerHTML = html;
             } catch (err) {
                 container.innerHTML = headerHTML + app.renderEmpty('Failed to load reposts.');
+            }
+        };
+        
+        app.loadSaved = async (headerHTML) => {
+            const container = document.getElementById('view-container');
+            try {
+                const res = await api('/api/me/saved');
+                let html = headerHTML;
+                if (res.data.length === 0) {
+                    html += app.renderEmpty('Belum ada postingan yang kamu simpan.');
+                } else {
+                    res.data.forEach(post => { html += app.createPostHTML(post); });
+                    app.postsData = res.data;
+                }
+                container.innerHTML = html;
+            } catch (err) {
+                container.innerHTML = headerHTML + app.renderEmpty('Failed to load saved posts.');
             }
         };
 
@@ -1110,14 +1173,30 @@
                 const u = resUser.user;
                 const isMe = app.user && app.user.username === u.username;
 
+                let followBtnHtml = '';
+                if (isMe) {
+                    followBtnHtml = `<button onclick="app.openEditProfile()" class="w-full bg-transparent border border-rz_border text-white font-semibold py-1.5 rounded-xl text-[15px] hover:bg-[#101010]">Edit profile</button>`;
+                } else {
+                    if (u.followed_by_me) {
+                        followBtnHtml = `<button onclick="app.toggleFollow('${u.username}')" id="btn-profile-follow" class="w-full bg-transparent border border-rz_border text-white font-semibold py-1.5 rounded-xl text-[15px] hover:bg-[#101010] transition">Following</button>`;
+                    } else {
+                        followBtnHtml = `<button onclick="app.toggleFollow('${u.username}')" id="btn-profile-follow" class="w-full bg-white text-black font-semibold py-1.5 rounded-xl text-[15px] hover:bg-gray-200 transition">Follow</button>`;
+                    }
+                }
+
                 let headerHTML = `
-                    <header class="sticky top-0 z-30 bg-[#000000]/80 backdrop-blur-xl px-4 pb-2 pt-6 flex justify-between items-center min-h-[60px]">
-                        <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/threads-white-icon.png" class="w-[30px] h-[30px] cursor-pointer" alt="Logo" onclick="app.navigate('home')">
-                        ${isMe ? `
-                        <div class="flex flex-col gap-[6px] cursor-pointer py-2 pl-4 pr-1 hover:opacity-70 transition" onclick="app.openSettingsModal()">
+                    <header class="sticky top-0 z-30 bg-[#000000]/80 backdrop-blur-xl h-[64px] px-4 flex justify-between items-center">
+                        ${!isMe ? `
+                        <button onclick="app.navigate('home')" class="w-[32px] flex justify-start text-white hover:opacity-70 transition">
+                            <i class="ph ph-arrow-left text-2xl"></i>
+                        </button>` : `<div class="w-[32px]"></div>`}
+                        
+                        <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/threads-white-icon.png" class="w-[32px] h-[32px] cursor-pointer" alt="Logo" onclick="app.navigate('home')">
+                        
+                        <div class="flex flex-col gap-[5px] cursor-pointer p-1 hover:opacity-70 transition w-[32px] items-end" onclick="app.openSettingsModal()">
                             <div class="w-6 h-[2px] bg-white rounded-full"></div>
                             <div class="w-6 h-[2px] bg-white rounded-full"></div>
-                        </div>` : '<div class="h-[28px]"></div>'}
+                        </div>
                     </header>
                     
                     <div class="px-4 pt-2 pb-4">
@@ -1135,15 +1214,14 @@
                         <div class="text-[15px] mb-4 whitespace-pre-wrap leading-relaxed">${util.formatContent(u.bio)}</div>
                         
                         <div class="flex items-center gap-2 text-[15px] text-rz_text_secondary mb-4">
-                            <span>${u.stats.total_posts} postingan</span>
+                            <span>${u.stats.total_posts || 0} postingan</span>
                             <span>·</span>
-                            <span>${u.stats.total_likes_received} suka</span>
+                            <span class="cursor-pointer hover:underline" onclick="app.openFollowModal('followers', '${u.username}')"><span id="profile-followers-count">${u.stats.total_followers || 0}</span> followers</span>
+                            <span>·</span>
+                            <span class="cursor-pointer hover:underline" onclick="app.openFollowModal('following', '${u.username}')"><span id="profile-following-count">${u.stats.total_following || 0}</span> following</span>
                         </div>
                         
-                        ${isMe ? 
-                        `<button onclick="app.openEditProfile()" class="w-full bg-transparent border border-rz_border text-white font-semibold py-1.5 rounded-xl text-[15px] hover:bg-[#101010]">Edit profile</button>` : 
-                        `<button class="w-full bg-white text-black font-semibold py-1.5 rounded-xl text-[15px]">Follow</button>`
-                        }
+                        ${followBtnHtml}
                     </div>
                     
                     <!-- Profile Tabs -->
@@ -1282,6 +1360,127 @@
                 util.showToast(err.message, 'error');
             } finally {
                 app.isReposting[id] = false;
+            }
+        };
+
+        app.toggleSave = async (id) => {
+            if (!app.user) return app.openAuthModal();
+            if (app.isSaving[id]) return;
+            
+            app.isSaving[id] = true;
+            const btn = document.querySelector(`.save-btn[data-id="${id}"]`);
+            const icon = btn.querySelector('.save-icon');
+            const postEl = document.getElementById(`post-${id}`);
+            
+            // Optimistic update
+            const isCurrentlySaved = icon.classList.contains('ph-fill');
+            
+            if (isCurrentlySaved) {
+                 icon.className = 'ph ph-bookmark text-white hover:text-rz_text_secondary text-[20px] save-icon';
+            } else {
+                 icon.className = 'ph-fill ph-bookmark text-white text-[20px] save-icon';
+            }
+
+            try {
+                const method = app.currentView === 'saved' ? 'DELETE' : 'POST';
+                const endpoint = `/api/posts/${id}/save`;
+
+                const res = await api(endpoint, { method });
+                
+                // Confirm UI
+                if (res.saved || res.saved_by_me === 1) {
+                    icon.className = 'ph-fill ph-bookmark text-white text-[20px] save-icon';
+                    util.showToast('Postingan disimpan');
+                } else {
+                    icon.className = 'ph ph-bookmark text-white hover:text-rz_text_secondary text-[20px] save-icon';
+                    util.showToast('Postingan dihapus dari simpanan');
+                    if (app.currentView === 'saved') {
+                        if(postEl) postEl.style.display = 'none';
+                    }
+                }
+
+                // Update cache
+                const postCache = (app.postsData || []).find(p => p.id === id);
+                if (postCache) {
+                    postCache.saved_by_me = res.saved_by_me;
+                }
+                
+            } catch (err) {
+                // Revert optimistic on fail
+                if (isCurrentlySaved) {
+                    icon.className = 'ph-fill ph-bookmark text-white text-[20px] save-icon';
+                } else {
+                    icon.className = 'ph ph-bookmark text-white hover:text-rz_text_secondary text-[20px] save-icon';
+                }
+                util.showToast(err.message, 'error');
+            } finally {
+                app.isSaving[id] = false;
+            }
+        };
+
+        app.toggleFollow = async (username) => {
+            if (!app.user) return app.openAuthModal();
+            if (app.isFollowing[username]) return;
+
+            app.isFollowing[username] = true;
+            const btn = document.getElementById('btn-profile-follow');
+            const countSpan = document.getElementById('profile-followers-count');
+            
+            // Optimistic update assumes we toggle correctly
+            let wasFollowing = btn.textContent.trim() === 'Following';
+
+            if(btn) {
+                btn.classList.add('opacity-50', 'cursor-not-allowed');
+            }
+
+            try {
+                const res = await api(`/api/users/${username}/follow`, { method: 'POST' });
+
+                if (res.following || res.followed_by_me === 1) {
+                    if(btn) {
+                        btn.textContent = 'Following';
+                        btn.className = 'w-full bg-transparent border border-rz_border text-white font-semibold py-1.5 rounded-xl text-[15px] hover:bg-[#101010] transition';
+                    }
+                } else {
+                    if(btn) {
+                        btn.textContent = 'Follow';
+                        btn.className = 'w-full bg-white text-black font-semibold py-1.5 rounded-xl text-[15px] hover:bg-gray-200 transition';
+                    }
+                }
+                
+                if (countSpan) {
+                    countSpan.textContent = res.total_followers;
+                }
+                
+                util.showToast(res.message);
+
+            } catch (err) {
+                util.showToast(err.message, 'error');
+            } finally {
+                if(btn) btn.classList.remove('opacity-50', 'cursor-not-allowed');
+                app.isFollowing[username] = false;
+            }
+        };
+
+        app.openFollowModal = async (type, username) => {
+            document.getElementById('follow-modal').classList.remove('hidden');
+            document.getElementById('follow-modal-title').textContent = type === 'followers' ? 'Followers' : 'Following';
+            const content = document.getElementById('follow-modal-content');
+            content.innerHTML = `<div class="p-10 text-center"><i class="ph ph-spinner animate-spin text-2xl text-rz_text_secondary"></i></div>`;
+
+            try {
+                const res = await api(`/api/users/${username}/${type}`);
+                if (res.data.length === 0) {
+                    content.innerHTML = app.renderEmpty(type === 'followers' ? 'Belum ada followers.' : 'Belum mengikuti siapa pun.');
+                } else {
+                    let html = '';
+                    res.data.forEach(u => {
+                        html += app.createUserHTML(u);
+                    });
+                    content.innerHTML = html;
+                }
+            } catch (err) {
+                content.innerHTML = app.renderEmpty('Gagal memuat data.');
             }
         };
 
