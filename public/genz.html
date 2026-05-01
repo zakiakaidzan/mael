@@ -3,7 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ruang Gen Z</title>
+    <!-- Primary Meta Tags -->
+<title>Nimbrung - Tempat Posting, Ngobrol, Dan Ikut Rame</title>
+<meta name="title" content="Nimbrung - Tempat Posting, Ngobrol, Dan Ikut Rame">
+<meta name="description" content="Nimbrung adalah platform sosial untuk posting cerita, berbagi opini, ngobrol santai, dan ikut rame dalam percakapan online.">
+<meta name="keywords" content="Nimbrung, forum online, media sosial, posting cerita, berbagi opini, ngobrol online, komunitas online, thread Indonesia, sosial media Indonesia">
+<meta name="author" content="Nimbrung">
+<meta name="robots" content="index, follow">
+<meta name="language" content="Indonesian">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Canonical URL -->
+<link rel="canonical" href="">
+
+<!-- Open Graph / Facebook / WhatsApp -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://domainkamu.com/">
+<meta property="og:title" content="Nimbrung - Tempat Posting, Ngobrol, Dan Ikut Rame">
+<meta property="og:description" content="Posting cerita, share opini, ngobrol santai, dan nimbrung di obrolan yang lagi rame bareng pengguna lain.">
+<meta property="og:image" content="https://domainkamu.com/og-image.jpg">
+<meta property="og:site_name" content="Nimbrung">
+<meta property="og:locale" content="id_ID">
+
+<!-- Twitter / X -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://domainkamu.com/">
+<meta name="twitter:title" content="Nimbrung - Tempat Posting, Ngobrol, Dan Ikut Rame">
+<meta name="twitter:description" content="Tempat buat posting cerita, berbagi opini, dan nimbrung di obrolan yang lagi rame.">
+<meta name="twitter:image" content="https://domainkamu.com/og-image.jpg">
+
+<!-- Theme Color -->
+<meta name="theme-color" content="#000000">
+<meta name="msapplication-TileColor" content="#000000">
+
+<!-- Favicon -->
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
     
     <!-- Fonts: Plus Jakarta Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -849,6 +884,11 @@
                     <span class="hidden lg:block text-[16px]">Lainnya</span>
                 `;
                 desk.appendChild(logoutBtn);
+                
+                document.getElementById('composer-avatar').src = util.getAvatar(app.user.avatar_url, app.user.display_name);
+                const avatarSmall = document.getElementById('composer-avatar-small');
+                if (avatarSmall) avatarSmall.src = util.getAvatar(app.user.avatar_url, app.user.display_name);
+                document.getElementById('composer-username').textContent = app.user.display_name;
 
             } else {
                 const loginBtn = document.createElement('a');
@@ -2331,6 +2371,12 @@
             document.getElementById('post-title').value = '';
             document.getElementById('post-content').value = '';
             document.getElementById('post-category').value = '';
+            
+            document.getElementById('composer-avatar').src = util.getAvatar(app.user.avatar_url, app.user.display_name);
+            const avatarSmall = document.getElementById('composer-avatar-small');
+            if (avatarSmall) avatarSmall.src = util.getAvatar(app.user.avatar_url, app.user.display_name);
+            document.getElementById('composer-username').textContent = app.user.display_name;
+            
             app.removeImage();
             app.checkComposerState();
         };
@@ -2346,6 +2392,11 @@
             document.getElementById('post-title').value = post.title || '';
             document.getElementById('post-content').value = post.content || '';
             document.getElementById('post-category').value = post.category_id || '';
+            
+            document.getElementById('composer-avatar').src = util.getAvatar(app.user.avatar_url, app.user.display_name);
+            const avatarSmall = document.getElementById('composer-avatar-small');
+            if (avatarSmall) avatarSmall.src = util.getAvatar(app.user.avatar_url, app.user.display_name);
+            document.getElementById('composer-username').textContent = app.user.display_name;
             
             app.removeImage();
             if (post.image_url) {
