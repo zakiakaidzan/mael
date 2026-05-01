@@ -490,7 +490,7 @@
 									class="bg-[#181818] border border-rz_border rounded-[18px] w-full max-w-[300px] overflow-hidden shadow-2xl relative flex flex-col">
 									<div class="flex flex-col text-[15px] font-semibold">
 										<button class="text-left px-5 py-4 hover:bg-[#262626] transition flex justify-between items-center text-white">Tampilan <i class="ph ph-caret-right text-rz_text_secondary"></i></button>
-										<button class="text-left px-5 py-4 hover:bg-[#262626] transition text-white border-b border-rz_border">Pengaturan</button>
+										<button class="text-left px-5 py-4 hover:bg-[#262626] transition flex justify-between items-center text-white border-b border-rz_border" onclick="app.closeModal('settings-modal'); app.openConfigModal()">Pengaturan <i class="ph ph-caret-right text-rz_text_secondary"></i></button>
 
 										<button class="text-left px-5 py-4 hover:bg-[#262626] transition text-white" onclick="app.closeModal('settings-modal'); app.navigate('activity', 'likes')">Disukai</button>
 										<button class="text-left px-5 py-4 hover:bg-[#262626] transition text-white" onclick="app.closeModal('settings-modal'); app.navigate('activity', 'reposts')">Repost</button>
@@ -498,6 +498,52 @@
 
 										<button class="text-left px-5 py-4 hover:bg-[#262626] transition text-white">Laporkan masalah</button>
 										<button class="text-left px-5 py-4 text-rz_red hover:bg-[#262626] transition" onclick="app.logout(); app.closeModal('settings-modal')">Keluar</button>
+									</div>
+								</div>
+							</div>
+
+							<!-- Config Modal (Pengaturan Dalam) -->
+							<div id="config-modal"
+								class="hidden fixed inset-0 z-50 flex flex-col justify-end sm:justify-center sm:items-center p-0 sm:p-4 modal-overlay"
+								onclick="if(event.target === this) app.closeModal('config-modal')">
+								<div
+									class="bg-[#101010] border-t sm:border border-rz_border rounded-t-[24px] sm:rounded-2xl w-full h-auto max-h-[80vh] sm:max-h-[80vh] max-w-md overflow-hidden shadow-2xl relative flex flex-col animate-slide-up sm:animate-none">
+									<div class="w-full flex justify-center pt-3 pb-1 sm:hidden cursor-pointer"
+										onclick="app.closeModal('config-modal')">
+										<div class="w-12 h-1.5 bg-[#333638] rounded-full"></div>
+									</div>
+									<div
+										class="flex justify-between items-center px-4 py-3 border-b border-rz_border sticky top-0 bg-[#101010]/90 backdrop-blur z-10 rounded-t-[24px] sm:rounded-t-2xl">
+										<button onclick="app.closeModal('config-modal'); app.openSettingsModal()" class="text-white hover:opacity-70 transition w-[32px] flex justify-start"><i class="ph ph-arrow-left text-xl"></i></button>
+										<h2 class="font-bold text-[16px] text-center flex-1">Pengaturan</h2>
+										<div class="w-[32px]"></div>
+									</div>
+									<div class="flex flex-col text-[15px] font-semibold pb-4">
+										<button class="text-left px-5 py-4 hover:bg-[#1a1a1a] transition text-white border-b border-rz_border flex justify-between items-center" onclick="app.openInfoModal('privacy')">Kebijakan Privasi <i class="ph ph-caret-right text-rz_text_secondary"></i></button>
+										<button class="text-left px-5 py-4 hover:bg-[#1a1a1a] transition text-white border-b border-rz_border flex justify-between items-center" onclick="app.openInfoModal('terms')">Ketentuan Pengguna <i class="ph ph-caret-right text-rz_text_secondary"></i></button>
+									</div>
+								</div>
+							</div>
+
+							<!-- Info Content Modal (Privasi / Ketentuan) -->
+							<div id="info-modal"
+								class="hidden fixed inset-0 z-[60] flex flex-col justify-end sm:justify-center sm:items-center p-0 sm:p-4 modal-overlay"
+								onclick="if(event.target === this) app.closeModal('info-modal')">
+								<div
+									class="bg-[#101010] border-t sm:border border-rz_border rounded-t-[24px] sm:rounded-2xl w-full h-[85vh] sm:max-h-[85vh] max-w-2xl overflow-hidden shadow-2xl relative flex flex-col animate-slide-up sm:animate-none">
+									<div class="w-full flex justify-center pt-3 pb-1 sm:hidden cursor-pointer"
+										onclick="app.closeModal('info-modal')">
+										<div class="w-12 h-1.5 bg-[#333638] rounded-full"></div>
+									</div>
+									<div
+										class="flex justify-between items-center px-4 py-3 border-b border-rz_border sticky top-0 bg-[#101010]/90 backdrop-blur z-10 rounded-t-[24px] sm:rounded-t-2xl">
+										<button onclick="app.closeModal('info-modal'); app.openConfigModal()" class="text-white hover:opacity-70 transition w-[32px] flex justify-start"><i class="ph ph-arrow-left text-xl"></i></button>
+										<h2 class="font-bold text-[16px] text-center flex-1" id="info-modal-title">Info
+										</h2>
+										<div class="w-[32px]"></div>
+									</div>
+									<div class="flex-1 overflow-y-auto no-scrollbar p-6" id="info-modal-content">
+										<!-- Dinamis Diubah via JS -->
 									</div>
 								</div>
 							</div>
@@ -902,6 +948,7 @@
                     else if (subView === 'saved') app.loadSaved(headerHTML);
                     break;
                 case 'profile':
+                    // Profile has custom header built in loadProfile
                     app.loadProfile(params);
                     break;
             }
@@ -919,6 +966,71 @@
 
         app.openSettingsModal = () => {
             document.getElementById('settings-modal').classList.remove('hidden');
+        };
+
+        app.openConfigModal = () => {
+            document.getElementById('config-modal').classList.remove('hidden');
+        };
+
+        app.openInfoModal = (type) => {
+            app.closeModal('config-modal');
+            const modal = document.getElementById('info-modal');
+            const title = document.getElementById('info-modal-title');
+            const content = document.getElementById('info-modal-content');
+            
+            modal.classList.remove('hidden');
+            
+            if (type === 'privacy') {
+                title.textContent = 'Kebijakan Privasi';
+                content.innerHTML = `
+                    <div class="space-y-4 text-[14px] text-gray-300 leading-relaxed pb-6">
+                        <p class="text-rz_text_secondary">Terakhir diperbarui: 1 Mei 2026</p>
+                        <p>Selamat datang di Ruang Gen Z. Privasi Anda sangat penting bagi kami. Kebijakan ini menjelaskan bagaimana kami mengumpulkan, menggunakan, dan melindungi informasi Anda saat Anda menggunakan platform ini.</p>
+                        
+                        <h3 class="font-bold text-white text-[15px] mt-6">1. Informasi yang Kami Kumpulkan</h3>
+                        <p>Kami mengumpulkan informasi yang Anda berikan secara langsung kepada kami, seperti <strong>username</strong>, <strong>alamat email</strong>, dan <strong>kata sandi</strong> saat Anda membuat akun. Kami juga menyimpan interaksi dan konten yang Anda hasilkan, termasuk utas, komentar, repost, dan data suka (likes).</p>
+                        
+                        <h3 class="font-bold text-white text-[15px] mt-6">2. Penggunaan Informasi</h3>
+                        <p>Informasi Anda digunakan secara eksklusif untuk menyediakan, memelihara, dan meningkatkan kualitas layanan Ruang Gen Z. Kami menggunakan data Anda untuk mempersonalisasi feed Anda, memberikan pemberitahuan yang relevan, dan menjaga keamanan platform dari segala bentuk penyalahgunaan.</p>
+                        
+                        <h3 class="font-bold text-white text-[15px] mt-6">3. Penyimpanan dan Keamanan</h3>
+                        <p>Sesi login Anda disimpan secara aman menggunakan token (Local Storage) pada perangkat yang Anda gunakan. Kami menggunakan standar enkripsi modern untuk melindungi kata sandi Anda dan <strong>tidak akan pernah</strong> menjual, menyewakan, atau memberikan alamat email Anda kepada pihak ketiga.</p>
+                        
+                        <h3 class="font-bold text-white text-[15px] mt-6">4. Konten Publik vs Pribadi</h3>
+                        <p>Harap diingat bahwa setiap utas, balasan, dan informasi profil Anda (seperti nama tampilan dan bio) bersifat publik dan dapat dilihat oleh pengguna lain di dalam forum. Jangan pernah membagikan informasi identitas pribadi (KTP, nomor telepon pribadi, dll) ke ranah publik.</p>
+                        
+                        <h3 class="font-bold text-white text-[15px] mt-6">5. Penghapusan Akun</h3>
+                        <p>Jika Anda memutuskan untuk berhenti menggunakan platform ini, Anda memiliki kendali penuh atas data Anda. Meskipun saat ini belum ada opsi penghapusan otomatis via antarmuka, Anda dapat meminta penghapusan total data profil dengan menghubungi admin komunitas kami.</p>
+                    </div>
+                `;
+            } else if (type === 'terms') {
+                title.textContent = 'Ketentuan Pengguna';
+                content.innerHTML = `
+                    <div class="space-y-4 text-[14px] text-gray-300 leading-relaxed pb-6">
+                        <p class="text-rz_text_secondary">Terakhir diperbarui: 1 Mei 2026</p>
+                        <p>Dengan mengakses, mendaftar, atau menggunakan aplikasi Ruang Gen Z, Anda setuju untuk mematuhi dan terikat sepenuhnya oleh Ketentuan Pengguna ini. Jika Anda tidak setuju dengan bagian mana pun, Anda tidak diperkenankan menggunakan platform ini.</p>
+                        
+                        <h3 class="font-bold text-white text-[15px] mt-6">1. Aturan Komunitas & Perilaku Pengguna</h3>
+                        <p>Ruang Gen Z adalah ruang aman dan suportif untuk berekspresi. Setiap pengguna diwajibkan mematuhi 5 Aturan Emas komunitas kami:</p>
+                        <ul class="list-disc pl-5 space-y-2 mt-2">
+                            <li><strong>Jangan Doxing:</strong> Menyebarkan alamat, nomor telepon, foto rahasia, atau informasi kehidupan nyata (real life) orang lain tanpa izin sangat dilarang keras.</li>
+                            <li><strong>Jangan Bullying:</strong> Kami memiliki kebijakan nol toleransi terhadap perundungan (cyberbullying), ancaman fisik, penghinaan bentuk tubuh (body shaming), atau ujaran kebencian (SARA).</li>
+                            <li><strong>Jangan Spam:</strong> Mengunggah konten jualan bot, link tidak relevan, atau membanjiri feed dengan utas berulang akan dianggap sebagai pelanggaran.</li>
+                            <li><strong>Jangan Mengunggah Konten Dewasa:</strong> Segala bentuk pornografi, gambar asusila, NSFW, maupun kekerasan eksplisit dilarang sepenuhnya. Platform ini bersifat ramah bagi seluruh kalangan Gen Z.</li>
+                            <li><strong>Saling Jaga Suasana:</strong> Jadilah pengguna yang saling menghargai. Kritik boleh, tapi sampaikanlah dengan bahasa yang membangun.</li>
+                        </ul>
+                        
+                        <h3 class="font-bold text-white text-[15px] mt-6">2. Kepemilikan & Hak Konten</h3>
+                        <p>Anda tetap memiliki semua hak cipta atas konten asli yang Anda unggah. Namun, dengan mengunggahnya, Anda secara otomatis memberikan lisensi global tanpa royalti kepada Ruang Gen Z untuk menampilkan dan mendistribusikan konten tersebut di dalam platform ini. Anda sepenuhnya bertanggung jawab atas apa yang Anda unggah.</p>
+                        
+                        <h3 class="font-bold text-white text-[15px] mt-6">3. Pelanggaran & Pemutusan Akses Akun</h3>
+                        <p>Kami memiliki tim admin dan sistem moderasi yang secara aktif memantau laporan komunitas. Ruang Gen Z memiliki kebebasan mutlak dan tanpa pemberitahuan sebelumnya untuk <strong>menghapus konten yang melanggar</strong> atau <strong>memblokir akun (banned)</strong> secara permanen jika dirasa merugikan ekosistem forum.</p>
+                        
+                        <h3 class="font-bold text-white text-[15px] mt-6">4. Batasan Tanggung Jawab (Disclaimer)</h3>
+                        <p>Platform layanan ini disediakan secara "apa adanya" (as is) dan "sebagaimana tersedia" (as available). Kami tidak bertanggung jawab atas kerugian materiil, moril, atau perselisihan yang timbul antar pengguna di dalam maupun di luar platform, meskipun kami terus berupaya membuat ruang digital ini lebih aman.</p>
+                    </div>
+                `;
+            }
         };
 
         app.switchAuthTab = (tab) => {
@@ -1098,6 +1210,18 @@
         // --- MENTION AUTOCOMPLETE ---
 
         let mentionSearchTimeout;
+
+        app.handleCommentInput = (el) => {
+            app.handleMentionSearch(el, 'comment');
+            const btn = document.getElementById('btn-submit-comment');
+            if (btn) {
+                if (el.value.trim().length > 0) {
+                    btn.classList.remove('hidden');
+                } else {
+                    btn.classList.add('hidden');
+                }
+            }
+        };
 
         app.handleMentionSearch = (inputEl, context) => {
             clearTimeout(mentionSearchTimeout);
@@ -1637,7 +1761,7 @@
                                 <h2 class="text-[26px] font-bold leading-tight">${util.escapeHTML(u.display_name)}</h2>
                                 <div class="flex items-center gap-2 mt-1">
                                     <span class="text-[15px]">${util.escapeHTML(u.username)}</span>
-                                    <span class="text-[12px] bg-[#1a1a1a] text-rz_text_secondary px-2 py-0.5 rounded-full">threads.net</span>
+                                    <span class="text-[12px] bg-[#1a1a1a] text-rz_text_secondary px-2 py-0.5 rounded-full">nimbrung</span>
                                 </div>
                             </div>
                             <img src="${util.getAvatar(u.avatar_url, u.display_name)}" class="w-[72px] h-[72px] rounded-full object-cover">
@@ -1941,12 +2065,12 @@
                 inputArea.innerHTML = `
                     <img id="comment-my-avatar" src="${util.getAvatar(app.user.avatar_url, app.user.display_name)}" class="w-9 h-9 rounded-full object-cover shrink-0">
                     <div class="relative flex-1">
-                        <input type="text" id="comment-input" placeholder="Balas ke pengguna... (ketik @ untuk mention)" class="w-full bg-[#1a1a1a] rounded-full px-4 py-2.5 text-[15px] text-white focus:outline-none" oninput="app.handleMentionSearch(this, 'comment')" onblur="setTimeout(() => { const el = document.getElementById('comment-mention-list'); if(el) el.classList.add('hidden'); }, 200)">
+                        <input type="text" id="comment-input" placeholder="Balas ke pengguna... (ketik @ untuk mention)" class="w-full bg-[#1a1a1a] rounded-full px-4 py-2.5 text-[15px] text-white focus:outline-none transition-all" oninput="app.handleCommentInput(this)" onblur="setTimeout(() => { const el = document.getElementById('comment-mention-list'); if(el) el.classList.add('hidden'); }, 200)">
                         
                         <!-- Autocomplete Suggestions for Comments -->
                         <div id="comment-mention-list" class="hidden absolute bottom-full left-0 mb-2 bg-[#1a1a1a] border border-rz_border rounded-xl shadow-2xl max-h-48 overflow-y-auto z-50 w-full sm:w-[250px]"></div>
                     </div>
-                    <button onclick="app.submitComment()" class="text-white font-semibold disabled:opacity-50 px-2 py-1 bg-transparent rounded-full hover:opacity-70 transition"><i class="ph-fill ph-arrow-circle-up text-[30px]"></i></button>
+                    <button id="btn-submit-comment" onclick="app.submitComment()" class="hidden text-white font-semibold disabled:opacity-50 flex items-center justify-center shrink-0 hover:opacity-70 transition h-[40px]"><i class="ph-fill ph-arrow-circle-up text-[32px]"></i></button>
                 `;
             } else {
                 inputArea.innerHTML = `
@@ -1993,7 +2117,7 @@
             const val = input.value.trim();
             if (!val) return;
 
-            const btn = input.nextElementSibling; // the submit button
+            const btn = document.getElementById('btn-submit-comment');
             if(btn) btn.disabled = true;
             input.disabled = true;
 
@@ -2003,6 +2127,7 @@
                     body: { content: val }
                 });
                 input.value = '';
+                if(btn) btn.classList.add('hidden'); // Sembunyikan kembali karena kolom kosong
                 util.showToast('Balasan terkirim.', 'success');
                 
                 // Refresh hitungan komentar di tampilan feed secara langsung (DOM Update)
