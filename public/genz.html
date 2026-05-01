@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <!-- Primary Meta Tags -->
-<title>Nimbrung - Tempat Posting, Ngobrol, Dan Ikut Rame</title>
-<meta name="title" content="Nimbrung - Tempat Posting, Ngobrol, Dan Ikut Rame">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	 <!-- Primary Meta Tags -->
+<title>Nimbrung - Tempatnya Ngobrol, Berbagi, dan Terhubung</title>
+<meta name="title" content="Nimbrung - Tempatnya Ngobrol, Berbagi, dan Terhubung">
 <meta name="description" content="Nimbrung adalah platform sosial untuk posting cerita, berbagi opini, ngobrol santai, dan ikut rame dalam percakapan online.">
 <meta name="keywords" content="Nimbrung, forum online, media sosial, posting cerita, berbagi opini, ngobrol online, komunitas online, thread Indonesia, sosial media Indonesia">
 <meta name="author" content="Nimbrung">
@@ -19,7 +20,7 @@
 <!-- Open Graph / Facebook / WhatsApp -->
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://domainkamu.com/">
-<meta property="og:title" content="Nimbrung - Tempat Posting, Ngobrol, Dan Ikut Rame">
+<meta property="og:title" content="Nimbrung - Tempatnya Ngobrol, Berbagi, dan Terhubung">
 <meta property="og:description" content="Posting cerita, share opini, ngobrol santai, dan nimbrung di obrolan yang lagi rame bareng pengguna lain.">
 <meta property="og:image" content="https://domainkamu.com/og-image.jpg">
 <meta property="og:site_name" content="Nimbrung">
@@ -28,7 +29,7 @@
 <!-- Twitter / X -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:url" content="https://domainkamu.com/">
-<meta name="twitter:title" content="Nimbrung - Tempat Posting, Ngobrol, Dan Ikut Rame">
+<meta name="twitter:title" content="Nimbrung - Tempatnya Ngobrol, Berbagi, dan Terhubung">
 <meta name="twitter:description" content="Tempat buat posting cerita, berbagi opini, dan nimbrung di obrolan yang lagi rame.">
 <meta name="twitter:image" content="https://domainkamu.com/og-image.jpg">
 
@@ -40,18 +41,20 @@
 <link rel="icon" type="image/png" href="/favicon.png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     
-    <!-- Fonts: Plus Jakarta Sans -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Icons: Phosphor Icons -->
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
+
+	<!-- Fonts: Plus Jakarta Sans -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+		rel="stylesheet">
+
+	<!-- Icons: Phosphor Icons -->
+	<script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+	<!-- Tailwind CSS -->
+	<script src="https://cdn.tailwindcss.com"></script>
+	<script>
+		tailwind.config = {
             theme: {
                 extend: {
                     fontFamily: {
@@ -67,440 +70,530 @@
                 }
             }
         }
-    </script>
+	</script>
 
-    <style>
-        body {
-            background-color: #000000;
-            color: #f3f4f6;
-            -webkit-tap-highlight-color: transparent;
-        }
-        
-        ::-webkit-scrollbar {
-            width: 0px;
-            background: transparent;
-        }
-        
-        .thread-line {
-            width: 2px;
-            background-color: #333638;
-            flex-grow: 1;
-            margin-top: 8px;
-            margin-bottom: 4px;
-            border-radius: 999px;
-        }
+	<style>
+		body {
+			background-color: #000000;
+			color: #f3f4f6;
+			-webkit-tap-highlight-color: transparent;
+		}
 
-        .modal-overlay {
-            background-color: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(5px);
-        }
+		::-webkit-scrollbar {
+			width: 0px;
+			background: transparent;
+		}
 
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
+		.thread-line {
+			width: 2px;
+			background-color: #333638;
+			flex-grow: 1;
+			margin-top: 8px;
+			margin-bottom: 4px;
+			border-radius: 999px;
+		}
 
-        /* Action Icon Animations */
-        .action-icon {
-            transition: transform 0.1s ease-in-out, color 0.2s;
-        }
-        .action-icon:active {
-            transform: scale(0.8);
-        }
+		.modal-overlay {
+			background-color: rgba(0, 0, 0, 0.8);
+			backdrop-filter: blur(5px);
+		}
 
-        @keyframes slideUp {
-            from { transform: translateY(100%); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-        .toast-enter {
-            animation: slideUp 0.3s ease-out forwards;
-        }
+		.no-scrollbar {
+			-ms-overflow-style: none;
+			scrollbar-width: none;
+		}
 
-        /* Bottom Sheet Animation */
-        @keyframes slideUpSheet {
-            from { transform: translateY(100%); }
-            to { transform: translateY(0); }
-        }
-        .animate-slide-up {
-            animation: slideUpSheet 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-        
-        textarea {
-            resize: none;
-        }
+		/* Action Icon Animations */
+		.action-icon {
+			transition: transform 0.1s ease-in-out, color 0.2s;
+		}
 
-        /* Nav Tab Styling */
-        .tab-active {
-            color: white;
-            border-bottom: 1.5px solid white;
-        }
-        .tab-inactive {
-            color: #777777;
-            border-bottom: 1.5px solid #262626;
-        }
-    </style>
+		.action-icon:active {
+			transform: scale(0.8);
+		}
+
+		@keyframes slideUp {
+			from {
+				transform: translateY(100%);
+				opacity: 0;
+			}
+
+			to {
+				transform: translateY(0);
+				opacity: 1;
+			}
+		}
+
+		.toast-enter {
+			animation: slideUp 0.3s ease-out forwards;
+		}
+
+		/* Bottom Sheet Animation */
+		@keyframes slideUpSheet {
+			from {
+				transform: translateY(100%);
+			}
+
+			to {
+				transform: translateY(0);
+			}
+		}
+
+		.animate-slide-up {
+			animation: slideUpSheet 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+		}
+
+		textarea {
+			resize: none;
+		}
+
+		/* Nav Tab Styling */
+		.tab-active {
+			color: white;
+			border-bottom: 1.5px solid white;
+		}
+
+		.tab-inactive {
+			color: #777777;
+			border-bottom: 1.5px solid #262626;
+		}
+	</style>
 </head>
+
 <body class="antialiased overflow-y-scroll no-scrollbar selection:bg-gray-700 selection:text-white">
 
-    <!-- App Shell -->
-    <div class="flex justify-between w-full max-w-[1250px] mx-auto min-h-screen">
-        
-        <!-- Left Sidebar (Desktop) -->
-        <nav class="hidden sm:flex flex-col w-[80px] lg:w-[260px] h-screen sticky top-0 py-8 px-2 lg:px-6 shrink-0 z-40 items-center lg:items-start">
-            <!-- Logo Sidebar Kiri -->
-            <div class="flex items-center justify-center lg:justify-start mb-8 w-full px-3">
-                <div class="w-8 h-8 flex justify-center items-center">
-                    <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/threads-white-icon.png" class="w-[32px] h-[32px] cursor-pointer hover:opacity-80 transition" alt="Logo" onclick="app.navigate('home')">
+	<!-- App Shell -->
+	<div class="flex justify-between w-full max-w-[1250px] mx-auto min-h-screen">
+
+		<!-- Left Sidebar (Desktop) -->
+		<nav
+			class="hidden sm:flex flex-col w-[80px] lg:w-[260px] h-screen sticky top-0 py-8 px-2 lg:px-6 shrink-0 z-40 items-center lg:items-start">
+			<!-- Logo Sidebar Kiri -->
+			<div class="flex items-center justify-center lg:justify-start mb-8 w-full px-3">
+				<div class="w-8 h-8 flex justify-center items-center">
+					<img src="https://res.cloudinary.com/dlkbwg9dz/image/upload/v1777641890/nimbrung_mchrik.png" class="h-[32px] w-auto max-w-[50px] object-contain ms-6 cursor-pointer hover:opacity-80 transition" alt="Logo" onclick="app.navigate('home')">
                 </div>
-            </div>
-            
-            <!-- Navigasi Utama -->
-            <div class="flex flex-col gap-2 w-full" id="desktop-nav">
-                <!-- Nav items injected via JS based on auth state -->
-            </div>
-        </nav>
+				</div>
 
-        <!-- Main Content Area -->
-        <main class="w-full sm:w-[600px] min-h-screen border-x sm:border-rz_border border-transparent relative pb-20 sm:pb-0 shrink-0" id="main-content">
-            
-            <!-- Dynamic View Container -->
-            <div id="view-container" class="min-h-screen">
-                <!-- Content injected here -->
-            </div>
-        </main>
+				<!-- Navigasi Utama -->
+				<div class="flex flex-col gap-2 w-full" id="desktop-nav">
+					<!-- Nav items injected via JS based on auth state -->
+				</div>
+		</nav>
 
-        <!-- Right Sidebar (Desktop) -->
-        <aside class="hidden lg:flex flex-col w-[300px] h-screen sticky top-0 pt-14 pb-8 px-6 shrink-0 z-40 overflow-y-auto no-scrollbar">
-            <div class="flex flex-col gap-8">
-                <!-- Kategori (Mode Grid) -->
-                <div>
-                    <h3 class="font-bold text-white mb-4 text-[15px]">Kategori</h3>
-                    <div class="grid grid-cols-2 gap-2.5 text-[13px] text-center font-medium">
-                        <div class="bg-[#1a1a1a] text-white hover:bg-[#262626] rounded-xl py-2.5 cursor-pointer transition">Curhat</div>
-                        <div class="bg-[#1a1a1a] text-white hover:bg-[#262626] rounded-xl py-2.5 cursor-pointer transition">Kerja</div>
-                        <div class="bg-[#1a1a1a] text-white hover:bg-[#262626] rounded-xl py-2.5 cursor-pointer transition">Meme</div>
-                        <div class="bg-[#1a1a1a] text-white hover:bg-[#262626] rounded-xl py-2.5 cursor-pointer transition">Random Talk</div>
-                        <div class="bg-[#1a1a1a] text-white hover:bg-[#262626] rounded-xl py-2.5 cursor-pointer transition">Relationship</div>
-                        <div class="bg-[#1a1a1a] text-white hover:bg-[#262626] rounded-xl py-2.5 cursor-pointer transition">Sekolah</div>
-                    </div>
-                </div>
-                
-                <!-- Aturan Komunitas -->
-                <div>
-                    <h3 class="font-bold text-white mb-4 text-[15px]">Aturan komunitas</h3>
-                    <ul class="flex flex-col gap-3 text-[14px] text-rz_text_secondary">
-                        <li class="flex items-start gap-3"><span class="font-bold text-white text-[13px] bg-[#1a1a1a] w-5 h-5 flex items-center justify-center rounded shrink-0">1</span> <span class="leading-tight mt-0.5">Jangan doxing.</span></li>
-                        <li class="flex items-start gap-3"><span class="font-bold text-white text-[13px] bg-[#1a1a1a] w-5 h-5 flex items-center justify-center rounded shrink-0">2</span> <span class="leading-tight mt-0.5">Jangan bullying.</span></li>
-                        <li class="flex items-start gap-3"><span class="font-bold text-white text-[13px] bg-[#1a1a1a] w-5 h-5 flex items-center justify-center rounded shrink-0">3</span> <span class="leading-tight mt-0.5">Jangan spam.</span></li>
-                        <li class="flex items-start gap-3"><span class="font-bold text-white text-[13px] bg-[#1a1a1a] w-5 h-5 flex items-center justify-center rounded shrink-0">4</span> <span class="leading-tight mt-0.5">Jangan upload konten dewasa.</span></li>
-                        <li class="flex items-start gap-3"><span class="font-bold text-white text-[13px] bg-[#1a1a1a] w-5 h-5 flex items-center justify-center rounded shrink-0">5</span> <span class="leading-tight mt-0.5">Saling jaga suasana.</span></li>
-                    </ul>
-                </div>
-                
-                <!-- Footer -->
-                <div class="text-[13px] text-rz_text_secondary font-medium">
-                    &copy; 2026 Ruang Gen Z
-                </div>
-            </div>
-        </aside>
+		<!-- Main Content Area -->
+		<main
+			class="w-full sm:w-[600px] min-h-screen border-x sm:border-rz_border border-transparent relative pb-20 sm:pb-0 shrink-0"
+			id="main-content">
 
-        <!-- Bottom Navigation (Mobile) -->
-        <nav class="sm:hidden fixed bottom-0 left-0 right-0 bg-[#000000]/90 backdrop-blur-xl z-40 border-t border-rz_border" id="mobile-nav">
-             <div class="flex justify-around items-center h-[60px] px-2" id="mobile-nav-items">
-                <!-- Mobile nav items injected via JS -->
-             </div>
-        </nav>
+			<!-- Dynamic View Container -->
+			<div id="view-container" class="min-h-screen">
+				<!-- Content injected here -->
+			</div>
+		</main>
 
-    </div>
+		<!-- Right Sidebar (Desktop) -->
+		<aside
+			class="hidden lg:flex flex-col w-[300px] h-screen sticky top-0 pt-14 pb-8 px-6 shrink-0 z-40 overflow-y-auto no-scrollbar">
+			<div class="flex flex-col gap-8">
+				<!-- Kategori (Mode Grid) -->
+				<div>
+					<h3 class="font-bold text-white mb-4 text-[15px]">Kategori</h3>
+					<div class="grid grid-cols-2 gap-2.5 text-[13px] text-center font-medium">
+						<div
+							class="bg-[#1a1a1a] text-white hover:bg-[#262626] rounded-xl py-2.5 cursor-pointer transition">
+							Curhat</div>
+						<div
+							class="bg-[#1a1a1a] text-white hover:bg-[#262626] rounded-xl py-2.5 cursor-pointer transition">
+							Kerja</div>
+						<div
+							class="bg-[#1a1a1a] text-white hover:bg-[#262626] rounded-xl py-2.5 cursor-pointer transition">
+							Meme</div>
+						<div
+							class="bg-[#1a1a1a] text-white hover:bg-[#262626] rounded-xl py-2.5 cursor-pointer transition">
+							Random Talk</div>
+						<div
+							class="bg-[#1a1a1a] text-white hover:bg-[#262626] rounded-xl py-2.5 cursor-pointer transition">
+							Relationship</div>
+						<div
+							class="bg-[#1a1a1a] text-white hover:bg-[#262626] rounded-xl py-2.5 cursor-pointer transition">
+							Sekolah</div>
+					</div>
+				</div>
 
-    <!-- Modals Container -->
-    <div id="modals">
-        <!-- New Auth Overlay (Fullscreen Mobile & Split Desktop) -->
-        <div id="auth-modal" class="hidden fixed inset-0 z-[100] bg-rz_black flex overflow-hidden">
-            
-            <!-- Left Side: Form Area -->
-            <div class="w-full lg:w-[500px] xl:w-[600px] shrink-0 flex flex-col relative h-[100dvh] overflow-y-auto">
-                <!-- Close Button -->
-                <button onclick="app.closeModal('auth-modal')" class="absolute top-6 right-6 p-2 rounded-full bg-[#1a1a1a] text-rz_text_secondary hover:text-white hover:bg-[#262626] transition z-10">
+				<!-- Aturan Komunitas -->
+				<div>
+					<h3 class="font-bold text-white mb-4 text-[15px]">Aturan komunitas</h3>
+					<ul class="flex flex-col gap-3 text-[14px] text-rz_text_secondary">
+						<li class="flex items-start gap-3">
+							<span class="font-bold text-white text-[13px] bg-[#1a1a1a] w-5 h-5 flex items-center justify-center rounded shrink-0">1</span>
+							<span class="leading-tight mt-0.5">Jangan doxing.</span></li>
+						<li class="flex items-start gap-3">
+							<span class="font-bold text-white text-[13px] bg-[#1a1a1a] w-5 h-5 flex items-center justify-center rounded shrink-0">2</span>
+							<span class="leading-tight mt-0.5">Jangan bullying.</span></li>
+						<li class="flex items-start gap-3">
+							<span class="font-bold text-white text-[13px] bg-[#1a1a1a] w-5 h-5 flex items-center justify-center rounded shrink-0">3</span>
+							<span class="leading-tight mt-0.5">Jangan spam.</span></li>
+						<li class="flex items-start gap-3">
+							<span class="font-bold text-white text-[13px] bg-[#1a1a1a] w-5 h-5 flex items-center justify-center rounded shrink-0">4</span>
+							<span class="leading-tight mt-0.5">Jangan upload konten dewasa.</span></li>
+						<li class="flex items-start gap-3">
+							<span class="font-bold text-white text-[13px] bg-[#1a1a1a] w-5 h-5 flex items-center justify-center rounded shrink-0">5</span>
+							<span class="leading-tight mt-0.5">Saling jaga suasana.</span></li>
+					</ul>
+				</div>
+
+				<!-- Footer -->
+				<div class="text-[13px] text-rz_text_secondary font-medium">
+					&copy; 2026 Nimbrung
+				</div>
+			</div>
+		</aside>
+
+		<!-- Bottom Navigation (Mobile) -->
+		<nav class="sm:hidden fixed bottom-0 left-0 right-0 bg-[#000000]/90 backdrop-blur-xl z-40 border-t border-rz_border"
+			id="mobile-nav">
+			<div class="flex justify-around items-center h-[60px] px-2" id="mobile-nav-items">
+				<!-- Mobile nav items injected via JS -->
+			</div>
+		</nav>
+
+	</div>
+
+	<!-- Modals Container -->
+	<div id="modals">
+		<!-- New Auth Overlay (Fullscreen Mobile & Split Desktop) -->
+		<div id="auth-modal" class="hidden fixed inset-0 z-[100] bg-rz_black flex overflow-hidden">
+
+			<!-- Left Side: Form Area -->
+			<div class="w-full lg:w-[500px] xl:w-[600px] shrink-0 flex flex-col relative h-[100dvh] overflow-y-auto">
+				<!-- Close Button -->
+				<button onclick="app.closeModal('auth-modal')" class="absolute top-6 right-6 p-2 rounded-full bg-[#1a1a1a] text-rz_text_secondary hover:text-white hover:bg-[#262626] transition z-10">
                     <i class="ph ph-x text-xl"></i>
                 </button>
 
-                <!-- Form Content Container -->
-                <div class="flex-1 flex flex-col justify-center px-8 sm:px-16 py-12 max-w-[500px] mx-auto w-full">
-                    
-                    <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/threads-white-icon.png" class="w-12 h-12 mb-8" alt="Logo">
-                    
-                    <h2 id="auth-title" class="text-3xl font-bold mb-2">Masuk</h2>
-                    <p id="auth-subtitle" class="text-rz_text_secondary mb-10 text-[15px]">Selamat datang kembali di Ruang Gen Z.</p>
-                    
-                    <!-- Login Form -->
-                    <form id="form-login" onsubmit="app.handleLogin(event)" class="flex flex-col gap-4 w-full">
-                        <div>
-                            <input type="email" id="login-email" placeholder="Email" required class="w-full bg-[#101010] border border-rz_border rounded-[14px] px-5 py-4 text-[15px] text-white focus:outline-none focus:border-gray-500 transition">
+				<!-- Form Content Container -->
+				<div class="flex-1 flex flex-col justify-center px-8 sm:px-16 py-12 max-w-[500px] mx-auto w-full">
+
+					<img src="https://res.cloudinary.com/dlkbwg9dz/image/upload/v1777641890/nimbrung_mchrik.png" class="h-[70px] w-auto max-w-[60px] object-contain" alt="Logo">
+
+					<h2 id="auth-title" class="text-3xl font-bold mb-2">Masuk</h2>
+					<p id="auth-subtitle" class="text-rz_text_secondary mb-10 text-[15px]">Selamat datang kembali di
+						Nimbrung.</p>
+
+					<!-- Login Form -->
+					<form id="form-login" onsubmit="app.handleLogin(event)" class="flex flex-col gap-4 w-full">
+						<div>
+							<input type="email" id="login-email" placeholder="Email" required class="w-full bg-[#101010] border border-rz_border rounded-[14px] px-5 py-4 text-[15px] text-white focus:outline-none focus:border-gray-500 transition">
                         </div>
-                        <div class="relative w-full">
-                            <input type="password" id="login-password" placeholder="Kata Sandi" required class="w-full bg-[#101010] border border-rz_border rounded-[14px] px-5 py-4 pr-12 text-[15px] text-white focus:outline-none focus:border-gray-500 transition">
-                            <button type="button" onclick="app.togglePassword('login-password', 'login-eye')" class="absolute right-4 top-1/2 -translate-y-1/2 text-rz_text_secondary hover:text-white p-1">
+							<div class="relative w-full">
+								<input type="password" id="login-password" placeholder="Kata Sandi" required class="w-full bg-[#101010] border border-rz_border rounded-[14px] px-5 py-4 pr-12 text-[15px] text-white focus:outline-none focus:border-gray-500 transition">
+								<button type="button" onclick="app.togglePassword('login-password', 'login-eye')" class="absolute right-4 top-1/2 -translate-y-1/2 text-rz_text_secondary hover:text-white p-1">
                                 <i id="login-eye" class="ph ph-eye text-xl"></i>
                             </button>
-                        </div>
-                        <button type="submit" class="w-full bg-white text-black font-bold rounded-[14px] py-4 mt-4 hover:bg-gray-200 transition text-[15px] shadow-lg shadow-white/10" id="btn-login">Masuk</button>
-                    </form>
+							</div>
+							<button type="submit" class="w-full bg-white text-black font-bold rounded-[14px] py-4 mt-4 hover:bg-gray-200 transition text-[15px] shadow-lg shadow-white/10" id="btn-login">Masuk</button>
+					</form>
 
-                    <!-- Register Form -->
-                    <form id="form-register" onsubmit="app.handleRegister(event)" class="hidden flex flex-col gap-4 w-full">
-                        <div>
-                            <input type="text" id="reg-username" placeholder="Username (tanpa @)" required minlength="3" class="w-full bg-[#101010] border border-rz_border rounded-[14px] px-5 py-4 text-[15px] text-white focus:outline-none focus:border-gray-500 transition">
+					<!-- Register Form -->
+					<form id="form-register" onsubmit="app.handleRegister(event)"
+						class="hidden flex flex-col gap-4 w-full">
+						<div>
+							<input type="text" id="reg-username" placeholder="Username (tanpa @)" required minlength="3" class="w-full bg-[#101010] border border-rz_border rounded-[14px] px-5 py-4 text-[15px] text-white focus:outline-none focus:border-gray-500 transition">
                         </div>
-                        <div>
-                            <input type="email" id="reg-email" placeholder="Email" required class="w-full bg-[#101010] border border-rz_border rounded-[14px] px-5 py-4 text-[15px] text-white focus:outline-none focus:border-gray-500 transition">
+							<div>
+								<input type="email" id="reg-email" placeholder="Email" required class="w-full bg-[#101010] border border-rz_border rounded-[14px] px-5 py-4 text-[15px] text-white focus:outline-none focus:border-gray-500 transition">
                         </div>
-                        <div class="relative w-full">
-                            <input type="password" id="reg-password" placeholder="Kata Sandi (min 6 karakter)" required minlength="6" class="w-full bg-[#101010] border border-rz_border rounded-[14px] px-5 py-4 pr-12 text-[15px] text-white focus:outline-none focus:border-gray-500 transition">
-                            <button type="button" onclick="app.togglePassword('reg-password', 'reg-eye')" class="absolute right-4 top-1/2 -translate-y-1/2 text-rz_text_secondary hover:text-white p-1">
+								<div class="relative w-full">
+									<input type="password" id="reg-password" placeholder="Kata Sandi (min 6 karakter)" required minlength="6" class="w-full bg-[#101010] border border-rz_border rounded-[14px] px-5 py-4 pr-12 text-[15px] text-white focus:outline-none focus:border-gray-500 transition">
+									<button type="button" onclick="app.togglePassword('reg-password', 'reg-eye')" class="absolute right-4 top-1/2 -translate-y-1/2 text-rz_text_secondary hover:text-white p-1">
                                 <i id="reg-eye" class="ph ph-eye text-xl"></i>
                             </button>
-                        </div>
-                        <button type="submit" class="w-full bg-white text-black font-bold rounded-[14px] py-4 mt-4 hover:bg-gray-200 transition text-[15px] shadow-lg shadow-white/10" id="btn-register">Daftar</button>
-                    </form>
+								</div>
+								<button type="submit" class="w-full bg-white text-black font-bold rounded-[14px] py-4 mt-4 hover:bg-gray-200 transition text-[15px] shadow-lg shadow-white/10" id="btn-register">Daftar</button>
+					</form>
 
-                    <!-- Toggle Text -->
-                    <p id="auth-toggle-text" class="mt-8 text-center text-rz_text_secondary text-[15px]">
-                        Belum punya akun? <button type="button" onclick="app.switchAuthTab('register')" class="text-white font-semibold hover:underline">Daftar</button>
-                    </p>
-                </div>
-            </div>
+					<!-- Toggle Text -->
+					<p id="auth-toggle-text" class="mt-8 text-center text-rz_text_secondary text-[15px]">
+						Belum punya akun?
+						<button type="button" onclick="app.switchAuthTab('register')" class="text-white font-semibold hover:underline">Daftar</button>
+					</p>
+				</div>
+			</div>
 
-            <!-- Right Side: Aesthetic Banner (Hidden on Mobile) -->
-            <div class="hidden lg:flex flex-1 relative bg-[#0a0a0a] items-center justify-center overflow-hidden border-l border-rz_border">
-                <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover opacity-40 mix-blend-screen" alt="Abstract Background">
-                <div class="absolute inset-0 bg-gradient-to-r from-rz_black via-transparent to-transparent opacity-80"></div>
-                <div class="absolute inset-0 bg-gradient-to-t from-rz_black via-transparent to-transparent opacity-50"></div>
-                
-                <div class="relative z-10 p-12 text-center">
-                    <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/threads-white-icon.png" class="w-24 h-24 mx-auto mb-8 opacity-20" alt="Watermark Logo">
-                    <h1 class="text-4xl font-bold text-white/90 mb-4 tracking-tight">Ruang Gen Z</h1>
-                    <p class="text-xl text-gray-400 font-medium">Tempatnya ngobrol, berbagi, dan terhubung.</p>
-                </div>
-            </div>
-        </div>
+			<!-- Right Side: Aesthetic Banner (Hidden on Mobile) -->
+			<div
+				class="hidden lg:flex flex-1 relative bg-[#0a0a0a] items-center justify-center overflow-hidden border-l border-rz_border">
+				<img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover opacity-40 mix-blend-screen" alt="Abstract Background">
+				<div class="absolute inset-0 bg-gradient-to-r from-rz_black via-transparent to-transparent opacity-80">
+				</div>
+				<div class="absolute inset-0 bg-gradient-to-t from-rz_black via-transparent to-transparent opacity-50">
+				</div>
 
-        <!-- Custom Confirm Modal -->
-        <div id="confirm-modal" class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4 modal-overlay">
-            <div class="bg-[#181818] border border-rz_border rounded-2xl w-full max-w-[320px] overflow-hidden shadow-2xl p-6 text-center">
-                <h3 class="text-[18px] font-bold text-white mb-2" id="confirm-title">Konfirmasi</h3>
-                <p class="text-rz_text_secondary text-[15px] mb-6" id="confirm-message">Apakah Anda yakin?</p>
-                <div class="flex gap-3">
-                    <button id="confirm-cancel" class="flex-1 py-2.5 rounded-xl font-semibold border border-rz_border text-white hover:bg-[#262626] transition text-[15px]">Batal</button>
-                    <button id="confirm-ok" class="flex-1 py-2.5 rounded-xl font-semibold bg-rz_red text-white hover:bg-red-600 transition text-[15px]">Hapus</button>
-                </div>
-            </div>
-        </div>
+				<div class="relative z-10 p-12 text-center">
+					
+					<h1 class="text-4xl font-bold text-white/90 mb-4 tracking-tight">Nimbrung</h1>
+					<p class="text-xl text-gray-400 font-medium">Tempatnya ngobrol, berbagi, dan terhubung.</p>
+				</div>
+			</div>
+		</div>
 
-        <!-- Composer Modal (Create/Edit Post) -->
-        <div id="composer-modal" class="hidden fixed inset-0 z-50 flex flex-col justify-end sm:justify-center sm:items-center p-0 sm:p-4 modal-overlay" onclick="if(event.target === this) app.closeModal('composer-modal')">
-            <div class="bg-[#101010] border-t sm:border border-rz_border rounded-t-[24px] sm:rounded-2xl w-full h-auto max-h-[90vh] sm:max-h-[90vh] max-w-xl overflow-y-visible shadow-2xl relative flex flex-col animate-slide-up sm:animate-none pb-4 sm:pb-0">
-                
-                <!-- Handle Bar for Mobile -->
-                <div class="w-full flex justify-center pt-3 pb-1 sm:hidden cursor-pointer" onclick="app.closeModal('composer-modal')">
-                    <div class="w-12 h-1.5 bg-[#333638] rounded-full"></div>
-                </div>
+		<!-- Custom Confirm Modal -->
+		<div id="confirm-modal" class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4 modal-overlay">
+			<div
+				class="bg-[#181818] border border-rz_border rounded-2xl w-full max-w-[320px] overflow-hidden shadow-2xl p-6 text-center">
+				<h3 class="text-[18px] font-bold text-white mb-2" id="confirm-title">Konfirmasi</h3>
+				<p class="text-rz_text_secondary text-[15px] mb-6" id="confirm-message">Apakah Anda yakin?</p>
+				<div class="flex gap-3">
+					<button id="confirm-cancel" class="flex-1 py-2.5 rounded-xl font-semibold border border-rz_border text-white hover:bg-[#262626] transition text-[15px]">Batal</button>
+					<button id="confirm-ok" class="flex-1 py-2.5 rounded-xl font-semibold bg-rz_red text-white hover:bg-red-600 transition text-[15px]">Hapus</button>
+				</div>
+			</div>
+		</div>
 
-                <div class="flex justify-between items-center px-4 py-3 border-b border-rz_border sticky top-0 bg-[#101010]/90 backdrop-blur z-10 rounded-t-[24px] sm:rounded-t-2xl">
-                    <button onclick="app.closeModal('composer-modal')" class="text-white text-[15px] hidden sm:block hover:opacity-70">Batal</button>
-                    <div class="sm:hidden w-[50px]"></div> <!-- Spacer to center title on mobile -->
-                    <h2 class="font-bold text-[16px] text-center" id="composer-title">Buat Utas</h2>
-                    <button onclick="app.submitPost()" id="btn-submit-post" class="text-white font-semibold opacity-50 cursor-not-allowed text-[15px] w-[50px] text-right hover:opacity-70 transition">Posting</button>
-                </div>
-                
-                <div class="p-4 flex gap-3 flex-1 overflow-y-auto no-scrollbar">
-                    <div class="flex flex-col items-center shrink-0">
-                        <img id="composer-avatar" src="https://ui-avatars.com/api/?name=User&background=333&color=fff" class="w-9 h-9 rounded-full object-cover">
-                        <div class="thread-line"></div>
-                        <img id="composer-avatar-small" src="https://ui-avatars.com/api/?name=User&background=333&color=fff" class="w-4 h-4 rounded-full object-cover opacity-50 mt-1">
+		<!-- Composer Modal (Create/Edit Post) -->
+		<div id="composer-modal"
+			class="hidden fixed inset-0 z-50 flex flex-col justify-end sm:justify-center sm:items-center p-0 sm:p-4 modal-overlay"
+			onclick="if(event.target === this) app.closeModal('composer-modal')">
+			<div
+				class="bg-[#101010] border-t sm:border border-rz_border rounded-t-[24px] sm:rounded-2xl w-full h-auto max-h-[90vh] sm:max-h-[90vh] max-w-xl overflow-y-visible shadow-2xl relative flex flex-col animate-slide-up sm:animate-none pb-4 sm:pb-0">
+
+				<!-- Handle Bar for Mobile -->
+				<div class="w-full flex justify-center pt-3 pb-1 sm:hidden cursor-pointer"
+					onclick="app.closeModal('composer-modal')">
+					<div class="w-12 h-1.5 bg-[#333638] rounded-full"></div>
+				</div>
+
+				<div
+					class="flex justify-between items-center px-4 py-3 border-b border-rz_border sticky top-0 bg-[#101010]/90 backdrop-blur z-10 rounded-t-[24px] sm:rounded-t-2xl">
+					<button onclick="app.closeModal('composer-modal')" class="text-white text-[15px] hidden sm:block hover:opacity-70">Batal</button>
+					<div class="sm:hidden w-[50px]"></div> <!-- Spacer to center title on mobile -->
+					<h2 class="font-bold text-[16px] text-center" id="composer-title">Buat Utas</h2>
+					<button onclick="app.submitPost()" id="btn-submit-post" class="text-white font-semibold opacity-50 cursor-not-allowed text-[15px] w-[50px] text-right hover:opacity-70 transition">Posting</button>
+				</div>
+
+				<div class="p-4 flex gap-3 flex-1 overflow-y-auto no-scrollbar">
+					<div class="flex flex-col items-center shrink-0">
+						<img id="composer-avatar" src="https://ui-avatars.com/api/?name=User&background=333&color=fff" class="w-9 h-9 rounded-full object-cover">
+						<div class="thread-line"></div>
+						<img id="composer-avatar-small" src="https://ui-avatars.com/api/?name=User&background=333&color=fff" class="w-4 h-4 rounded-full object-cover opacity-50 mt-1">
                     </div>
-                    <div class="flex-1 relative">
-                        <p class="font-semibold text-[15px] mb-1" id="composer-username">Username</p>
-                        <input type="hidden" id="composer-post-id">
-                        
-                        <input type="text" id="post-title" placeholder="Judul (opsional)" class="w-full bg-transparent text-white font-semibold outline-none placeholder-rz_text_secondary mb-2 text-[15px]">
-                        
-                        <div class="relative w-full">
-                            <textarea id="post-content" placeholder="Mulai utas... (ketik @ untuk mention)" class="w-full bg-transparent text-white outline-none placeholder-rz_text_secondary min-h-[80px] text-[15px] leading-relaxed" oninput="app.checkComposerState(); app.handleMentionSearch(this, 'composer')" onblur="setTimeout(() => { const el = document.getElementById('composer-mention-list'); if(el) el.classList.add('hidden'); }, 200)"></textarea>
-                            
-                            <!-- Autocomplete Suggestions -->
-                            <div id="composer-mention-list" class="hidden absolute top-full left-0 mt-1 bg-[#1a1a1a] border border-rz_border rounded-xl shadow-2xl max-h-48 overflow-y-auto z-50 w-[250px]"></div>
-                        </div>
+						<div class="flex-1 relative">
+							<p class="font-semibold text-[15px] mb-1" id="composer-username">Username</p>
+							<input type="hidden" id="composer-post-id">
 
-                        <div id="image-preview-container" class="hidden relative mt-2 w-fit mb-2">
-                            <img id="image-preview" src="" class="max-h-[300px] rounded-xl border border-rz_border object-cover">
-                            <button onclick="app.removeImage()" class="absolute top-2 right-2 bg-black/70 rounded-full p-1.5 text-white hover:bg-black transition">
+							<input type="text" id="post-title" placeholder="Judul (opsional)" class="w-full bg-transparent text-white font-semibold outline-none placeholder-rz_text_secondary mb-2 text-[15px]">
+
+							<div class="relative w-full">
+								<textarea id="post-content" placeholder="Mulai utas... (ketik @ untuk mention)" class="w-full bg-transparent text-white outline-none placeholder-rz_text_secondary min-h-[80px] text-[15px] leading-relaxed" oninput="app.checkComposerState(); app.handleMentionSearch(this, 'composer')" onblur="setTimeout(() => { const el = document.getElementById('composer-mention-list'); if(el) el.classList.add('hidden'); }, 200)"></textarea>
+
+								<!-- Autocomplete Suggestions -->
+								<div id="composer-mention-list"
+									class="hidden absolute top-full left-0 mt-1 bg-[#1a1a1a] border border-rz_border rounded-xl shadow-2xl max-h-48 overflow-y-auto z-50 w-[250px]">
+								</div>
+							</div>
+
+							<div id="image-preview-container" class="hidden relative mt-2 w-fit mb-2">
+								<img id="image-preview" src="" class="max-h-[300px] rounded-xl border border-rz_border object-cover">
+								<button onclick="app.removeImage()" class="absolute top-2 right-2 bg-black/70 rounded-full p-1.5 text-white hover:bg-black transition">
                                 <i class="ph ph-x"></i>
                             </button>
-                            <input type="hidden" id="post-image-url">
+								<input type="hidden" id="post-image-url">
                         </div>
 
-                        <div class="mt-2 flex gap-4 items-center">
-                            <label class="cursor-pointer text-rz_text_secondary hover:text-white flex items-center justify-center p-1 transition">
+								<div class="mt-2 flex gap-4 items-center">
+									<label class="cursor-pointer text-rz_text_secondary hover:text-white flex items-center justify-center p-1 transition">
                                 <i class="ph ph-image text-[22px]"></i>
                                 <input type="file" id="post-image" accept="image/*" class="hidden" onchange="app.handleImageSelect(event)">
                             </label>
-                            <select id="post-category" class="bg-transparent text-rz_text_secondary text-[14px] outline-none cursor-pointer">
+									<select id="post-category" class="bg-transparent text-rz_text_secondary text-[14px] outline-none cursor-pointer">
                                 <option value="" class="bg-[#101010]">Pilih Kategori</option>
                             </select>
+								</div>
+							</div>
+						</div>
+
+						<!-- Bottom setting -->
+						<div class="px-4 py-4 border-t border-rz_border flex items-center text-rz_text_secondary">
+							<span class="text-[14px]">Siapa saja dapat membalas & mengutip</span>
+						</div>
+					</div>
+				</div>
+
+				<!-- Edit Profile Modal -->
+				<div id="profile-modal"
+					class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay">
+					<div
+						class="bg-[#101010] border border-rz_border rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl relative">
+						<div class="flex justify-between items-center px-4 py-3 border-b border-rz_border">
+							<h2 class="font-bold text-[16px]">Edit profil</h2>
+							<button onclick="app.closeModal('profile-modal')" class="text-rz_text_secondary hover:text-white transition"><i class="ph ph-x text-xl"></i></button>
+						</div>
+						<div class="p-6 flex flex-col gap-4">
+							<div
+								class="flex justify-between items-center p-4 bg-[#1a1a1a] rounded-xl border border-rz_border/50">
+								<div>
+									<p class="font-bold text-[15px]" id="edit-preview-name">Nama</p>
+									<p class="text-[14px]" id="edit-preview-user">@username</p>
+								</div>
+								<div class="relative group cursor-pointer shrink-0"
+									onclick="document.getElementById('avatar-upload').click()">
+									<img id="edit-avatar-preview" src="" class="w-14 h-14 rounded-full object-cover">
+									<div
+										class="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+										<i class="ph ph-camera text-white"></i>
+									</div>
+									<input type="file" id="avatar-upload" accept="image/*" class="hidden" onchange="app.handleAvatarUpload(event)">
                         </div>
+								</div>
+								<div>
+									<label class="text-[13px] font-semibold">Nama Tampilan</label>
+									<input type="text" id="edit-display-name" class="w-full bg-transparent border-b border-rz_border py-2 text-[15px] text-white focus:outline-none focus:border-white transition">
                     </div>
-                </div>
-                
-                <!-- Bottom setting -->
-                <div class="px-4 py-4 border-t border-rz_border flex items-center text-rz_text_secondary">
-                    <span class="text-[14px]">Siapa saja dapat membalas & mengutip</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Edit Profile Modal -->
-        <div id="profile-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay">
-            <div class="bg-[#101010] border border-rz_border rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl relative">
-                <div class="flex justify-between items-center px-4 py-3 border-b border-rz_border">
-                    <h2 class="font-bold text-[16px]">Edit profil</h2>
-                    <button onclick="app.closeModal('profile-modal')" class="text-rz_text_secondary hover:text-white transition"><i class="ph ph-x text-xl"></i></button>
-                </div>
-                <div class="p-6 flex flex-col gap-4">
-                    <div class="flex justify-between items-center p-4 bg-[#1a1a1a] rounded-xl border border-rz_border/50">
-                        <div>
-                            <p class="font-bold text-[15px]" id="edit-preview-name">Nama</p>
-                            <p class="text-[14px]" id="edit-preview-user">@username</p>
-                        </div>
-                        <div class="relative group cursor-pointer shrink-0" onclick="document.getElementById('avatar-upload').click()">
-                            <img id="edit-avatar-preview" src="" class="w-14 h-14 rounded-full object-cover">
-                            <div class="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
-                                <i class="ph ph-camera text-white"></i>
-                            </div>
-                            <input type="file" id="avatar-upload" accept="image/*" class="hidden" onchange="app.handleAvatarUpload(event)">
-                        </div>
+									<div>
+										<label class="text-[13px] font-semibold">Username</label>
+										<input type="text" id="edit-username" class="w-full bg-transparent border-b border-rz_border py-2 text-[15px] text-white focus:outline-none focus:border-white transition">
                     </div>
-                    <div>
-                        <label class="text-[13px] font-semibold">Nama Tampilan</label>
-                        <input type="text" id="edit-display-name" class="w-full bg-transparent border-b border-rz_border py-2 text-[15px] text-white focus:outline-none focus:border-white transition">
-                    </div>
-                    <div>
-                        <label class="text-[13px] font-semibold">Username</label>
-                        <input type="text" id="edit-username" class="w-full bg-transparent border-b border-rz_border py-2 text-[15px] text-white focus:outline-none focus:border-white transition">
-                    </div>
-                    <div>
-                        <label class="text-[13px] font-semibold">Bio</label>
-                        <textarea id="edit-bio" rows="2" placeholder="+ Tulis bio" class="w-full bg-transparent border-b border-rz_border py-2 text-[15px] text-white focus:outline-none focus:border-white transition resize-none"></textarea>
-                    </div>
-                    <button onclick="app.saveProfile()" id="btn-save-profile" class="w-full bg-white text-black font-semibold rounded-xl py-3 mt-4 hover:bg-gray-200 transition text-[15px]">Simpan</button>
-                </div>
-            </div>
-        </div>
+										<div>
+											<label class="text-[13px] font-semibold">Bio</label>
+											<textarea id="edit-bio" rows="2" placeholder="+ Tulis bio" class="w-full bg-transparent border-b border-rz_border py-2 text-[15px] text-white focus:outline-none focus:border-white transition resize-none"></textarea>
+										</div>
+										<button onclick="app.saveProfile()" id="btn-save-profile" class="w-full bg-white text-black font-semibold rounded-xl py-3 mt-4 hover:bg-gray-200 transition text-[15px]">Simpan</button>
+									</div>
+								</div>
+							</div>
 
-        <!-- Post Detail Modal -->
-        <div id="detail-modal" class="hidden fixed inset-0 z-40 flex items-start sm:items-center justify-center p-0 sm:p-4 modal-overlay">
-            <div class="bg-[#000000] sm:bg-[#101010] sm:border border-rz_border rounded-none sm:rounded-2xl w-full h-full sm:h-[90vh] max-w-2xl overflow-hidden shadow-2xl relative flex flex-col">
-                <div class="flex items-center px-4 h-[64px] border-b border-rz_border sticky top-0 bg-[#000000]/90 sm:bg-[#101010]/90 backdrop-blur z-10 justify-between sm:hidden">
-                    <button onclick="app.closeModal('detail-modal')" class="text-white w-[32px] flex justify-start hover:opacity-70 transition"><i class="ph ph-arrow-left text-2xl"></i></button>
-                    <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/threads-white-icon.png" class="w-[32px] h-[32px]" alt="Logo">
-                    <div class="w-[32px]"></div> <!-- Spacer for centering -->
-                </div>
-                <!-- Desktop Header Detail Modal -->
-                <div class="hidden sm:flex items-center px-4 h-[64px] border-b border-rz_border sticky top-0 bg-[#101010]/90 backdrop-blur z-10 justify-between">
-                    <button onclick="app.closeModal('detail-modal')" class="text-white w-[32px] flex justify-start hover:opacity-70 transition"><i class="ph ph-arrow-left text-2xl"></i></button>
-                    <h2 class="font-bold flex-1 text-center text-[16px]">Utas</h2>
-                    <div class="w-[32px]"></div>
-                </div>
+							<!-- Post Detail Modal -->
+							<div id="detail-modal"
+								class="hidden fixed inset-0 z-40 flex items-start sm:items-center justify-center p-0 sm:p-4 modal-overlay">
+								<div
+									class="bg-[#000000] sm:bg-[#101010] sm:border border-rz_border rounded-none sm:rounded-2xl w-full h-full sm:h-[90vh] max-w-2xl overflow-hidden shadow-2xl relative flex flex-col">
+									<div
+										class="flex items-center px-4 h-[64px] border-b border-rz_border sticky top-0 bg-[#000000]/90 sm:bg-[#101010]/90 backdrop-blur z-10 justify-between sm:hidden">
+										<button onclick="app.closeModal('detail-modal')" class="text-white w-[32px] flex justify-start hover:opacity-70 transition"><i class="ph ph-arrow-left text-2xl"></i></button>
+										<img src="https://res.cloudinary.com/dlkbwg9dz/image/upload/v1777641890/nimbrung_mchrik.png" class="w-[32px] h-[32px]" alt="Logo">
+										<div class="w-[32px]"></div> <!-- Spacer for centering -->
+									</div>
+									<!-- Desktop Header Detail Modal -->
+									<div
+										class="hidden sm:flex items-center px-4 h-[64px] border-b border-rz_border sticky top-0 bg-[#101010]/90 backdrop-blur z-10 justify-between">
+										<button onclick="app.closeModal('detail-modal')" class="text-white w-[32px] flex justify-start hover:opacity-70 transition"><i class="ph ph-arrow-left text-2xl"></i></button>
+										<h2 class="font-bold flex-1 text-center text-[16px]">Utas</h2>
+										<div class="w-[32px]"></div>
+									</div>
 
-                <div class="flex-1 overflow-y-auto no-scrollbar pb-24" id="detail-content">
-                    <!-- Post and Comments injected here -->
-                </div>
-                <!-- Comment Input Area -->
-                <div class="absolute bottom-0 left-0 right-0 p-4 bg-[#000000] sm:bg-[#101010] border-t border-rz_border flex gap-3 items-center" id="comment-input-area">
-                    <!-- Dinamis Diubah via JS -->
-                </div>
-            </div>
-        </div>
+									<div class="flex-1 overflow-y-auto no-scrollbar pb-24" id="detail-content">
+										<!-- Post and Comments injected here -->
+									</div>
+									<!-- Comment Input Area -->
+									<div class="absolute bottom-0 left-0 right-0 p-4 bg-[#000000] sm:bg-[#101010] border-t border-rz_border flex gap-3 items-center"
+										id="comment-input-area">
+										<!-- Dinamis Diubah via JS -->
+									</div>
+								</div>
+							</div>
 
-        <!-- Follow/Following Modal -->
-        <div id="follow-modal" class="hidden fixed inset-0 z-50 flex flex-col justify-end sm:justify-center sm:items-center p-0 sm:p-4 modal-overlay" onclick="if(event.target === this) app.closeModal('follow-modal')">
-            <div class="bg-[#101010] border-t sm:border border-rz_border rounded-t-[24px] sm:rounded-2xl w-full h-auto max-h-[80vh] sm:max-h-[80vh] max-w-md overflow-hidden shadow-2xl relative flex flex-col animate-slide-up sm:animate-none">
-                
-                <!-- Handle Bar for Mobile -->
-                <div class="w-full flex justify-center pt-3 pb-1 sm:hidden cursor-pointer" onclick="app.closeModal('follow-modal')">
-                    <div class="w-12 h-1.5 bg-[#333638] rounded-full"></div>
-                </div>
+							<!-- Follow/Following Modal -->
+							<div id="follow-modal"
+								class="hidden fixed inset-0 z-50 flex flex-col justify-end sm:justify-center sm:items-center p-0 sm:p-4 modal-overlay"
+								onclick="if(event.target === this) app.closeModal('follow-modal')">
+								<div
+									class="bg-[#101010] border-t sm:border border-rz_border rounded-t-[24px] sm:rounded-2xl w-full h-auto max-h-[80vh] sm:max-h-[80vh] max-w-md overflow-hidden shadow-2xl relative flex flex-col animate-slide-up sm:animate-none">
 
-                <div class="flex justify-between items-center px-4 py-3 border-b border-rz_border sticky top-0 bg-[#101010]/90 backdrop-blur z-10 rounded-t-[24px] sm:rounded-t-2xl">
-                    <h2 class="font-bold text-[16px] text-center w-full" id="follow-modal-title">Pengikut</h2>
-                    <button onclick="app.closeModal('follow-modal')" class="absolute right-4 text-rz_text_secondary hover:text-white hidden sm:block transition"><i class="ph ph-x text-xl"></i></button>
-                </div>
-                <div class="flex-1 overflow-y-auto no-scrollbar pb-4" id="follow-modal-content">
-                    <!-- User list goes here -->
-                </div>
-            </div>
-        </div>
+									<!-- Handle Bar for Mobile -->
+									<div class="w-full flex justify-center pt-3 pb-1 sm:hidden cursor-pointer"
+										onclick="app.closeModal('follow-modal')">
+										<div class="w-12 h-1.5 bg-[#333638] rounded-full"></div>
+									</div>
 
-        <!-- Settings Menu Modal (Burger) -->
-        <div id="settings-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay" onclick="if(event.target === this) app.closeModal('settings-modal')">
-            <div class="bg-[#181818] border border-rz_border rounded-[18px] w-full max-w-[300px] overflow-hidden shadow-2xl relative flex flex-col">
-                <div class="flex flex-col text-[15px] font-semibold">
-                    <button class="text-left px-5 py-4 hover:bg-[#262626] transition flex justify-between items-center text-white">Tampilan <i class="ph ph-caret-right text-rz_text_secondary"></i></button>
-                    <button class="text-left px-5 py-4 hover:bg-[#262626] transition flex justify-between items-center text-white border-b border-rz_border" onclick="app.closeModal('settings-modal'); app.openConfigModal()">Pengaturan <i class="ph ph-caret-right text-rz_text_secondary"></i></button>
-                    
-                    <button class="text-left px-5 py-4 hover:bg-[#262626] transition text-white" onclick="app.closeModal('settings-modal'); app.navigate('activity', 'likes')">Disukai</button>
-                    <button class="text-left px-5 py-4 hover:bg-[#262626] transition text-white" onclick="app.closeModal('settings-modal'); app.navigate('activity', 'reposts')">Repost</button>
-                    <button class="text-left px-5 py-4 hover:bg-[#262626] transition text-white border-b border-rz_border" onclick="app.closeModal('settings-modal'); app.navigate('activity', 'saved')">Tersimpan</button>
-                    
-                    <button class="text-left px-5 py-4 hover:bg-[#262626] transition text-white">Laporkan masalah</button>
-                    <button class="text-left px-5 py-4 text-rz_red hover:bg-[#262626] transition" onclick="app.logout(); app.closeModal('settings-modal')">Keluar</button>
-                </div>
-            </div>
-        </div>
+									<div
+										class="flex justify-between items-center px-4 py-3 border-b border-rz_border sticky top-0 bg-[#101010]/90 backdrop-blur z-10 rounded-t-[24px] sm:rounded-t-2xl">
+										<h2 class="font-bold text-[16px] text-center w-full" id="follow-modal-title">
+											Pengikut</h2>
+										<button onclick="app.closeModal('follow-modal')" class="absolute right-4 text-rz_text_secondary hover:text-white hidden sm:block transition"><i class="ph ph-x text-xl"></i></button>
+									</div>
+									<div class="flex-1 overflow-y-auto no-scrollbar pb-4" id="follow-modal-content">
+										<!-- User list goes here -->
+									</div>
+								</div>
+							</div>
 
-        <!-- Config Modal (Pengaturan Dalam) -->
-        <div id="config-modal" class="hidden fixed inset-0 z-50 flex flex-col justify-end sm:justify-center sm:items-center p-0 sm:p-4 modal-overlay" onclick="if(event.target === this) app.closeModal('config-modal')">
-            <div class="bg-[#101010] border-t sm:border border-rz_border rounded-t-[24px] sm:rounded-2xl w-full h-auto max-h-[80vh] sm:max-h-[80vh] max-w-md overflow-hidden shadow-2xl relative flex flex-col animate-slide-up sm:animate-none">
-                <div class="w-full flex justify-center pt-3 pb-1 sm:hidden cursor-pointer" onclick="app.closeModal('config-modal')">
-                    <div class="w-12 h-1.5 bg-[#333638] rounded-full"></div>
-                </div>
-                <div class="flex justify-between items-center px-4 py-3 border-b border-rz_border sticky top-0 bg-[#101010]/90 backdrop-blur z-10 rounded-t-[24px] sm:rounded-t-2xl">
-                    <button onclick="app.closeModal('config-modal'); app.openSettingsModal()" class="text-white hover:opacity-70 transition w-[32px] flex justify-start"><i class="ph ph-arrow-left text-xl"></i></button>
-                    <h2 class="font-bold text-[16px] text-center flex-1">Pengaturan</h2>
-                    <div class="w-[32px]"></div>
-                </div>
-                <div class="flex flex-col text-[15px] font-semibold pb-4">
-                    <button class="text-left px-5 py-4 hover:bg-[#1a1a1a] transition text-white border-b border-rz_border flex justify-between items-center" onclick="app.openInfoModal('privacy')">Kebijakan Privasi <i class="ph ph-caret-right text-rz_text_secondary"></i></button>
-                    <button class="text-left px-5 py-4 hover:bg-[#1a1a1a] transition text-white border-b border-rz_border flex justify-between items-center" onclick="app.openInfoModal('terms')">Ketentuan Pengguna <i class="ph ph-caret-right text-rz_text_secondary"></i></button>
-                </div>
-            </div>
-        </div>
+							<!-- Settings Menu Modal (Burger) -->
+							<div id="settings-modal"
+								class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay"
+								onclick="if(event.target === this) app.closeModal('settings-modal')">
+								<div
+									class="bg-[#181818] border border-rz_border rounded-[18px] w-full max-w-[300px] overflow-hidden shadow-2xl relative flex flex-col">
+									<div class="flex flex-col text-[15px] font-semibold">
+										<button class="text-left px-5 py-4 hover:bg-[#262626] transition flex justify-between items-center text-white">Tampilan <i class="ph ph-caret-right text-rz_text_secondary"></i></button>
+										<button class="text-left px-5 py-4 hover:bg-[#262626] transition flex justify-between items-center text-white border-b border-rz_border" onclick="app.closeModal('settings-modal'); app.openConfigModal()">Pengaturan <i class="ph ph-caret-right text-rz_text_secondary"></i></button>
 
-        <!-- Info Content Modal (Privasi / Ketentuan) -->
-        <div id="info-modal" class="hidden fixed inset-0 z-[60] flex flex-col justify-end sm:justify-center sm:items-center p-0 sm:p-4 modal-overlay" onclick="if(event.target === this) app.closeModal('info-modal')">
-            <div class="bg-[#101010] border-t sm:border border-rz_border rounded-t-[24px] sm:rounded-2xl w-full h-[85vh] sm:max-h-[85vh] max-w-2xl overflow-hidden shadow-2xl relative flex flex-col animate-slide-up sm:animate-none">
-                <div class="w-full flex justify-center pt-3 pb-1 sm:hidden cursor-pointer" onclick="app.closeModal('info-modal')">
-                    <div class="w-12 h-1.5 bg-[#333638] rounded-full"></div>
-                </div>
-                <div class="flex justify-between items-center px-4 py-3 border-b border-rz_border sticky top-0 bg-[#101010]/90 backdrop-blur z-10 rounded-t-[24px] sm:rounded-t-2xl">
-                    <button onclick="app.closeModal('info-modal'); app.openConfigModal()" class="text-white hover:opacity-70 transition w-[32px] flex justify-start"><i class="ph ph-arrow-left text-xl"></i></button>
-                    <h2 class="font-bold text-[16px] text-center flex-1" id="info-modal-title">Info</h2>
-                    <div class="w-[32px]"></div>
-                </div>
-                <div class="flex-1 overflow-y-auto no-scrollbar p-6" id="info-modal-content">
-                    <!-- Dinamis Diubah via JS -->
-                </div>
-            </div>
-        </div>
+										<button class="text-left px-5 py-4 hover:bg-[#262626] transition text-white" onclick="app.closeModal('settings-modal'); app.navigate('activity', 'likes')">Disukai</button>
+										<button class="text-left px-5 py-4 hover:bg-[#262626] transition text-white" onclick="app.closeModal('settings-modal'); app.navigate('activity', 'reposts')">Repost</button>
+										<button class="text-left px-5 py-4 hover:bg-[#262626] transition text-white border-b border-rz_border" onclick="app.closeModal('settings-modal'); app.navigate('activity', 'saved')">Tersimpan</button>
 
-    </div>
+										<button class="text-left px-5 py-4 hover:bg-[#262626] transition text-white">Laporkan masalah</button>
+										<button class="text-left px-5 py-4 text-rz_red hover:bg-[#262626] transition" onclick="app.logout(); app.closeModal('settings-modal')">Keluar</button>
+									</div>
+								</div>
+							</div>
 
-    <!-- Toast Container -->
-    <div id="toast-container" class="fixed bottom-24 sm:bottom-10 left-1/2 transform -translate-x-1/2 z-[100] flex flex-col gap-2 pointer-events-none w-full max-w-sm px-4"></div>
+							<!-- Config Modal (Pengaturan Dalam) -->
+							<div id="config-modal"
+								class="hidden fixed inset-0 z-50 flex flex-col justify-end sm:justify-center sm:items-center p-0 sm:p-4 modal-overlay"
+								onclick="if(event.target === this) app.closeModal('config-modal')">
+								<div
+									class="bg-[#101010] border-t sm:border border-rz_border rounded-t-[24px] sm:rounded-2xl w-full h-auto max-h-[80vh] sm:max-h-[80vh] max-w-md overflow-hidden shadow-2xl relative flex flex-col animate-slide-up sm:animate-none">
+									<div class="w-full flex justify-center pt-3 pb-1 sm:hidden cursor-pointer"
+										onclick="app.closeModal('config-modal')">
+										<div class="w-12 h-1.5 bg-[#333638] rounded-full"></div>
+									</div>
+									<div
+										class="flex justify-between items-center px-4 py-3 border-b border-rz_border sticky top-0 bg-[#101010]/90 backdrop-blur z-10 rounded-t-[24px] sm:rounded-t-2xl">
+										<button onclick="app.closeModal('config-modal'); app.openSettingsModal()" class="text-white hover:opacity-70 transition w-[32px] flex justify-start"><i class="ph ph-arrow-left text-xl"></i></button>
+										<h2 class="font-bold text-[16px] text-center flex-1">Pengaturan</h2>
+										<div class="w-[32px]"></div>
+									</div>
+									<div class="flex flex-col text-[15px] font-semibold pb-4">
+										<button class="text-left px-5 py-4 hover:bg-[#1a1a1a] transition text-white border-b border-rz_border flex justify-between items-center" onclick="app.openInfoModal('privacy')">Kebijakan Privasi <i class="ph ph-caret-right text-rz_text_secondary"></i></button>
+										<button class="text-left px-5 py-4 hover:bg-[#1a1a1a] transition text-white border-b border-rz_border flex justify-between items-center" onclick="app.openInfoModal('terms')">Ketentuan Pengguna <i class="ph ph-caret-right text-rz_text_secondary"></i></button>
+									</div>
+								</div>
+							</div>
 
-    <!-- MAIN SCRIPT -->
-    <script>
-        const API_URL = "https://apigenz.rizkifundie.workers.dev";
+							<!-- Info Content Modal (Privasi / Ketentuan) -->
+							<div id="info-modal"
+								class="hidden fixed inset-0 z-[60] flex flex-col justify-end sm:justify-center sm:items-center p-0 sm:p-4 modal-overlay"
+								onclick="if(event.target === this) app.closeModal('info-modal')">
+								<div
+									class="bg-[#101010] border-t sm:border border-rz_border rounded-t-[24px] sm:rounded-2xl w-full h-[85vh] sm:max-h-[85vh] max-w-2xl overflow-hidden shadow-2xl relative flex flex-col animate-slide-up sm:animate-none">
+									<div class="w-full flex justify-center pt-3 pb-1 sm:hidden cursor-pointer"
+										onclick="app.closeModal('info-modal')">
+										<div class="w-12 h-1.5 bg-[#333638] rounded-full"></div>
+									</div>
+									<div
+										class="flex justify-between items-center px-4 py-3 border-b border-rz_border sticky top-0 bg-[#101010]/90 backdrop-blur z-10 rounded-t-[24px] sm:rounded-t-2xl">
+										<button onclick="app.closeModal('info-modal'); app.openConfigModal()" class="text-white hover:opacity-70 transition w-[32px] flex justify-start"><i class="ph ph-arrow-left text-xl"></i></button>
+										<h2 class="font-bold text-[16px] text-center flex-1" id="info-modal-title">Info
+										</h2>
+										<div class="w-[32px]"></div>
+									</div>
+									<div class="flex-1 overflow-y-auto no-scrollbar p-6" id="info-modal-content">
+										<!-- Dinamis Diubah via JS -->
+									</div>
+								</div>
+							</div>
+
+						</div>
+
+						<!-- Toast Container -->
+						<div id="toast-container"
+							class="fixed bottom-24 sm:bottom-10 left-1/2 transform -translate-x-1/2 z-[100] flex flex-col gap-2 pointer-events-none w-full max-w-sm px-4">
+						</div>
+
+						<!-- MAIN SCRIPT -->
+						<script>
+							const API_URL = "https://apigenz.rizkifundie.workers.dev";
         
         // --- STATE MANAGEMENT ---
         const app = {
@@ -946,7 +1039,7 @@
                 case 'home':
                     headerHTML = `
                         <header class="sticky top-0 z-30 bg-[#000000]/80 backdrop-blur-xl h-[64px] flex justify-center items-center cursor-pointer sm:hidden" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
-                            <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/threads-white-icon.png" class="w-[32px] h-[32px]" alt="Logo">
+                            <img src="https://res.cloudinary.com/dlkbwg9dz/image/upload/v1777641890/nimbrung_mchrik.png" class="h-[30px] w-auto max-w-[160px] object-contain" alt="Logo">
                         </header>
                     `;
                     app.currentHeaderHTML = headerHTML;
@@ -955,7 +1048,7 @@
                 case 'search':
                     headerHTML = `
                         <header class="sticky top-0 z-30 bg-[#000000]/80 backdrop-blur-xl h-[64px] flex justify-center items-center sm:hidden">
-                            <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/threads-white-icon.png" class="w-[32px] h-[32px]" alt="Logo">
+                            <img src="https://res.cloudinary.com/dlkbwg9dz/image/upload/v1777641890/nimbrung_mchrik.png" class="h-[30px] w-auto max-w-[160px] object-contain" alt="Logo">
                         </header>
                         <div class="p-4 sm:pt-8">
                             <h1 class="font-bold text-3xl mb-4 hidden sm:block">Cari</h1>
@@ -973,7 +1066,7 @@
                     headerHTML = `
                         <header class="sticky top-0 z-30 bg-[#000000]/80 backdrop-blur-xl h-[64px] flex justify-between items-center px-4 border-b border-rz_border sm:hidden">
                             <div class="w-[32px]"></div> <!-- Spacer -->
-                            <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/threads-white-icon.png" class="w-[32px] h-[32px]" alt="Logo">
+							<img src="https://res.cloudinary.com/dlkbwg9dz/image/upload/v1777641890/nimbrung_mchrik.png" class="h-[30px] w-auto max-w-[160px] object-contain" alt="Logo">
                             ${subView === 'all' ? `<button onclick="app.markAllNotificationsRead()" class="w-[32px] flex justify-end text-blue-500 hover:opacity-70 transition"><i class="ph-fill ph-check-circle text-2xl"></i></button>` : `<div class="w-[32px]"></div>`}
                         </header>
                         
@@ -1093,7 +1186,7 @@
             document.getElementById('form-register').classList.toggle('hidden', isLogin);
             
             document.getElementById('auth-title').textContent = isLogin ? 'Masuk' : 'Daftar';
-            document.getElementById('auth-subtitle').textContent = isLogin ? 'Selamat datang kembali di Ruang Gen Z.' : 'Bergabunglah untuk memulai obrolan hari ini.';
+            document.getElementById('auth-subtitle').textContent = isLogin ? 'Selamat datang kembali di Nimbrung.' : 'Bergabunglah untuk memulai obrolan hari ini.';
             
             const toggleHtml = isLogin 
                 ? `Belum punya akun? <button type="button" onclick="app.switchAuthTab('register')" class="text-white font-semibold hover:underline">Daftar</button>`
@@ -1911,7 +2004,7 @@
                         <button onclick="app.navigate('home')" class="w-[32px] flex justify-start text-white hover:opacity-70 transition">
                             <i class="ph ph-arrow-left text-2xl"></i>
                         </button>
-                        <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/threads-white-icon.png" class="w-[32px] h-[32px] cursor-pointer" alt="Logo" onclick="app.navigate('home')">
+                        <img src="https://res.cloudinary.com/dlkbwg9dz/image/upload/v1777641890/nimbrung_mchrik.png" class="h-[30px] w-auto max-w-[160px] object-contain cursor-pointer" alt="Logo" onclick="app.navigate('home')">
                         <div class="w-[32px]"></div>
                     </header>
                     <div class="hidden sm:block h-8 w-full"></div>
@@ -1942,7 +2035,7 @@
                             <i class="ph ph-arrow-left text-2xl"></i>
                         </button>` : `<div class="w-[32px]"></div>`}
                         
-                        <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/threads-white-icon.png" class="w-[32px] h-[32px] cursor-pointer" alt="Logo" onclick="app.navigate('home')">
+                        <img src="https://res.cloudinary.com/dlkbwg9dz/image/upload/v1777641890/nimbrung_mchrik.png" class="h-[30px] w-auto max-w-[160px] object-contain cursor-pointer" alt="Logo" onclick="app.navigate('home')">
                         
                         <div class="flex flex-col gap-[5px] cursor-pointer p-1 hover:opacity-70 transition w-[32px] items-end" onclick="app.openSettingsModal()">
                             <div class="w-6 h-[2px] bg-white rounded-full"></div>
@@ -2579,6 +2672,7 @@
         // --- STARTUP ---
         document.addEventListener('DOMContentLoaded', app.init);
 
-    </script>
+						</script>
 </body>
+
 </html>
