@@ -163,33 +163,82 @@
 
 	<!-- Modals Container -->
 	<div id="modals">
-		<!-- Auth Modal -->
-		<div id="auth-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay">
-			<div
-				class="bg-[#101010] border border-rz_border rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl relative">
-				<button onclick="app.closeModal('auth-modal')" class="absolute top-4 right-4 text-rz_text_secondary hover:text-white">
-                    <i class="ph ph-x text-2xl"></i>
-                </button>
-				<div class="flex text-center mt-2 px-4">
-					<button id="tab-login" class="flex-1 py-4 font-semibold text-[15px] tab-active" onclick="app.switchAuthTab('login')">Login</button>
-					<button id="tab-register" class="flex-1 py-4 font-semibold text-[15px] tab-inactive" onclick="app.switchAuthTab('register')">Register</button>
-				</div>
+		<!-- New Auth Overlay (Fullscreen Mobile & Split Desktop) -->
+		<div id="auth-modal" class="hidden fixed inset-0 z-[100] bg-rz_black flex overflow-hidden">
 
-				<div class="p-6">
+			<!-- Left Side: Form Area -->
+			<div class="w-full lg:w-[500px] xl:w-[600px] shrink-0 flex flex-col relative h-[100dvh] overflow-y-auto">
+				<!-- Close Button -->
+				<button onclick="app.closeModal('auth-modal')" class="absolute top-6 right-6 p-2 rounded-full bg-[#1a1a1a] text-rz_text_secondary hover:text-white hover:bg-[#262626] transition z-10">
+                    <i class="ph ph-x text-xl"></i>
+                </button>
+
+				<!-- Form Content Container -->
+				<div class="flex-1 flex flex-col justify-center px-8 sm:px-16 py-12 max-w-[500px] mx-auto w-full">
+
+					<img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/threads-white-icon.png" class="w-12 h-12 mb-8" alt="Logo">
+
+					<h2 id="auth-title" class="text-3xl font-bold mb-2">Masuk</h2>
+					<p id="auth-subtitle" class="text-rz_text_secondary mb-10 text-[15px]">Selamat datang kembali di
+						Ruang Gen Z.</p>
+
 					<!-- Login Form -->
-					<form id="form-login" onsubmit="app.handleLogin(event)" class="flex flex-col gap-3">
-						<input type="email" id="login-email" placeholder="Email" required class="w-full bg-[#1a1a1a] border border-transparent rounded-xl px-4 py-3.5 text-[15px] text-white focus:outline-none focus:border-rz_border transition">
-						<input type="password" id="login-password" placeholder="Password" required class="w-full bg-[#1a1a1a] border border-transparent rounded-xl px-4 py-3.5 text-[15px] text-white focus:outline-none focus:border-rz_border transition">
-						<button type="submit" class="w-full bg-white text-black font-semibold rounded-xl py-3.5 mt-4 hover:bg-gray-200 transition text-[15px]" id="btn-login">Log in</button>
+					<form id="form-login" onsubmit="app.handleLogin(event)" class="flex flex-col gap-4 w-full">
+						<div>
+							<input type="email" id="login-email" placeholder="Email" required class="w-full bg-[#101010] border border-rz_border rounded-[14px] px-5 py-4 text-[15px] text-white focus:outline-none focus:border-gray-500 transition">
+                        </div>
+							<div class="relative w-full">
+								<input type="password" id="login-password" placeholder="Password" required class="w-full bg-[#101010] border border-rz_border rounded-[14px] px-5 py-4 pr-12 text-[15px] text-white focus:outline-none focus:border-gray-500 transition">
+								<button type="button" onclick="app.togglePassword('login-password', 'login-eye')" class="absolute right-4 top-1/2 -translate-y-1/2 text-rz_text_secondary hover:text-white p-1">
+                                <i id="login-eye" class="ph ph-eye text-xl"></i>
+                            </button>
+							</div>
+							<button type="submit" class="w-full bg-white text-black font-bold rounded-[14px] py-4 mt-4 hover:bg-gray-200 transition text-[15px] shadow-lg shadow-white/10" id="btn-login">Masuk</button>
 					</form>
 
 					<!-- Register Form -->
-					<form id="form-register" onsubmit="app.handleRegister(event)" class="hidden flex flex-col gap-3">
-						<input type="text" id="reg-username" placeholder="Username" required minlength="3" class="w-full bg-[#1a1a1a] border border-transparent rounded-xl px-4 py-3.5 text-[15px] text-white focus:outline-none focus:border-rz_border transition">
-						<input type="email" id="reg-email" placeholder="Email" required class="w-full bg-[#1a1a1a] border border-transparent rounded-xl px-4 py-3.5 text-[15px] text-white focus:outline-none focus:border-rz_border transition">
-						<input type="password" id="reg-password" placeholder="Password" required minlength="6" class="w-full bg-[#1a1a1a] border border-transparent rounded-xl px-4 py-3.5 text-[15px] text-white focus:outline-none focus:border-rz_border transition">
-						<button type="submit" class="w-full bg-white text-black font-semibold rounded-xl py-3.5 mt-4 hover:bg-gray-200 transition text-[15px]" id="btn-register">Sign up</button>
+					<form id="form-register" onsubmit="app.handleRegister(event)"
+						class="hidden flex flex-col gap-4 w-full">
+						<div>
+							<input type="text" id="reg-username" placeholder="Username (tanpa @)" required minlength="3" class="w-full bg-[#101010] border border-rz_border rounded-[14px] px-5 py-4 text-[15px] text-white focus:outline-none focus:border-gray-500 transition">
+                        </div>
+							<div>
+								<input type="email" id="reg-email" placeholder="Email" required class="w-full bg-[#101010] border border-rz_border rounded-[14px] px-5 py-4 text-[15px] text-white focus:outline-none focus:border-gray-500 transition">
+                        </div>
+								<div class="relative w-full">
+									<input type="password" id="reg-password" placeholder="Password (min 6 karakter)" required minlength="6" class="w-full bg-[#101010] border border-rz_border rounded-[14px] px-5 py-4 pr-12 text-[15px] text-white focus:outline-none focus:border-gray-500 transition">
+									<button type="button" onclick="app.togglePassword('reg-password', 'reg-eye')" class="absolute right-4 top-1/2 -translate-y-1/2 text-rz_text_secondary hover:text-white p-1">
+                                <i id="reg-eye" class="ph ph-eye text-xl"></i>
+                            </button>
+								</div>
+								<button type="submit" class="w-full bg-white text-black font-bold rounded-[14px] py-4 mt-4 hover:bg-gray-200 transition text-[15px] shadow-lg shadow-white/10" id="btn-register">Daftar</button>
 					</form>
+
+					<!-- Toggle Text -->
+					<p id="auth-toggle-text" class="mt-8 text-center text-rz_text_secondary text-[15px]">
+						Belum punya akun?
+						<button type="button" onclick="app.switchAuthTab('register')" class="text-white font-semibold hover:underline">Daftar</button>
+					</p>
+				</div>
+			</div>
+
+			<!-- Right Side: Aesthetic Banner (Hidden on Mobile) -->
+			<div
+				class="hidden lg:flex flex-1 relative bg-[#0a0a0a] items-center justify-center overflow-hidden border-l border-rz_border">
+				<!-- Cool abstract dark background image -->
+				<img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover opacity-40 mix-blend-screen" alt="Abstract Background">
+
+				<!-- Gradient overlays for fading effect -->
+				<div class="absolute inset-0 bg-gradient-to-r from-rz_black via-transparent to-transparent opacity-80">
+				</div>
+				<div class="absolute inset-0 bg-gradient-to-t from-rz_black via-transparent to-transparent opacity-50">
+				</div>
+
+				<!-- Overlay content -->
+				<div class="relative z-10 p-12 text-center">
+					<img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/threads-white-icon.png" class="w-24 h-24 mx-auto mb-8 opacity-20" alt="Watermark Logo">
+					<h1 class="text-4xl font-bold text-white/90 mb-4 tracking-tight">Ruang Gen Z</h1>
+					<p class="text-xl text-gray-400 font-medium">Tempatnya ngobrol, berbagi, dan terhubung.</p>
 				</div>
 			</div>
 		</div>
@@ -381,7 +430,12 @@
 										<button class="text-left px-5 py-4 hover:bg-[#262626] transition flex justify-between items-center text-white">Tampilan <i class="ph ph-caret-right text-rz_text_secondary"></i></button>
 										<button class="text-left px-5 py-4 hover:bg-[#262626] transition text-white border-b border-rz_border">Pengaturan</button>
 
-										<button class="text-left px-5 py-4 hover:bg-[#262626] transition text-white text-center text-rz_red" onclick="app.logout(); app.closeModal('settings-modal')">Log out</button>
+										<button class="text-left px-5 py-4 hover:bg-[#262626] transition text-white" onclick="app.closeModal('settings-modal'); app.navigate('activity', 'likes')">Disukai</button>
+										<button class="text-left px-5 py-4 hover:bg-[#262626] transition text-white" onclick="app.closeModal('settings-modal'); app.navigate('activity', 'reposts')">Reposts</button>
+										<button class="text-left px-5 py-4 hover:bg-[#262626] transition text-white border-b border-rz_border" onclick="app.closeModal('settings-modal'); app.navigate('activity', 'saved')">Tersimpan</button>
+
+										<button class="text-left px-5 py-4 hover:bg-[#262626] transition text-white">Laporkan masalah</button>
+										<button class="text-left px-5 py-4 text-rz_red hover:bg-[#262626] transition" onclick="app.logout(); app.closeModal('settings-modal')">Logout</button>
 									</div>
 								</div>
 							</div>
@@ -432,10 +486,10 @@
                 if (diffSec < 60) return 'Baru saja';
                 if (diffSec < 3600) return `${Math.floor(diffSec/60)}m`;
                 if (diffSec < 86400) return `${Math.floor(diffSec/3600)}j`;
-                if (diffSec < 604800) return `${Math.floor(diffSec/86400)}h`;
+                if (diffSec < 604800) return `${Math.floor(diffSec/86400)}d`;
+                if (diffSec < 31536000) return `${Math.floor(diffSec/604800)}w`;
                 
-                const options = { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Jakarta' };
-                return date.toLocaleDateString('id-ID', options).replace(' pukul ', ', ').replace(':', '.');
+                return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
             },
             
             escapeHTML: (str) => {
@@ -736,8 +790,28 @@
             document.getElementById('form-login').classList.toggle('hidden', !isLogin);
             document.getElementById('form-register').classList.toggle('hidden', isLogin);
             
-            document.getElementById('tab-login').className = `flex-1 py-4 font-semibold text-[15px] ${isLogin ? 'tab-active' : 'tab-inactive'}`;
-            document.getElementById('tab-register').className = `flex-1 py-4 font-semibold text-[15px] ${!isLogin ? 'tab-active' : 'tab-inactive'}`;
+            document.getElementById('auth-title').textContent = isLogin ? 'Masuk' : 'Daftar';
+            document.getElementById('auth-subtitle').textContent = isLogin ? 'Selamat datang kembali di Ruang Gen Z.' : 'Bergabunglah untuk memulai obrolan hari ini.';
+            
+            const toggleHtml = isLogin 
+                ? `Belum punya akun? <button type="button" onclick="app.switchAuthTab('register')" class="text-white font-semibold hover:underline">Daftar</button>`
+                : `Sudah punya akun? <button type="button" onclick="app.switchAuthTab('login')" class="text-white font-semibold hover:underline">Masuk</button>`;
+            
+            document.getElementById('auth-toggle-text').innerHTML = toggleHtml;
+        };
+
+        app.togglePassword = (inputId, iconId) => {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('ph-eye');
+                icon.classList.add('ph-eye-slash', 'text-white');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('ph-eye-slash', 'text-white');
+                icon.classList.add('ph-eye');
+            }
         };
 
         app.handleLogin = async (e) => {
@@ -760,7 +834,7 @@
             } catch (err) {
                 util.showToast(err.message, 'error');
             } finally {
-                util.setLoading('btn-login', false, 'Log in');
+                util.setLoading('btn-login', false, 'Masuk');
             }
         };
 
@@ -785,7 +859,7 @@
             } catch (err) {
                 util.showToast(err.message, 'error');
             } finally {
-                util.setLoading('btn-register', false, 'Sign up');
+                util.setLoading('btn-register', false, 'Daftar');
             }
         };
 
@@ -1365,7 +1439,7 @@
             }
 
             try {
-                const method = app.currentView === 'likes' ? 'DELETE' : 'POST';
+                const method = app.currentView === 'activity' && app.currentParams === 'likes' ? 'DELETE' : 'POST';
                 const endpoint = `/api/posts/${id}/like`;
 
                 const res = await api(endpoint, { method });
@@ -1375,7 +1449,7 @@
                     icon.className = 'ph-fill ph-heart text-rz_red text-[22px] like-icon';
                 } else {
                     icon.className = 'ph ph-heart text-white hover:text-rz_text_secondary text-[22px] like-icon';
-                    if (app.currentView === 'likes' || app.currentParams === 'likes') {
+                    if (app.currentView === 'activity' && app.currentParams === 'likes') {
                         if(postEl) postEl.style.display = 'none';
                     }
                 }
@@ -1431,7 +1505,7 @@
                 } else {
                     icon.className = 'ph ph-arrows-clockwise text-white hover:text-rz_text_secondary text-[22px] repost-icon';
                     util.showToast('Repost dibatalkan');
-                    if (app.currentParams === 'reposts') {
+                    if (app.currentView === 'activity' && app.currentParams === 'reposts') {
                         if(postEl) postEl.style.display = 'none';
                     }
                 }
@@ -1478,7 +1552,7 @@
             }
 
             try {
-                const method = app.currentView === 'saved' || app.currentParams === 'saved' ? 'DELETE' : 'POST';
+                const method = app.currentView === 'activity' && app.currentParams === 'saved' ? 'DELETE' : 'POST';
                 const endpoint = `/api/posts/${id}/save`;
 
                 const res = await api(endpoint, { method });
@@ -1490,7 +1564,7 @@
                 } else {
                     icon.className = 'ph ph-bookmark text-white hover:text-rz_text_secondary text-[20px] save-icon';
                     util.showToast('Postingan dihapus dari simpanan');
-                    if (app.currentView === 'saved' || app.currentParams === 'saved') {
+                    if (app.currentView === 'activity' && app.currentParams === 'saved') {
                         if(postEl) postEl.style.display = 'none';
                     }
                 }
