@@ -1,22 +1,24 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ruang Gen Z</title>
-    
-    <!-- Fonts: Plus Jakarta Sans -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Icons: Phosphor Icons -->
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<title>Ruang Gen Z</title>
+
+	<!-- Fonts: Plus Jakarta Sans -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+		rel="stylesheet">
+
+	<!-- Icons: Phosphor Icons -->
+	<script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+	<!-- Tailwind CSS -->
+	<script src="https://cdn.tailwindcss.com"></script>
+	<script>
+		tailwind.config = {
             theme: {
                 extend: {
                     fontFamily: {
@@ -32,311 +34,368 @@
                 }
             }
         }
-    </script>
+	</script>
 
-    <style>
-        body {
-            background-color: #000000;
-            color: #f3f4f6;
-            -webkit-tap-highlight-color: transparent;
-        }
-        
-        ::-webkit-scrollbar {
-            width: 0px;
-            background: transparent;
-        }
-        
-        .thread-line {
-            width: 2px;
-            background-color: #333638;
-            flex-grow: 1;
-            margin-top: 8px;
-            margin-bottom: 4px;
-            border-radius: 999px;
-        }
+	<style>
+		body {
+			background-color: #000000;
+			color: #f3f4f6;
+			-webkit-tap-highlight-color: transparent;
+		}
 
-        .modal-overlay {
-            background-color: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(5px);
-        }
+		::-webkit-scrollbar {
+			width: 0px;
+			background: transparent;
+		}
 
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
+		.thread-line {
+			width: 2px;
+			background-color: #333638;
+			flex-grow: 1;
+			margin-top: 8px;
+			margin-bottom: 4px;
+			border-radius: 999px;
+		}
 
-        /* Action Icon Animations */
-        .action-icon {
-            transition: transform 0.1s ease-in-out, color 0.2s;
-        }
-        .action-icon:active {
-            transform: scale(0.8);
-        }
+		.modal-overlay {
+			background-color: rgba(0, 0, 0, 0.8);
+			backdrop-filter: blur(5px);
+		}
 
-        @keyframes slideUp {
-            from { transform: translateY(100%); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-        .toast-enter {
-            animation: slideUp 0.3s ease-out forwards;
-        }
+		.no-scrollbar {
+			-ms-overflow-style: none;
+			scrollbar-width: none;
+		}
 
-        /* Bottom Sheet Animation */
-        @keyframes slideUpSheet {
-            from { transform: translateY(100%); }
-            to { transform: translateY(0); }
-        }
-        .animate-slide-up {
-            animation: slideUpSheet 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-        
-        textarea {
-            resize: none;
-        }
+		/* Action Icon Animations */
+		.action-icon {
+			transition: transform 0.1s ease-in-out, color 0.2s;
+		}
 
-        /* Nav Tab Styling */
-        .tab-active {
-            color: white;
-            border-bottom: 1.5px solid white;
-        }
-        .tab-inactive {
-            color: #777777;
-            border-bottom: 1.5px solid #262626;
-        }
-    </style>
+		.action-icon:active {
+			transform: scale(0.8);
+		}
+
+		@keyframes slideUp {
+			from {
+				transform: translateY(100%);
+				opacity: 0;
+			}
+
+			to {
+				transform: translateY(0);
+				opacity: 1;
+			}
+		}
+
+		.toast-enter {
+			animation: slideUp 0.3s ease-out forwards;
+		}
+
+		/* Bottom Sheet Animation */
+		@keyframes slideUpSheet {
+			from {
+				transform: translateY(100%);
+			}
+
+			to {
+				transform: translateY(0);
+			}
+		}
+
+		.animate-slide-up {
+			animation: slideUpSheet 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+		}
+
+		textarea {
+			resize: none;
+		}
+
+		/* Nav Tab Styling */
+		.tab-active {
+			color: white;
+			border-bottom: 1.5px solid white;
+		}
+
+		.tab-inactive {
+			color: #777777;
+			border-bottom: 1.5px solid #262626;
+		}
+	</style>
 </head>
+
 <body class="antialiased overflow-y-scroll no-scrollbar selection:bg-gray-700 selection:text-white">
 
-    <!-- App Shell -->
-    <div class="flex justify-center min-h-screen">
-        
-        <!-- Left Sidebar (Desktop) -->
-        <nav class="hidden sm:flex flex-col w-[68px] lg:w-[260px] h-screen sticky top-0 py-6 px-2 lg:px-6 shrink-0 z-40">
-            <div class="flex items-center justify-center lg:justify-start mb-8 lg:px-2">
-                <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/threads-white-icon.png" class="w-9 h-9" alt="Logo">
+	<!-- App Shell -->
+	<div class="flex justify-center min-h-screen">
+
+		<!-- Left Sidebar (Desktop) -->
+		<nav
+			class="hidden sm:flex flex-col w-[68px] lg:w-[260px] h-screen sticky top-0 py-6 px-2 lg:px-6 shrink-0 z-40">
+			<div class="flex items-center justify-center lg:justify-start mb-8 lg:px-2">
+				<img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/threads-white-icon.png" class="w-9 h-9" alt="Logo">
             </div>
-            
-            <div class="flex flex-col gap-1 w-full" id="desktop-nav">
-                <!-- Nav items injected via JS based on auth state -->
-            </div>
-        </nav>
 
-        <!-- Main Content Area -->
-        <main class="w-full sm:w-[600px] min-h-screen border-x sm:border-rz_border border-transparent relative pb-20 sm:pb-0" id="main-content">
-            
-            <!-- Dynamic View Container -->
-            <div id="view-container" class="min-h-screen">
-                <!-- Content injected here -->
-            </div>
-        </main>
+				<div class="flex flex-col gap-1 w-full" id="desktop-nav">
+					<!-- Nav items injected via JS based on auth state -->
+				</div>
+		</nav>
 
-        <!-- Bottom Navigation (Mobile) -->
-        <nav class="sm:hidden fixed bottom-0 left-0 right-0 bg-[#000000]/90 backdrop-blur-xl z-40" id="mobile-nav">
-             <div class="flex justify-around items-center h-16 px-2" id="mobile-nav-items">
-                <!-- Mobile nav items injected via JS -->
-             </div>
-        </nav>
+		<!-- Main Content Area -->
+		<main
+			class="w-full sm:w-[600px] min-h-screen border-x sm:border-rz_border border-transparent relative pb-20 sm:pb-0"
+			id="main-content">
 
-    </div>
+			<!-- Dynamic View Container -->
+			<div id="view-container" class="min-h-screen">
+				<!-- Content injected here -->
+			</div>
+		</main>
 
-    <!-- Modals Container -->
-    <div id="modals">
-        <!-- Auth Modal -->
-        <div id="auth-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay">
-            <div class="bg-[#101010] border border-rz_border rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl relative">
-                <button onclick="app.closeModal('auth-modal')" class="absolute top-4 right-4 text-rz_text_secondary hover:text-white">
+		<!-- Bottom Navigation (Mobile) -->
+		<nav class="sm:hidden fixed bottom-0 left-0 right-0 bg-[#000000]/90 backdrop-blur-xl z-40" id="mobile-nav">
+			<div class="flex justify-around items-center h-16 px-2" id="mobile-nav-items">
+				<!-- Mobile nav items injected via JS -->
+			</div>
+		</nav>
+
+	</div>
+
+	<!-- Modals Container -->
+	<div id="modals">
+		<!-- Auth Modal -->
+		<div id="auth-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay">
+			<div
+				class="bg-[#101010] border border-rz_border rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl relative">
+				<button onclick="app.closeModal('auth-modal')" class="absolute top-4 right-4 text-rz_text_secondary hover:text-white">
                     <i class="ph ph-x text-2xl"></i>
                 </button>
-                <div class="flex text-center mt-2 px-4">
-                    <button id="tab-login" class="flex-1 py-4 font-semibold text-[15px] tab-active" onclick="app.switchAuthTab('login')">Login</button>
-                    <button id="tab-register" class="flex-1 py-4 font-semibold text-[15px] tab-inactive" onclick="app.switchAuthTab('register')">Register</button>
-                </div>
-                
-                <div class="p-6">
-                    <!-- Login Form -->
-                    <form id="form-login" onsubmit="app.handleLogin(event)" class="flex flex-col gap-3">
-                        <input type="email" id="login-email" placeholder="Email" required class="w-full bg-[#1a1a1a] border border-transparent rounded-xl px-4 py-3.5 text-[15px] text-white focus:outline-none focus:border-rz_border transition">
-                        <input type="password" id="login-password" placeholder="Password" required class="w-full bg-[#1a1a1a] border border-transparent rounded-xl px-4 py-3.5 text-[15px] text-white focus:outline-none focus:border-rz_border transition">
-                        <button type="submit" class="w-full bg-white text-black font-semibold rounded-xl py-3.5 mt-4 hover:bg-gray-200 transition text-[15px]" id="btn-login">Log in</button>
-                    </form>
+				<div class="flex text-center mt-2 px-4">
+					<button id="tab-login" class="flex-1 py-4 font-semibold text-[15px] tab-active" onclick="app.switchAuthTab('login')">Login</button>
+					<button id="tab-register" class="flex-1 py-4 font-semibold text-[15px] tab-inactive" onclick="app.switchAuthTab('register')">Register</button>
+				</div>
 
-                    <!-- Register Form -->
-                    <form id="form-register" onsubmit="app.handleRegister(event)" class="hidden flex flex-col gap-3">
-                        <input type="text" id="reg-username" placeholder="Username" required minlength="3" class="w-full bg-[#1a1a1a] border border-transparent rounded-xl px-4 py-3.5 text-[15px] text-white focus:outline-none focus:border-rz_border transition">
-                        <input type="email" id="reg-email" placeholder="Email" required class="w-full bg-[#1a1a1a] border border-transparent rounded-xl px-4 py-3.5 text-[15px] text-white focus:outline-none focus:border-rz_border transition">
-                        <input type="password" id="reg-password" placeholder="Password" required minlength="6" class="w-full bg-[#1a1a1a] border border-transparent rounded-xl px-4 py-3.5 text-[15px] text-white focus:outline-none focus:border-rz_border transition">
-                        <button type="submit" class="w-full bg-white text-black font-semibold rounded-xl py-3.5 mt-4 hover:bg-gray-200 transition text-[15px]" id="btn-register">Sign up</button>
-                    </form>
-                </div>
-            </div>
-        </div>
+				<div class="p-6">
+					<!-- Login Form -->
+					<form id="form-login" onsubmit="app.handleLogin(event)" class="flex flex-col gap-3">
+						<input type="email" id="login-email" placeholder="Email" required class="w-full bg-[#1a1a1a] border border-transparent rounded-xl px-4 py-3.5 text-[15px] text-white focus:outline-none focus:border-rz_border transition">
+						<input type="password" id="login-password" placeholder="Password" required class="w-full bg-[#1a1a1a] border border-transparent rounded-xl px-4 py-3.5 text-[15px] text-white focus:outline-none focus:border-rz_border transition">
+						<button type="submit" class="w-full bg-white text-black font-semibold rounded-xl py-3.5 mt-4 hover:bg-gray-200 transition text-[15px]" id="btn-login">Log in</button>
+					</form>
 
-        <!-- Composer Modal (Create/Edit Post) - Now Responsive Bottom Sheet -->
-        <div id="composer-modal" class="hidden fixed inset-0 z-50 flex flex-col justify-end sm:justify-center sm:items-center p-0 sm:p-4 modal-overlay" onclick="if(event.target === this) app.closeModal('composer-modal')">
-            <div class="bg-[#101010] border-t sm:border border-rz_border rounded-t-[24px] sm:rounded-2xl w-full h-auto max-h-[90vh] sm:max-h-[90vh] max-w-xl overflow-y-visible shadow-2xl relative flex flex-col animate-slide-up sm:animate-none pb-4 sm:pb-0">
-                
-                <!-- Handle Bar for Mobile -->
-                <div class="w-full flex justify-center pt-3 pb-1 sm:hidden cursor-pointer" onclick="app.closeModal('composer-modal')">
-                    <div class="w-12 h-1.5 bg-[#333638] rounded-full"></div>
-                </div>
+					<!-- Register Form -->
+					<form id="form-register" onsubmit="app.handleRegister(event)" class="hidden flex flex-col gap-3">
+						<input type="text" id="reg-username" placeholder="Username" required minlength="3" class="w-full bg-[#1a1a1a] border border-transparent rounded-xl px-4 py-3.5 text-[15px] text-white focus:outline-none focus:border-rz_border transition">
+						<input type="email" id="reg-email" placeholder="Email" required class="w-full bg-[#1a1a1a] border border-transparent rounded-xl px-4 py-3.5 text-[15px] text-white focus:outline-none focus:border-rz_border transition">
+						<input type="password" id="reg-password" placeholder="Password" required minlength="6" class="w-full bg-[#1a1a1a] border border-transparent rounded-xl px-4 py-3.5 text-[15px] text-white focus:outline-none focus:border-rz_border transition">
+						<button type="submit" class="w-full bg-white text-black font-semibold rounded-xl py-3.5 mt-4 hover:bg-gray-200 transition text-[15px]" id="btn-register">Sign up</button>
+					</form>
+				</div>
+			</div>
+		</div>
 
-                <div class="flex justify-between items-center px-4 py-3 border-b border-rz_border sticky top-0 bg-[#101010]/90 backdrop-blur z-10 rounded-t-[24px] sm:rounded-t-2xl">
-                    <button onclick="app.closeModal('composer-modal')" class="text-white text-[15px] hidden sm:block">Batal</button>
-                    <div class="sm:hidden w-[50px]"></div> <!-- Spacer to center title on mobile -->
-                    <h2 class="font-bold text-[16px] text-center" id="composer-title">New thread</h2>
-                    <button onclick="app.submitPost()" id="btn-submit-post" class="text-white font-semibold opacity-50 cursor-not-allowed text-[15px] w-[50px] text-right">Post</button>
-                </div>
-                
-                <div class="p-4 flex gap-3 flex-1 overflow-y-auto no-scrollbar">
-                    <div class="flex flex-col items-center shrink-0">
-                        <img id="composer-avatar" src="https://ui-avatars.com/api/?name=User&background=333&color=fff" class="w-9 h-9 rounded-full object-cover">
-                        <div class="thread-line"></div>
-                        <img id="composer-avatar-small" src="https://ui-avatars.com/api/?name=User&background=333&color=fff" class="w-4 h-4 rounded-full object-cover opacity-50 mt-1">
+		<!-- Custom Confirm Modal -->
+		<div id="confirm-modal" class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4 modal-overlay">
+			<div
+				class="bg-[#181818] border border-rz_border rounded-2xl w-full max-w-[320px] overflow-hidden shadow-2xl p-6 text-center">
+				<h3 class="text-[18px] font-bold text-white mb-2" id="confirm-title">Konfirmasi</h3>
+				<p class="text-rz_text_secondary text-[15px] mb-6" id="confirm-message">Apakah Anda yakin?</p>
+				<div class="flex gap-3">
+					<button id="confirm-cancel" class="flex-1 py-2.5 rounded-xl font-semibold border border-rz_border text-white hover:bg-[#262626] transition text-[15px]">Batal</button>
+					<button id="confirm-ok" class="flex-1 py-2.5 rounded-xl font-semibold bg-rz_red text-white hover:bg-red-600 transition text-[15px]">Hapus</button>
+				</div>
+			</div>
+		</div>
+
+		<!-- Composer Modal (Create/Edit Post) - Now Responsive Bottom Sheet -->
+		<div id="composer-modal"
+			class="hidden fixed inset-0 z-50 flex flex-col justify-end sm:justify-center sm:items-center p-0 sm:p-4 modal-overlay"
+			onclick="if(event.target === this) app.closeModal('composer-modal')">
+			<div
+				class="bg-[#101010] border-t sm:border border-rz_border rounded-t-[24px] sm:rounded-2xl w-full h-auto max-h-[90vh] sm:max-h-[90vh] max-w-xl overflow-y-visible shadow-2xl relative flex flex-col animate-slide-up sm:animate-none pb-4 sm:pb-0">
+
+				<!-- Handle Bar for Mobile -->
+				<div class="w-full flex justify-center pt-3 pb-1 sm:hidden cursor-pointer"
+					onclick="app.closeModal('composer-modal')">
+					<div class="w-12 h-1.5 bg-[#333638] rounded-full"></div>
+				</div>
+
+				<div
+					class="flex justify-between items-center px-4 py-3 border-b border-rz_border sticky top-0 bg-[#101010]/90 backdrop-blur z-10 rounded-t-[24px] sm:rounded-t-2xl">
+					<button onclick="app.closeModal('composer-modal')" class="text-white text-[15px] hidden sm:block hover:opacity-70">Batal</button>
+					<div class="sm:hidden w-[50px]"></div> <!-- Spacer to center title on mobile -->
+					<h2 class="font-bold text-[16px] text-center" id="composer-title">New thread</h2>
+					<button onclick="app.submitPost()" id="btn-submit-post" class="text-white font-semibold opacity-50 cursor-not-allowed text-[15px] w-[50px] text-right hover:opacity-70 transition">Post</button>
+				</div>
+
+				<div class="p-4 flex gap-3 flex-1 overflow-y-auto no-scrollbar">
+					<div class="flex flex-col items-center shrink-0">
+						<img id="composer-avatar" src="https://ui-avatars.com/api/?name=User&background=333&color=fff" class="w-9 h-9 rounded-full object-cover">
+						<div class="thread-line"></div>
+						<img id="composer-avatar-small" src="https://ui-avatars.com/api/?name=User&background=333&color=fff" class="w-4 h-4 rounded-full object-cover opacity-50 mt-1">
                     </div>
-                    <div class="flex-1 relative">
-                        <p class="font-semibold text-[15px] mb-1" id="composer-username">Username</p>
-                        <input type="hidden" id="composer-post-id">
-                        
-                        <input type="text" id="post-title" placeholder="Title (optional)" class="w-full bg-transparent text-white font-semibold outline-none placeholder-rz_text_secondary mb-2 text-[15px]">
-                        
-                        <div class="relative w-full">
-                            <textarea id="post-content" placeholder="Start a thread... (ketik @ untuk mention)" class="w-full bg-transparent text-white outline-none placeholder-rz_text_secondary min-h-[80px] text-[15px] leading-relaxed" oninput="app.checkComposerState(); app.handleMentionSearch(this, 'composer')" onblur="setTimeout(() => document.getElementById('composer-mention-list').classList.add('hidden'), 200)"></textarea>
-                            
-                            <!-- Autocomplete Suggestions -->
-                            <div id="composer-mention-list" class="hidden absolute top-full left-0 mt-1 bg-[#1a1a1a] border border-rz_border rounded-xl shadow-2xl max-h-48 overflow-y-auto z-50 w-[250px]"></div>
-                        </div>
+						<div class="flex-1 relative">
+							<p class="font-semibold text-[15px] mb-1" id="composer-username">Username</p>
+							<input type="hidden" id="composer-post-id">
 
-                        <div id="image-preview-container" class="hidden relative mt-2 w-fit mb-2">
-                            <img id="image-preview" src="" class="max-h-[300px] rounded-xl border border-rz_border object-cover">
-                            <button onclick="app.removeImage()" class="absolute top-2 right-2 bg-black/70 rounded-full p-1.5 text-white hover:bg-black">
+							<input type="text" id="post-title" placeholder="Title (optional)" class="w-full bg-transparent text-white font-semibold outline-none placeholder-rz_text_secondary mb-2 text-[15px]">
+
+							<div class="relative w-full">
+								<textarea id="post-content" placeholder="Start a thread... (ketik @ untuk mention)" class="w-full bg-transparent text-white outline-none placeholder-rz_text_secondary min-h-[80px] text-[15px] leading-relaxed" oninput="app.checkComposerState(); app.handleMentionSearch(this, 'composer')" onblur="setTimeout(() => { const el = document.getElementById('composer-mention-list'); if(el) el.classList.add('hidden'); }, 200)"></textarea>
+
+								<!-- Autocomplete Suggestions -->
+								<div id="composer-mention-list"
+									class="hidden absolute top-full left-0 mt-1 bg-[#1a1a1a] border border-rz_border rounded-xl shadow-2xl max-h-48 overflow-y-auto z-50 w-[250px]">
+								</div>
+							</div>
+
+							<div id="image-preview-container" class="hidden relative mt-2 w-fit mb-2">
+								<img id="image-preview" src="" class="max-h-[300px] rounded-xl border border-rz_border object-cover">
+								<button onclick="app.removeImage()" class="absolute top-2 right-2 bg-black/70 rounded-full p-1.5 text-white hover:bg-black transition">
                                 <i class="ph ph-x"></i>
                             </button>
-                            <input type="hidden" id="post-image-url">
+								<input type="hidden" id="post-image-url">
                         </div>
 
-                        <div class="mt-2 flex gap-4 items-center">
-                            <label class="cursor-pointer text-rz_text_secondary hover:text-white flex items-center justify-center p-1">
+								<div class="mt-2 flex gap-4 items-center">
+									<label class="cursor-pointer text-rz_text_secondary hover:text-white flex items-center justify-center p-1 transition">
                                 <i class="ph ph-paperclip text-[22px]"></i>
                                 <input type="file" id="post-image" accept="image/*" class="hidden" onchange="app.handleImageSelect(event)">
                             </label>
-                            <select id="post-category" class="bg-transparent text-rz_text_secondary text-[14px] outline-none cursor-pointer">
+									<select id="post-category" class="bg-transparent text-rz_text_secondary text-[14px] outline-none cursor-pointer">
                                 <option value="" class="bg-[#101010]">Add category</option>
                             </select>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Bottom anon setting -->
-                <div class="px-4 py-4 border-t border-rz_border flex items-center justify-between text-rz_text_secondary">
-                    <span class="text-[14px]">Anyone can reply & quote</span>
-                    <label class="flex items-center gap-2 text-[14px] cursor-pointer">
+								</div>
+							</div>
+						</div>
+
+						<!-- Bottom anon setting -->
+						<div
+							class="px-4 py-4 border-t border-rz_border flex items-center justify-between text-rz_text_secondary">
+							<span class="text-[14px]">Anyone can reply & quote</span>
+							<label class="flex items-center gap-2 text-[14px] cursor-pointer">
                         <input type="checkbox" id="post-anonymous" class="accent-white w-4 h-4 rounded">
                         Post Anonymously
                     </label>
-                </div>
-            </div>
-        </div>
+						</div>
+					</div>
+				</div>
 
-        <!-- Edit Profile Modal -->
-        <div id="profile-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay">
-            <div class="bg-[#101010] border border-rz_border rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl relative">
-                <div class="flex justify-between items-center px-4 py-3 border-b border-rz_border">
-                    <h2 class="font-bold text-[16px]">Edit profile</h2>
-                    <button onclick="app.closeModal('profile-modal')" class="text-rz_text_secondary hover:text-white"><i class="ph ph-x text-xl"></i></button>
-                </div>
-                <div class="p-6 flex flex-col gap-4">
-                    <div class="flex justify-between items-center p-4 bg-[#1a1a1a] rounded-xl border border-rz_border/50">
-                        <div>
-                            <p class="font-bold text-[15px]" id="edit-preview-name">Name</p>
-                            <p class="text-[14px]" id="edit-preview-user">@username</p>
+				<!-- Edit Profile Modal -->
+				<div id="profile-modal"
+					class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay">
+					<div
+						class="bg-[#101010] border border-rz_border rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl relative">
+						<div class="flex justify-between items-center px-4 py-3 border-b border-rz_border">
+							<h2 class="font-bold text-[16px]">Edit profile</h2>
+							<button onclick="app.closeModal('profile-modal')" class="text-rz_text_secondary hover:text-white transition"><i class="ph ph-x text-xl"></i></button>
+						</div>
+						<div class="p-6 flex flex-col gap-4">
+							<div
+								class="flex justify-between items-center p-4 bg-[#1a1a1a] rounded-xl border border-rz_border/50">
+								<div>
+									<p class="font-bold text-[15px]" id="edit-preview-name">Name</p>
+									<p class="text-[14px]" id="edit-preview-user">@username</p>
+								</div>
+								<div class="relative group cursor-pointer shrink-0"
+									onclick="document.getElementById('avatar-upload').click()">
+									<img id="edit-avatar-preview" src="" class="w-14 h-14 rounded-full object-cover">
+									<div
+										class="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+										<i class="ph ph-camera text-white"></i>
+									</div>
+									<input type="file" id="avatar-upload" accept="image/*" class="hidden" onchange="app.handleAvatarUpload(event)">
                         </div>
-                        <div class="relative group cursor-pointer shrink-0" onclick="document.getElementById('avatar-upload').click()">
-                            <img id="edit-avatar-preview" src="" class="w-14 h-14 rounded-full object-cover">
-                            <div class="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
-                                <i class="ph ph-camera text-white"></i>
-                            </div>
-                            <input type="file" id="avatar-upload" accept="image/*" class="hidden" onchange="app.handleAvatarUpload(event)">
-                        </div>
+								</div>
+								<div>
+									<label class="text-[13px] font-semibold">Name</label>
+									<input type="text" id="edit-display-name" class="w-full bg-transparent border-b border-rz_border py-2 text-[15px] text-white focus:outline-none focus:border-white transition">
                     </div>
-                    <div>
-                        <label class="text-[13px] font-semibold">Name</label>
-                        <input type="text" id="edit-display-name" class="w-full bg-transparent border-b border-rz_border py-2 text-[15px] text-white focus:outline-none focus:border-white transition">
+									<div>
+										<label class="text-[13px] font-semibold">Username</label>
+										<input type="text" id="edit-username" class="w-full bg-transparent border-b border-rz_border py-2 text-[15px] text-white focus:outline-none focus:border-white transition">
                     </div>
-                    <div>
-                        <label class="text-[13px] font-semibold">Username</label>
-                        <input type="text" id="edit-username" class="w-full bg-transparent border-b border-rz_border py-2 text-[15px] text-white focus:outline-none focus:border-white transition">
-                    </div>
-                    <div>
-                        <label class="text-[13px] font-semibold">Bio</label>
-                        <textarea id="edit-bio" rows="2" placeholder="+ Write bio" class="w-full bg-transparent border-b border-rz_border py-2 text-[15px] text-white focus:outline-none focus:border-white transition resize-none"></textarea>
-                    </div>
-                    <button onclick="app.saveProfile()" id="btn-save-profile" class="w-full bg-white text-black font-semibold rounded-xl py-3 mt-4 hover:bg-gray-200 transition text-[15px]">Done</button>
-                </div>
-            </div>
-        </div>
+										<div>
+											<label class="text-[13px] font-semibold">Bio</label>
+											<textarea id="edit-bio" rows="2" placeholder="+ Write bio" class="w-full bg-transparent border-b border-rz_border py-2 text-[15px] text-white focus:outline-none focus:border-white transition resize-none"></textarea>
+										</div>
+										<button onclick="app.saveProfile()" id="btn-save-profile" class="w-full bg-white text-black font-semibold rounded-xl py-3 mt-4 hover:bg-gray-200 transition text-[15px]">Done</button>
+									</div>
+								</div>
+							</div>
 
-        <!-- Post Detail Modal -->
-        <div id="detail-modal" class="hidden fixed inset-0 z-40 flex items-start sm:items-center justify-center p-0 sm:p-4 modal-overlay">
-            <div class="bg-[#000000] sm:bg-[#101010] sm:border border-rz_border rounded-none sm:rounded-2xl w-full h-full sm:h-[90vh] max-w-2xl overflow-hidden shadow-2xl relative flex flex-col">
-                <div class="flex items-center px-4 h-[64px] border-b border-rz_border sticky top-0 bg-[#000000]/90 sm:bg-[#101010]/90 backdrop-blur z-10 justify-between">
-                    <button onclick="app.closeModal('detail-modal')" class="text-white w-[32px] flex justify-start hover:opacity-70 transition"><i class="ph ph-arrow-left text-2xl"></i></button>
-                    <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/threads-white-icon.png" class="w-[32px] h-[32px]" alt="Logo">
-                    <div class="w-[32px]"></div> <!-- Spacer for centering -->
-                </div>
-                <div class="flex-1 overflow-y-auto no-scrollbar pb-24" id="detail-content">
-                    <!-- Post and Comments injected here -->
-                </div>
-                <!-- Comment Input Area -->
-                <div class="absolute bottom-0 left-0 right-0 p-4 bg-[#000000] sm:bg-[#101010] border-t border-rz_border flex gap-3 items-center" id="comment-input-area">
-                    <!-- Dinamis Diubah via JS -->
-                </div>
-            </div>
-        </div>
+							<!-- Post Detail Modal -->
+							<div id="detail-modal"
+								class="hidden fixed inset-0 z-40 flex items-start sm:items-center justify-center p-0 sm:p-4 modal-overlay">
+								<div
+									class="bg-[#000000] sm:bg-[#101010] sm:border border-rz_border rounded-none sm:rounded-2xl w-full h-full sm:h-[90vh] max-w-2xl overflow-hidden shadow-2xl relative flex flex-col">
+									<div
+										class="flex items-center px-4 h-[64px] border-b border-rz_border sticky top-0 bg-[#000000]/90 sm:bg-[#101010]/90 backdrop-blur z-10 justify-between">
+										<button onclick="app.closeModal('detail-modal')" class="text-white w-[32px] flex justify-start hover:opacity-70 transition"><i class="ph ph-arrow-left text-2xl"></i></button>
+										<img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/threads-white-icon.png" class="w-[32px] h-[32px]" alt="Logo">
+										<div class="w-[32px]"></div> <!-- Spacer for centering -->
+									</div>
+									<div class="flex-1 overflow-y-auto no-scrollbar pb-24" id="detail-content">
+										<!-- Post and Comments injected here -->
+									</div>
+									<!-- Comment Input Area -->
+									<div class="absolute bottom-0 left-0 right-0 p-4 bg-[#000000] sm:bg-[#101010] border-t border-rz_border flex gap-3 items-center"
+										id="comment-input-area">
+										<!-- Dinamis Diubah via JS -->
+									</div>
+								</div>
+							</div>
 
-        <!-- Follow/Following Modal -->
-        <div id="follow-modal" class="hidden fixed inset-0 z-50 flex flex-col justify-end sm:justify-center sm:items-center p-0 sm:p-4 modal-overlay" onclick="if(event.target === this) app.closeModal('follow-modal')">
-            <div class="bg-[#101010] border-t sm:border border-rz_border rounded-t-[24px] sm:rounded-2xl w-full h-auto max-h-[80vh] sm:max-h-[80vh] max-w-md overflow-hidden shadow-2xl relative flex flex-col animate-slide-up sm:animate-none">
-                
-                <!-- Handle Bar for Mobile -->
-                <div class="w-full flex justify-center pt-3 pb-1 sm:hidden cursor-pointer" onclick="app.closeModal('follow-modal')">
-                    <div class="w-12 h-1.5 bg-[#333638] rounded-full"></div>
-                </div>
+							<!-- Follow/Following Modal -->
+							<div id="follow-modal"
+								class="hidden fixed inset-0 z-50 flex flex-col justify-end sm:justify-center sm:items-center p-0 sm:p-4 modal-overlay"
+								onclick="if(event.target === this) app.closeModal('follow-modal')">
+								<div
+									class="bg-[#101010] border-t sm:border border-rz_border rounded-t-[24px] sm:rounded-2xl w-full h-auto max-h-[80vh] sm:max-h-[80vh] max-w-md overflow-hidden shadow-2xl relative flex flex-col animate-slide-up sm:animate-none">
 
-                <div class="flex justify-between items-center px-4 py-3 border-b border-rz_border sticky top-0 bg-[#101010]/90 backdrop-blur z-10 rounded-t-[24px] sm:rounded-t-2xl">
-                    <h2 class="font-bold text-[16px] text-center w-full" id="follow-modal-title">Followers</h2>
-                    <button onclick="app.closeModal('follow-modal')" class="absolute right-4 text-rz_text_secondary hover:text-white hidden sm:block"><i class="ph ph-x text-xl"></i></button>
-                </div>
-                <div class="flex-1 overflow-y-auto no-scrollbar pb-4" id="follow-modal-content">
-                    <!-- User list goes here -->
-                </div>
-            </div>
-        </div>
+									<!-- Handle Bar for Mobile -->
+									<div class="w-full flex justify-center pt-3 pb-1 sm:hidden cursor-pointer"
+										onclick="app.closeModal('follow-modal')">
+										<div class="w-12 h-1.5 bg-[#333638] rounded-full"></div>
+									</div>
 
-        <!-- Settings Menu Modal (Burger) -->
-        <div id="settings-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay" onclick="if(event.target === this) app.closeModal('settings-modal')">
-            <div class="bg-[#181818] border border-rz_border rounded-[18px] w-full max-w-[300px] overflow-hidden shadow-2xl relative flex flex-col">
-                <div class="flex flex-col text-[15px] font-semibold">
-                    <button class="text-left px-5 py-4 hover:bg-[#262626] transition flex justify-between items-center text-white">Tampilan <i class="ph ph-caret-right text-rz_text_secondary"></i></button>
-                    <button class="text-left px-5 py-4 hover:bg-[#262626] transition text-white border-b border-rz_border">Pengaturan</button>
-                    
-                    <button class="text-left px-5 py-4 hover:bg-[#262626] transition text-white" onclick="app.closeModal('settings-modal'); app.navigate('likes')">Disukai</button>
-                    <button class="text-left px-5 py-4 hover:bg-[#262626] transition text-white" onclick="app.closeModal('settings-modal'); app.navigate('reposts')">Reposts</button>
-                    <button class="text-left px-5 py-4 hover:bg-[#262626] transition text-white border-b border-rz_border" onclick="app.closeModal('settings-modal'); app.navigate('saved')">Tersimpan</button>
-                    
-                    <button class="text-left px-5 py-4 hover:bg-[#262626] transition text-white">Laporkan masalah</button>
-                    <button class="text-left px-5 py-4 text-rz_red hover:bg-[#262626] transition" onclick="app.logout(); app.closeModal('settings-modal')">Logout</button>
-                </div>
-            </div>
-        </div>
+									<div
+										class="flex justify-between items-center px-4 py-3 border-b border-rz_border sticky top-0 bg-[#101010]/90 backdrop-blur z-10 rounded-t-[24px] sm:rounded-t-2xl">
+										<h2 class="font-bold text-[16px] text-center w-full" id="follow-modal-title">
+											Followers</h2>
+										<button onclick="app.closeModal('follow-modal')" class="absolute right-4 text-rz_text_secondary hover:text-white hidden sm:block transition"><i class="ph ph-x text-xl"></i></button>
+									</div>
+									<div class="flex-1 overflow-y-auto no-scrollbar pb-4" id="follow-modal-content">
+										<!-- User list goes here -->
+									</div>
+								</div>
+							</div>
 
-    </div>
+							<!-- Settings Menu Modal (Burger) -->
+							<div id="settings-modal"
+								class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay"
+								onclick="if(event.target === this) app.closeModal('settings-modal')">
+								<div
+									class="bg-[#181818] border border-rz_border rounded-[18px] w-full max-w-[300px] overflow-hidden shadow-2xl relative flex flex-col">
+									<div class="flex flex-col text-[15px] font-semibold">
+										<button class="text-left px-5 py-4 hover:bg-[#262626] transition flex justify-between items-center text-white">Tampilan <i class="ph ph-caret-right text-rz_text_secondary"></i></button>
+										<button class="text-left px-5 py-4 hover:bg-[#262626] transition text-white border-b border-rz_border">Pengaturan</button>
 
-    <!-- Toast Container -->
-    <div id="toast-container" class="fixed bottom-24 sm:bottom-10 left-1/2 transform -translate-x-1/2 z-[100] flex flex-col gap-2 pointer-events-none w-full max-w-sm px-4"></div>
+										<button class="text-left px-5 py-4 hover:bg-[#262626] transition text-white text-center text-rz_red" onclick="app.logout(); app.closeModal('settings-modal')">Log out</button>
+									</div>
+								</div>
+							</div>
 
-    <!-- MAIN SCRIPT -->
-    <script>
-        const API_URL = "https://apigenz.rizkifundie.workers.dev";
+						</div>
+
+						<!-- Toast Container -->
+						<div id="toast-container"
+							class="fixed bottom-24 sm:bottom-10 left-1/2 transform -translate-x-1/2 z-[100] flex flex-col gap-2 pointer-events-none w-full max-w-sm px-4">
+						</div>
+
+						<!-- MAIN SCRIPT -->
+						<script>
+							const API_URL = "https://apigenz.rizkifundie.workers.dev";
         
         // --- STATE MANAGEMENT ---
         const app = {
@@ -356,7 +415,7 @@
                 { id: 'home', icon: 'ph-house', label: 'Home' },
                 { id: 'search', icon: 'ph-magnifying-glass', label: 'Search' },
                 { id: 'create', icon: 'ph-plus', label: 'Post', action: 'openComposer' },
-                { id: 'likes', icon: 'ph-heart', label: 'Activity', reqAuth: true },
+                { id: 'activity', icon: 'ph-heart', label: 'Activity', reqAuth: true },
                 { id: 'profile', icon: 'ph-user', label: 'Profile', reqAuth: true },
             ]
         };
@@ -370,13 +429,13 @@
                 const now = new Date();
                 const diffSec = Math.floor((now - date) / 1000);
                 
-                if (diffSec < 60) return 'Just now';
+                if (diffSec < 60) return 'Baru saja';
                 if (diffSec < 3600) return `${Math.floor(diffSec/60)}m`;
-                if (diffSec < 86400) return `${Math.floor(diffSec/3600)}h`;
-                if (diffSec < 604800) return `${Math.floor(diffSec/86400)}d`;
-                if (diffSec < 31536000) return `${Math.floor(diffSec/604800)}w`;
+                if (diffSec < 86400) return `${Math.floor(diffSec/3600)}j`;
+                if (diffSec < 604800) return `${Math.floor(diffSec/86400)}h`;
                 
-                return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+                const options = { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Jakarta' };
+                return date.toLocaleDateString('id-ID', options).replace(' pukul ', ', ').replace(':', '.');
             },
             
             escapeHTML: (str) => {
@@ -440,26 +499,32 @@
             const headers = {};
             if (app.token) headers['Authorization'] = `Bearer ${app.token}`;
             
-            if (!(options.body instanceof FormData)) {
+            if (options.body && !(options.body instanceof FormData)) {
                 headers['Content-Type'] = 'application/json';
-                if (options.body && typeof options.body === 'object') {
+                if (typeof options.body === 'object') {
                     options.body = JSON.stringify(options.body);
                 }
             }
 
             try {
                 const res = await fetch(`${API_URL}${endpoint}`, { ...options, headers });
-                const data = await res.json();
+                
+                let data;
+                try {
+                    data = await res.json();
+                } catch (parseErr) {
+                    throw new Error(`Respons API tidak valid (Status HTTP: ${res.status}). Pastikan endpoint ada dan mengembalikan JSON.`);
+                }
                 
                 if (!res.ok || data.success === false) {
                     if (res.status === 401) {
                         app.logout(false);
                     }
-                    throw new Error(data.message || 'Terjadi kesalahan dari server');
+                    throw new Error(data.message || `Error dari server (Status: ${res.status})`);
                 }
                 return data;
             } catch (err) {
-                console.error("API Error:", err);
+                console.error(`[API Error] ${endpoint}:`, err.message);
                 throw err;
             }
         }
@@ -502,8 +567,7 @@
             app.navItems.forEach(item => {
                 if (item.reqAuth && !isAuth) return;
                 
-                // For activity, map 'likes', 'mentions' and 'reposts' to the same tab visually
-                const isActive = app.currentView === item.id || (item.id === 'likes' && (app.currentView === 'mentions' || app.currentView === 'reposts'));
+                const isActive = app.currentView === item.id;
                 const iconClass = isActive ? `ph-fill ${item.icon}` : `ph ${item.icon}`;
                 
                 // Desktop Item
@@ -563,7 +627,35 @@
             }
         };
 
+        app.confirm = (title, message, onConfirm) => {
+            const modal = document.getElementById('confirm-modal');
+            document.getElementById('confirm-title').textContent = title;
+            document.getElementById('confirm-message').textContent = message;
+            modal.classList.remove('hidden');
+
+            const btnOk = document.getElementById('confirm-ok');
+            const btnCancel = document.getElementById('confirm-cancel');
+
+            // Clone to remove previous event listeners
+            const newBtnOk = btnOk.cloneNode(true);
+            const newBtnCancel = btnCancel.cloneNode(true);
+            btnOk.parentNode.replaceChild(newBtnOk, btnOk);
+            btnCancel.parentNode.replaceChild(newBtnCancel, btnCancel);
+
+            const cleanup = () => modal.classList.add('hidden');
+
+            newBtnOk.addEventListener('click', () => { cleanup(); onConfirm(); });
+            newBtnCancel.addEventListener('click', () => { cleanup(); });
+        };
+
         app.navigate = (view, params = null) => {
+            // Auth Guard
+            if (['activity', 'profile'].includes(view) && !app.token) {
+                app.openAuthModal();
+                if (app.currentView === view) app.navigate('home');
+                return;
+            }
+
             app.currentView = view;
             app.currentParams = params;
             app.renderNav();
@@ -572,7 +664,6 @@
             const container = document.getElementById('view-container');
             container.innerHTML = `<div class="flex justify-center p-12"><i class="ph ph-spinner animate-spin text-3xl text-rz_text_secondary"></i></div>`;
 
-            // Setup Header text
             let headerHTML = '';
 
             switch(view) {
@@ -593,42 +684,31 @@
                             <h1 class="font-bold text-3xl mb-4 hidden sm:block">Search</h1>
                             <div class="relative">
                                 <i class="ph ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-rz_text_secondary text-xl"></i>
-                                <input type="text" id="search-input" placeholder="Search" class="w-full bg-[#1a1a1a] rounded-[14px] py-2.5 pl-12 pr-4 text-[16px] text-white focus:outline-none" onkeyup="if(event.key==='Enter') app.doSearch()">
+                                <input type="text" id="search-input" placeholder="Search" class="w-full bg-[#1a1a1a] rounded-[14px] py-2.5 pl-12 pr-4 text-[16px] text-white focus:outline-none transition border border-transparent focus:border-rz_border" onkeyup="if(event.key==='Enter') app.doSearch()">
                             </div>
                         </div>
                     `;
                     app.renderSearchView(headerHTML);
                     break;
-                case 'likes':
-                case 'mentions':
-                case 'reposts':
+                case 'activity':
+                    const subView = params || 'mentions';
                     headerHTML = `
                         <header class="sticky top-0 z-30 bg-[#000000]/80 backdrop-blur-xl h-[64px] flex justify-center items-center border-b border-rz_border">
-                            <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/threads-white-icon.png" class="w-[32px] h-[32px]" alt="Logo">
+                            <h1 class="font-bold text-[16px]">Aktivitas</h1>
                         </header>
                         <div class="px-4 py-3 border-b border-rz_border">
-                            <h1 class="font-bold text-3xl mb-4 hidden sm:block">Activity</h1>
                             <div class="flex gap-2 overflow-x-auto no-scrollbar pb-1">
-                                <button class="px-5 py-1.5 rounded-lg border ${view === 'likes' ? 'bg-white text-black border-white font-semibold' : 'border-rz_border text-white hover:bg-[#1a1a1a]'} text-[15px]" onclick="app.navigate('likes')">Likes</button>
-                                <button class="px-5 py-1.5 rounded-lg border ${view === 'mentions' ? 'bg-white text-black border-white font-semibold' : 'border-rz_border text-white hover:bg-[#1a1a1a]'} text-[15px]" onclick="app.navigate('mentions')">Mentions</button>
-                                <button class="px-5 py-1.5 rounded-lg border ${view === 'reposts' ? 'bg-white text-black border-white font-semibold' : 'border-rz_border text-white hover:bg-[#1a1a1a]'} text-[15px]" onclick="app.navigate('reposts')">Reposts</button>
+                                <button class="px-5 py-1.5 rounded-[10px] border ${subView === 'mentions' ? 'bg-white text-black border-white font-semibold' : 'border-rz_border text-white hover:bg-[#1a1a1a]'} text-[14px] transition" onclick="app.navigate('activity', 'mentions')">Mentions</button>
+                                <button class="px-5 py-1.5 rounded-[10px] border ${subView === 'likes' ? 'bg-white text-black border-white font-semibold' : 'border-rz_border text-white hover:bg-[#1a1a1a]'} text-[14px] transition" onclick="app.navigate('activity', 'likes')">Likes</button>
+                                <button class="px-5 py-1.5 rounded-[10px] border ${subView === 'reposts' ? 'bg-white text-black border-white font-semibold' : 'border-rz_border text-white hover:bg-[#1a1a1a]'} text-[14px] transition" onclick="app.navigate('activity', 'reposts')">Reposts</button>
+                                <button class="px-5 py-1.5 rounded-[10px] border ${subView === 'saved' ? 'bg-white text-black border-white font-semibold' : 'border-rz_border text-white hover:bg-[#1a1a1a]'} text-[14px] transition" onclick="app.navigate('activity', 'saved')">Tersimpan</button>
                             </div>
                         </div>
                     `;
-                    if(view === 'likes') app.loadLikes(headerHTML);
-                    else if(view === 'mentions') app.loadMentions(headerHTML);
-                    else app.loadReposts(headerHTML);
-                    break;
-                case 'saved':
-                    headerHTML = `
-                        <header class="sticky top-0 z-30 bg-[#000000]/80 backdrop-blur-xl h-[64px] flex justify-center items-center border-b border-rz_border">
-                            <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/threads-white-icon.png" class="w-[32px] h-[32px]" alt="Logo">
-                        </header>
-                        <div class="px-4 py-3 border-b border-rz_border">
-                            <h1 class="font-bold text-2xl">Tersimpan</h1>
-                        </div>
-                    `;
-                    app.loadSaved(headerHTML);
+                    if (subView === 'mentions') app.loadMentions(headerHTML);
+                    else if (subView === 'likes') app.loadLikes(headerHTML);
+                    else if (subView === 'reposts') app.loadReposts(headerHTML);
+                    else if (subView === 'saved') app.loadSaved(headerHTML);
                     break;
                 case 'profile':
                     // Profile has custom header built in loadProfile
@@ -822,10 +902,10 @@
             if (isOwner) {
                 actionMenu = `
                     <div class="relative group inline-block">
-                        <button class="text-rz_text_secondary hover:text-white p-1 ml-2"><i class="ph ph-dots-three text-xl"></i></button>
+                        <button class="text-rz_text_secondary hover:text-white p-1 ml-2 transition"><i class="ph ph-dots-three text-xl"></i></button>
                         <div class="absolute right-0 mt-1 w-32 bg-[#1a1a1a] border border-rz_border rounded-lg shadow-xl hidden group-hover:block z-20 overflow-hidden">
-                            <button onclick="app.openEditPost('${post.id}')" class="w-full text-left px-4 py-3 text-[14px] hover:bg-[#262626]">Edit</button>
-                            <button onclick="app.deletePost('${post.id}')" class="w-full text-left px-4 py-3 text-[14px] text-red-500 hover:bg-[#262626]">Delete</button>
+                            <button onclick="app.openEditPost('${post.id}')" class="w-full text-left px-4 py-3 text-[14px] hover:bg-[#262626] transition">Edit</button>
+                            <button onclick="app.deletePost('${post.id}')" class="w-full text-left px-4 py-3 text-[14px] text-red-500 hover:bg-[#262626] transition">Delete</button>
                         </div>
                     </div>
                 `;
@@ -844,7 +924,7 @@
             }
 
             return `
-                <div class="${isDetail ? 'pt-4 pb-2 px-4' : 'px-4 py-3 border-b border-rz_border'} transition" id="post-${post.id}">
+                <div class="${isDetail ? 'pt-4 pb-2 px-4' : 'px-4 py-3 border-b border-rz_border'} transition hover:bg-[#080808]" id="post-${post.id}">
                     <div class="flex gap-3">
                         <div class="flex flex-col items-center shrink-0 w-9">
                             <img src="${avatar}" class="w-9 h-9 rounded-full object-cover ${post.is_anonymous ? '' : 'cursor-pointer'}" ${post.is_anonymous ? '' : `onclick="app.navigate('profile', '${post.author}')"`}>
@@ -869,8 +949,8 @@
                             
                             ${imageHtml}
                             
-                            <div class="flex gap-2 mt-3 mb-2 text-white">
-                                <button onclick="app.toggleLike('${post.id}')" class="flex items-center gap-1 p-1 action-icon like-btn hover:bg-[#1a1a1a] rounded-full transition px-2" data-id="${post.id}">
+                            <div class="flex gap-4 mt-3 mb-2 text-white">
+                                <button onclick="app.toggleLike('${post.id}')" class="flex items-center gap-1 p-1 -ml-1 action-icon like-btn hover:bg-[#1a1a1a] rounded-full transition px-2" data-id="${post.id}">
                                     <i class="${likeIconClass} text-[20px] like-icon"></i>
                                     <span class="text-[13px] text-rz_text_secondary like-count">${post.total_likes > 0 ? post.total_likes : ''}</span>
                                 </button>
@@ -904,7 +984,7 @@
             const avatar = util.getAvatar(comment.author_avatar_url, comment.author_display_name);
             const time = util.formatDate(comment.created_at);
             return `
-                <div class="px-4 py-3 border-b border-rz_border">
+                <div class="px-4 py-3 border-b border-rz_border transition hover:bg-[#080808]">
                     <div class="flex gap-3">
                         <div class="flex flex-col items-center shrink-0 w-9">
                             <img src="${avatar}" class="w-9 h-9 rounded-full object-cover cursor-pointer" onclick="app.closeModal('detail-modal'); app.navigate('profile', '${comment.author}')">
@@ -935,7 +1015,7 @@
             const action = clickAction || defaultClick;
             
             return `
-                <div class="flex items-center justify-between px-4 py-3 border-b border-rz_border cursor-pointer hover:bg-[#101010]" onclick="${action}">
+                <div class="flex items-center justify-between px-4 py-3 border-b border-rz_border cursor-pointer hover:bg-[#101010] transition" onclick="${action}">
                     <div class="flex items-center gap-3">
                         <img src="${util.getAvatar(user.avatar_url, user.display_name)}" class="w-10 h-10 rounded-full object-cover">
                         <div>
@@ -943,7 +1023,7 @@
                             <p class="text-rz_text_secondary text-[14px]">@${user.username}</p>
                         </div>
                     </div>
-                    <button class="px-5 py-1.5 bg-transparent border border-rz_border rounded-xl text-[14px] font-semibold text-white">Lihat</button>
+                    <button class="px-5 py-1.5 bg-transparent border border-rz_border rounded-xl text-[14px] font-semibold text-white hover:bg-[#262626] transition">Lihat</button>
                 </div>
             `;
         };
@@ -963,86 +1043,99 @@
                 // Add Quick Composer CTA if logged in
                 if (app.user) {
                     html += `
-                        <div class="px-4 py-4 border-b border-rz_border flex items-center gap-3 cursor-text" onclick="app.openComposer()">
+                        <div class="px-4 py-4 border-b border-rz_border flex items-center gap-3 cursor-text hover:bg-[#080808] transition" onclick="app.openComposer()">
                             <img src="${util.getAvatar(app.user.avatar_url, app.user.display_name)}" class="w-9 h-9 rounded-full object-cover">
                             <span class="text-rz_text_secondary text-[15px]">Start a thread...</span>
-                            <button class="ml-auto px-4 py-1.5 bg-[#1a1a1a] text-white font-semibold rounded-full text-[14px]">Post</button>
+                            <button class="ml-auto px-4 py-1.5 bg-[#1a1a1a] text-white font-semibold rounded-full text-[14px] hover:bg-[#262626] transition">Post</button>
                         </div>
                     `;
                 }
 
-                if (res.data.length === 0) {
+                const dataList = res.data || [];
+                if (dataList.length === 0) {
                     html += app.renderEmpty('No threads yet.');
                 } else {
-                    res.data.forEach(post => { html += app.createPostHTML(post); });
+                    dataList.forEach(post => { html += app.createPostHTML(post); });
                 }
                 container.innerHTML = html;
-                app.postsData = res.data; 
+                app.postsData = dataList; 
             } catch (err) {
-                container.innerHTML = headerHTML + app.renderEmpty('Failed to load feed.');
+                console.error("[loadFeed] Gagal memuat:", err);
+                container.innerHTML = headerHTML + app.renderEmpty(`Gagal memuat feed.<br><span class="text-xs text-red-400 mt-2 block">Error: ${err.message}</span>`);
             }
         };
 
         app.loadLikes = async (headerHTML) => {
+            if (!app.token) return; // Prevent unauthorized load
             const container = document.getElementById('view-container');
             try {
                 const res = await api('/api/me/likes');
                 let html = headerHTML;
-                if (res.data.length === 0) {
+                const dataList = res.data || [];
+                if (dataList.length === 0) {
                     html += app.renderEmpty('No liked posts yet.');
                 } else {
-                    res.data.forEach(post => { html += app.createPostHTML(post); });
-                    app.postsData = res.data;
+                    dataList.forEach(post => { html += app.createPostHTML(post); });
+                    app.postsData = dataList;
                 }
                 container.innerHTML = html;
             } catch (err) {
-                container.innerHTML = headerHTML + app.renderEmpty('Failed to load likes.');
+                console.error("[loadLikes] Gagal memuat:", err);
+                container.innerHTML = headerHTML + app.renderEmpty(`Gagal memuat likes.<br><span class="text-xs text-red-400 mt-2 block">Error: ${err.message}</span>`);
             }
         };
 
         app.loadReposts = async (headerHTML) => {
+            if (!app.token) return; // Prevent unauthorized load
             const container = document.getElementById('view-container');
             try {
                 const res = await api('/api/me/reposts');
                 let html = headerHTML;
-                if (res.data.length === 0) {
+                const dataList = res.data || [];
+                if (dataList.length === 0) {
                     html += app.renderEmpty('Belum ada postingan yang kamu repost.');
                 } else {
-                    res.data.forEach(post => { html += app.createPostHTML(post); });
-                    app.postsData = res.data;
+                    dataList.forEach(post => { html += app.createPostHTML(post); });
+                    app.postsData = dataList;
                 }
                 container.innerHTML = html;
             } catch (err) {
-                container.innerHTML = headerHTML + app.renderEmpty('Failed to load reposts.');
+                console.error("[loadReposts] Gagal memuat:", err);
+                container.innerHTML = headerHTML + app.renderEmpty(`Gagal memuat reposts.<br><span class="text-xs text-red-400 mt-2 block">Error: ${err.message}</span>`);
             }
         };
         
         app.loadSaved = async (headerHTML) => {
+            if (!app.token) return; // Prevent unauthorized load
             const container = document.getElementById('view-container');
             try {
                 const res = await api('/api/me/saved');
                 let html = headerHTML;
-                if (res.data.length === 0) {
+                const dataList = res.data || [];
+                if (dataList.length === 0) {
                     html += app.renderEmpty('Belum ada postingan yang kamu simpan.');
                 } else {
-                    res.data.forEach(post => { html += app.createPostHTML(post); });
-                    app.postsData = res.data;
+                    dataList.forEach(post => { html += app.createPostHTML(post); });
+                    app.postsData = dataList;
                 }
                 container.innerHTML = html;
             } catch (err) {
-                container.innerHTML = headerHTML + app.renderEmpty('Failed to load saved posts.');
+                console.error("[loadSaved] Gagal memuat:", err);
+                container.innerHTML = headerHTML + app.renderEmpty(`Gagal memuat saved posts.<br><span class="text-xs text-red-400 mt-2 block">Error: ${err.message}</span>`);
             }
         };
 
         app.loadMentions = async (headerHTML) => {
+            if (!app.token) return; // Prevent unauthorized load
             const container = document.getElementById('view-container');
             try {
                 const res = await api('/api/me/mentions');
                 let html = headerHTML;
-                if (res.data.length === 0) {
+                const dataList = res.data || [];
+                if (dataList.length === 0) {
                     html += app.renderEmpty('No mentions yet.');
                 } else {
-                    res.data.forEach(m => {
+                    dataList.forEach(m => {
                         // Membedakan apakah mention dari komentar atau postingan
                         const isComment = !!m.comment_id;
                         const actionText = isComment ? 'menyebut Anda dalam komentar' : 'menyebut Anda dalam utas';
@@ -1053,7 +1146,7 @@
                         const titleHtml = !isComment && m.post_title ? `<h4 class="font-bold text-[14px] text-white mb-1 mt-1">${util.formatContent(m.post_title)}</h4>` : '';
                         
                         html += `
-                            <div class="px-4 py-3 border-b border-rz_border cursor-pointer hover:bg-[#101010]" onclick="app.openDetail('${m.post_id}')">
+                            <div class="px-4 py-3 border-b border-rz_border cursor-pointer hover:bg-[#101010] transition" onclick="app.openDetail('${m.post_id}')">
                                 <div class="flex items-start gap-3">
                                     <div class="relative shrink-0 w-10">
                                         <img src="${avatar}" class="w-10 h-10 rounded-full object-cover">
@@ -1079,7 +1172,8 @@
                 }
                 container.innerHTML = html;
             } catch (err) {
-                container.innerHTML = headerHTML + app.renderEmpty('Failed to load mentions.');
+                console.error("[loadMentions] Gagal memuat:", err);
+                container.innerHTML = headerHTML + app.renderEmpty(`Gagal memuat mentions.<br><span class="text-xs text-red-400 mt-2 block">Error: ${err.message}</span>`);
             }
         };
 
@@ -1087,7 +1181,7 @@
             const container = document.getElementById('view-container');
             container.innerHTML = headerHTML + `
                 <div id="search-results" class="pb-10">
-                    <div class="p-10 text-center text-rz_text_secondary text-[15px]">Type something to search</div>
+                    <div class="p-10 text-center text-rz_text_secondary text-[15px]">Ketik sesuatu untuk mencari</div>
                 </div>
             `;
             // Default to users as per threads UI
@@ -1107,31 +1201,31 @@
                 
                 let html = '';
                 
-                if (resUsers.data.length > 0) {
+                if (resUsers.data && resUsers.data.length > 0) {
                     html += `<div class="px-4 py-2 font-semibold text-[16px] border-b border-rz_border">Users</div>`;
                     resUsers.data.forEach(u => { html += app.createUserHTML(u); });
                 }
                 
-                if (resPosts.data.length > 0) {
+                if (resPosts.data && resPosts.data.length > 0) {
                     html += `<div class="px-4 py-2 font-semibold text-[16px] border-b border-rz_border mt-2">Threads</div>`;
                     resPosts.data.forEach(p => { html += app.createPostHTML(p); });
                     app.postsData = resPosts.data;
                 }
 
                 if(!html) {
-                    html = app.renderEmpty('No results found.');
+                    html = app.renderEmpty('Tidak ada hasil ditemukan.');
                 }
                 resContainer.innerHTML = html;
 
             } catch (err) {
-                resContainer.innerHTML = app.renderEmpty('Search failed.');
+                resContainer.innerHTML = app.renderEmpty(`Search failed.<br><span class="text-xs text-red-400 mt-2 block">Error: ${err.message}</span>`);
             }
         };
 
         app.switchProfileTab = async (tab, targetUser) => {
-            document.getElementById('tab-profile-threads').className = `flex-1 text-center py-3 font-semibold text-[15px] ${tab === 'threads' ? 'tab-active' : 'tab-inactive'} cursor-pointer`;
-            document.getElementById('tab-profile-replies').className = `flex-1 text-center py-3 font-semibold text-[15px] ${tab === 'replies' ? 'tab-active' : 'tab-inactive'} cursor-pointer`;
-            document.getElementById('tab-profile-reposts').className = `flex-1 text-center py-3 font-semibold text-[15px] ${tab === 'reposts' ? 'tab-active' : 'tab-inactive'} cursor-pointer`;
+            document.getElementById('tab-profile-threads').className = `flex-1 text-center py-3 font-semibold text-[15px] ${tab === 'threads' ? 'tab-active' : 'tab-inactive'} cursor-pointer transition`;
+            document.getElementById('tab-profile-replies').className = `flex-1 text-center py-3 font-semibold text-[15px] ${tab === 'replies' ? 'tab-active' : 'tab-inactive'} cursor-pointer transition`;
+            document.getElementById('tab-profile-reposts').className = `flex-1 text-center py-3 font-semibold text-[15px] ${tab === 'reposts' ? 'tab-active' : 'tab-inactive'} cursor-pointer transition`;
 
             const timeline = document.getElementById('profile-timeline');
             timeline.innerHTML = `<div class="p-10 text-center"><i class="ph ph-spinner animate-spin text-2xl text-rz_text_secondary"></i></div>`;
@@ -1146,16 +1240,18 @@
                 }
 
                 const resPosts = await api(endpoint);
-                if (resPosts.data.length === 0) {
+                const dataList = resPosts.data || [];
+                if (dataList.length === 0) {
                     timeline.innerHTML = app.renderEmpty(tab === 'reposts' ? 'No reposts yet.' : 'No threads yet.');
                 } else {
                     let phtml = '';
-                    resPosts.data.forEach(p => { phtml += app.createPostHTML(p); });
+                    dataList.forEach(p => { phtml += app.createPostHTML(p); });
                     timeline.innerHTML = phtml;
-                    app.postsData = resPosts.data;
+                    app.postsData = dataList;
                 }
             } catch (err) {
-                timeline.innerHTML = app.renderEmpty('Failed to load ' + tab);
+                console.error("[switchProfileTab] Gagal memuat:", err);
+                timeline.innerHTML = app.renderEmpty(`Gagal memuat ${tab}.<br><span class="text-xs text-red-400 mt-2 block">Error: ${err.message}</span>`);
             }
         };
 
@@ -1175,10 +1271,10 @@
 
                 let followBtnHtml = '';
                 if (isMe) {
-                    followBtnHtml = `<button onclick="app.openEditProfile()" class="w-full bg-transparent border border-rz_border text-white font-semibold py-1.5 rounded-xl text-[15px] hover:bg-[#101010]">Edit profile</button>`;
+                    followBtnHtml = `<button onclick="app.openEditProfile()" class="w-full bg-transparent border border-rz_border text-white font-semibold py-1.5 rounded-xl text-[15px] hover:bg-[#1a1a1a] transition">Edit profile</button>`;
                 } else {
                     if (u.followed_by_me) {
-                        followBtnHtml = `<button onclick="app.toggleFollow('${u.username}')" id="btn-profile-follow" class="w-full bg-transparent border border-rz_border text-white font-semibold py-1.5 rounded-xl text-[15px] hover:bg-[#101010] transition">Following</button>`;
+                        followBtnHtml = `<button onclick="app.toggleFollow('${u.username}')" id="btn-profile-follow" class="w-full bg-transparent border border-rz_border text-white font-semibold py-1.5 rounded-xl text-[15px] hover:bg-[#1a1a1a] transition">Following</button>`;
                     } else {
                         followBtnHtml = `<button onclick="app.toggleFollow('${u.username}')" id="btn-profile-follow" class="w-full bg-white text-black font-semibold py-1.5 rounded-xl text-[15px] hover:bg-gray-200 transition">Follow</button>`;
                     }
@@ -1216,9 +1312,9 @@
                         <div class="flex items-center gap-2 text-[15px] text-rz_text_secondary mb-4">
                             <span>${u.stats.total_posts || 0} postingan</span>
                             <span>·</span>
-                            <span class="cursor-pointer hover:underline" onclick="app.openFollowModal('followers', '${u.username}')"><span id="profile-followers-count">${u.stats.total_followers || 0}</span> followers</span>
+                            <span class="cursor-pointer hover:underline transition" onclick="app.openFollowModal('followers', '${u.username}')"><span id="profile-followers-count">${u.stats.total_followers || 0}</span> followers</span>
                             <span>·</span>
-                            <span class="cursor-pointer hover:underline" onclick="app.openFollowModal('following', '${u.username}')"><span id="profile-following-count">${u.stats.total_following || 0}</span> following</span>
+                            <span class="cursor-pointer hover:underline transition" onclick="app.openFollowModal('following', '${u.username}')"><span id="profile-following-count">${u.stats.total_following || 0}</span> following</span>
                         </div>
                         
                         ${followBtnHtml}
@@ -1226,9 +1322,9 @@
                     
                     <!-- Profile Tabs -->
                     <div class="flex border-b border-rz_border">
-                        <div id="tab-profile-threads" class="flex-1 text-center py-3 font-semibold text-[15px] tab-active cursor-pointer" onclick="app.switchProfileTab('threads', '${targetUser}')">Threads</div>
-                        <div id="tab-profile-replies" class="flex-1 text-center py-3 font-semibold text-[15px] tab-inactive cursor-pointer" onclick="app.switchProfileTab('replies', '${targetUser}')">Replies</div>
-                        <div id="tab-profile-reposts" class="flex-1 text-center py-3 font-semibold text-[15px] tab-inactive cursor-pointer" onclick="app.switchProfileTab('reposts', '${targetUser}')">Reposts</div>
+                        <div id="tab-profile-threads" class="flex-1 text-center py-3 font-semibold text-[15px] tab-active cursor-pointer transition" onclick="app.switchProfileTab('threads', '${targetUser}')">Threads</div>
+                        <div id="tab-profile-replies" class="flex-1 text-center py-3 font-semibold text-[15px] tab-inactive cursor-pointer transition" onclick="app.switchProfileTab('replies', '${targetUser}')">Replies</div>
+                        <div id="tab-profile-reposts" class="flex-1 text-center py-3 font-semibold text-[15px] tab-inactive cursor-pointer transition" onclick="app.switchProfileTab('reposts', '${targetUser}')">Reposts</div>
                     </div>
                     <div id="profile-timeline">
                         <div class="p-10 text-center"><i class="ph ph-spinner animate-spin text-2xl text-rz_text_secondary"></i></div>
@@ -1279,7 +1375,7 @@
                     icon.className = 'ph-fill ph-heart text-rz_red text-[22px] like-icon';
                 } else {
                     icon.className = 'ph ph-heart text-white hover:text-rz_text_secondary text-[22px] like-icon';
-                    if (app.currentView === 'likes') {
+                    if (app.currentView === 'likes' || app.currentParams === 'likes') {
                         if(postEl) postEl.style.display = 'none';
                     }
                 }
@@ -1335,7 +1431,7 @@
                 } else {
                     icon.className = 'ph ph-arrows-clockwise text-white hover:text-rz_text_secondary text-[22px] repost-icon';
                     util.showToast('Repost dibatalkan');
-                    if (app.currentView === 'reposts') {
+                    if (app.currentParams === 'reposts') {
                         if(postEl) postEl.style.display = 'none';
                     }
                 }
@@ -1382,7 +1478,7 @@
             }
 
             try {
-                const method = app.currentView === 'saved' ? 'DELETE' : 'POST';
+                const method = app.currentView === 'saved' || app.currentParams === 'saved' ? 'DELETE' : 'POST';
                 const endpoint = `/api/posts/${id}/save`;
 
                 const res = await api(endpoint, { method });
@@ -1394,7 +1490,7 @@
                 } else {
                     icon.className = 'ph ph-bookmark text-white hover:text-rz_text_secondary text-[20px] save-icon';
                     util.showToast('Postingan dihapus dari simpanan');
-                    if (app.currentView === 'saved') {
+                    if (app.currentView === 'saved' || app.currentParams === 'saved') {
                         if(postEl) postEl.style.display = 'none';
                     }
                 }
@@ -1426,9 +1522,6 @@
             const btn = document.getElementById('btn-profile-follow');
             const countSpan = document.getElementById('profile-followers-count');
             
-            // Optimistic update assumes we toggle correctly
-            let wasFollowing = btn.textContent.trim() === 'Following';
-
             if(btn) {
                 btn.classList.add('opacity-50', 'cursor-not-allowed');
             }
@@ -1439,7 +1532,7 @@
                 if (res.following || res.followed_by_me === 1) {
                     if(btn) {
                         btn.textContent = 'Following';
-                        btn.className = 'w-full bg-transparent border border-rz_border text-white font-semibold py-1.5 rounded-xl text-[15px] hover:bg-[#101010] transition';
+                        btn.className = 'w-full bg-transparent border border-rz_border text-white font-semibold py-1.5 rounded-xl text-[15px] hover:bg-[#1a1a1a] transition';
                     }
                 } else {
                     if(btn) {
@@ -1448,7 +1541,7 @@
                     }
                 }
                 
-                if (countSpan) {
+                if (countSpan && res.total_followers !== undefined) {
                     countSpan.textContent = res.total_followers;
                 }
                 
@@ -1470,7 +1563,7 @@
 
             try {
                 const res = await api(`/api/users/${username}/${type}`);
-                if (res.data.length === 0) {
+                if (!res.data || res.data.length === 0) {
                     content.innerHTML = app.renderEmpty(type === 'followers' ? 'Belum ada followers.' : 'Belum mengikuti siapa pun.');
                 } else {
                     let html = '';
@@ -1487,7 +1580,7 @@
         app.copyLink = (id) => {
             const url = `${window.location.origin}/#post-${id}`;
             navigator.clipboard.writeText(url).then(() => {
-                util.showToast('Copied', 'success');
+                util.showToast('Tautan disalin', 'success');
             }).catch(() => {
                 const input = document.createElement('input');
                 input.value = url;
@@ -1495,7 +1588,7 @@
                 input.select();
                 document.execCommand('copy');
                 document.body.removeChild(input);
-                util.showToast('Copied', 'success');
+                util.showToast('Tautan disalin', 'success');
             });
         };
 
@@ -1517,12 +1610,12 @@
                         <!-- Autocomplete Suggestions for Comments -->
                         <div id="comment-mention-list" class="hidden absolute bottom-full left-0 mb-2 bg-[#1a1a1a] border border-rz_border rounded-xl shadow-2xl max-h-48 overflow-y-auto z-50 w-full sm:w-[250px]"></div>
                     </div>
-                    <button onclick="app.submitComment()" class="text-white font-semibold disabled:opacity-50 px-2 py-1 bg-transparent rounded-full"><i class="ph-fill ph-arrow-circle-up text-[30px]"></i></button>
+                    <button onclick="app.submitComment()" class="text-white font-semibold disabled:opacity-50 px-2 py-1 bg-transparent rounded-full hover:opacity-70 transition"><i class="ph-fill ph-arrow-circle-up text-[30px]"></i></button>
                 `;
             } else {
                 inputArea.innerHTML = `
                     <div class="w-full text-center py-2">
-                        <button onclick="app.closeModal('detail-modal'); app.openAuthModal()" class="text-blue-500 font-semibold text-[15px] hover:underline">Login untuk membalas thread ini.</button>
+                        <button onclick="app.closeModal('detail-modal'); app.openAuthModal()" class="text-blue-500 font-semibold text-[15px] hover:underline transition">Login untuk membalas thread ini.</button>
                     </div>
                 `;
             }
@@ -1544,7 +1637,7 @@
 
                 const resCom = await api(`/api/posts/${id}/comments`);
                 const comContainer = document.getElementById('comments-container');
-                if (resCom.data.length === 0) {
+                if (!resCom.data || resCom.data.length === 0) {
                     comContainer.innerHTML = `<div class="p-6 text-center text-rz_text_secondary text-[15px]">Belum ada replies. Jadi yang pertama membalas.</div>`;
                 } else {
                     let chtml = '';
@@ -1724,15 +1817,21 @@
             }
         };
 
-        app.deletePost = async (id) => {
-            if (!confirm('Delete thread?')) return;
-            try {
-                await api(`/api/posts/${id}`, { method: 'DELETE' });
-                document.getElementById(`post-${id}`).remove();
-                util.showToast('Deleted');
-            } catch (err) {
-                util.showToast(err.message, 'error');
-            }
+        app.deletePost = (id) => {
+            app.confirm('Hapus Thread', 'Apakah Anda yakin ingin menghapus thread ini?', async () => {
+                try {
+                    await api(`/api/posts/${id}`, { method: 'DELETE' });
+                    const postEl = document.getElementById(`post-${id}`);
+                    if(postEl) postEl.remove();
+                    util.showToast('Thread dihapus');
+                    // Jika dihapus dari dalam modal detail, tutup modalnya
+                    if(app.currentDetailPostId === id) {
+                        app.closeModal('detail-modal');
+                    }
+                } catch (err) {
+                    util.showToast(err.message, 'error');
+                }
+            });
         };
 
         // --- PROFILE EDIT ---
@@ -1797,6 +1896,7 @@
         // --- STARTUP ---
         document.addEventListener('DOMContentLoaded', app.init);
 
-    </script>
+						</script>
 </body>
+
 </html>
