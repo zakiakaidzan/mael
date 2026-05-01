@@ -536,6 +536,72 @@
             ]
         };
 
+        // --- SKELETON LOADERS ---
+        app.renderPostSkeleton = () => {
+            return `
+                <div class="px-4 py-4 border-b border-rz_border animate-pulse">
+                    <div class="flex gap-3">
+                        <div class="flex flex-col items-center shrink-0 w-9">
+                            <div class="w-9 h-9 bg-[#1a1a1a] rounded-full"></div>
+                        </div>
+                        <div class="flex-1 min-w-0 pb-1">
+                            <div class="flex justify-between items-start mb-3">
+                                <div class="w-32 h-4 bg-[#1a1a1a] rounded"></div>
+                                <div class="w-12 h-3 bg-[#1a1a1a] rounded"></div>
+                            </div>
+                            <div class="w-full h-3.5 bg-[#1a1a1a] rounded mb-2"></div>
+                            <div class="w-4/5 h-3.5 bg-[#1a1a1a] rounded mb-4"></div>
+                            <div class="flex gap-4 mt-3">
+                                <div class="w-5 h-5 bg-[#1a1a1a] rounded-full"></div>
+                                <div class="w-5 h-5 bg-[#1a1a1a] rounded-full"></div>
+                                <div class="w-5 h-5 bg-[#1a1a1a] rounded-full"></div>
+                                <div class="w-5 h-5 bg-[#1a1a1a] rounded-full"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        };
+
+        app.renderUserSkeleton = () => {
+            return `
+                <div class="px-4 py-3 border-b border-rz_border animate-pulse flex items-center justify-between">
+                    <div class="flex items-center gap-3 w-full">
+                        <div class="w-10 h-10 bg-[#1a1a1a] rounded-full shrink-0"></div>
+                        <div class="flex flex-col gap-2 w-full">
+                            <div class="w-24 h-4 bg-[#1a1a1a] rounded"></div>
+                            <div class="w-32 h-3 bg-[#1a1a1a] rounded"></div>
+                        </div>
+                    </div>
+                    <div class="w-16 h-8 bg-[#1a1a1a] rounded-xl shrink-0"></div>
+                </div>
+            `;
+        };
+
+        app.renderProfileSkeleton = () => {
+            return `
+                <div class="px-4 pt-2 pb-4 sm:pt-8 animate-pulse">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="flex flex-col gap-3">
+                            <div class="w-40 h-6 bg-[#1a1a1a] rounded"></div>
+                            <div class="w-24 h-4 bg-[#1a1a1a] rounded-full"></div>
+                        </div>
+                        <div class="w-[72px] h-[72px] rounded-full bg-[#1a1a1a]"></div>
+                    </div>
+                    <div class="w-full h-4 bg-[#1a1a1a] rounded mb-2"></div>
+                    <div class="w-3/4 h-4 bg-[#1a1a1a] rounded mb-6"></div>
+                    <div class="w-48 h-4 bg-[#1a1a1a] rounded mb-6"></div>
+                    <div class="w-full h-9 bg-[#1a1a1a] rounded-xl"></div>
+                </div>
+                <div class="flex border-b border-rz_border mt-4">
+                    <div class="flex-1 py-3 flex justify-center"><div class="w-16 h-4 bg-[#1a1a1a] rounded"></div></div>
+                    <div class="flex-1 py-3 flex justify-center"><div class="w-16 h-4 bg-[#1a1a1a] rounded"></div></div>
+                    <div class="flex-1 py-3 flex justify-center"><div class="w-16 h-4 bg-[#1a1a1a] rounded"></div></div>
+                </div>
+                ${Array(3).fill(app.renderPostSkeleton()).join('')}
+            `;
+        };
+
         // --- UTILS ---
         
         const util = {
@@ -788,8 +854,6 @@
             window.scrollTo(0,0);
             
             const container = document.getElementById('view-container');
-            container.innerHTML = `<div class="flex justify-center p-12"><i class="ph ph-spinner animate-spin text-3xl text-rz_text_secondary"></i></div>`;
-
             let headerHTML = '';
 
             switch(view) {
@@ -838,7 +902,6 @@
                     else if (subView === 'saved') app.loadSaved(headerHTML);
                     break;
                 case 'profile':
-                    // Profile has custom header built in loadProfile
                     app.loadProfile(params);
                     break;
             }
@@ -920,7 +983,7 @@
                 }
 
                 if (!res.ok || !data.success) {
-                    util.showToast(data.message || "Email atau password salah", "error");
+                    util.showToast(data.message || "Email atau kata sandi salah", "error");
                     return;
                 }
 
@@ -958,7 +1021,7 @@
             const password = passwordInput.value;
 
             if (!username || !email || !password) {
-                util.showToast("Username, email, dan password wajib diisi", "error");
+                util.showToast("Username, email, dan kata sandi wajib diisi", "error");
                 return;
             }
 
@@ -969,7 +1032,7 @@
             }
 
             if (password.length < 6) {
-                util.showToast("Password minimal 6 karakter", "error");
+                util.showToast("Kata sandi minimal 6 karakter", "error");
                 passwordInput.focus();
                 return;
             }
@@ -1271,14 +1334,30 @@
 
         app.loadFeed = async (headerHTML) => {
             const container = document.getElementById('view-container');
+            
+            // Set skeleton HTML instantly
+            let skeletonHTML = headerHTML;
+            skeletonHTML += `<div class="hidden sm:block h-8 w-full"></div>`;
+            if (app.user) {
+                skeletonHTML += `
+                    <div class="px-4 py-4 border-b border-t sm:border-t-0 border-rz_border flex items-center gap-3 cursor-text hover:bg-[#080808] transition" onclick="app.openComposer()">
+                        <img src="${util.getAvatar(app.user.avatar_url, app.user.display_name)}" class="w-9 h-9 rounded-full object-cover">
+                        <span class="text-rz_text_secondary text-[15px]">Mulai utas...</span>
+                        <button class="ml-auto px-4 py-1.5 bg-[#1a1a1a] text-white font-semibold rounded-full text-[14px] hover:bg-[#262626] transition">Posting</button>
+                    </div>
+                `;
+            } else {
+                skeletonHTML += `<div class="hidden sm:block h-6 w-full border-b border-rz_border"></div>`;
+            }
+            skeletonHTML += Array(5).fill(app.renderPostSkeleton()).join('');
+            container.innerHTML = skeletonHTML;
+            
             try {
                 const res = await api('/api/posts');
                 let html = headerHTML;
                 
-                // Spacer for desktop to avoid sticking to the top
                 html += `<div class="hidden sm:block h-8 w-full"></div>`;
                 
-                // Add Quick Composer CTA if logged in
                 if (app.user) {
                     html += `
                         <div class="px-4 py-4 border-b border-t sm:border-t-0 border-rz_border flex items-center gap-3 cursor-text hover:bg-[#080808] transition" onclick="app.openComposer()">
@@ -1306,8 +1385,9 @@
         };
 
         app.loadLikes = async (headerHTML) => {
-            if (!app.token) return; // Prevent unauthorized load
+            if (!app.token) return; 
             const container = document.getElementById('view-container');
+            container.innerHTML = headerHTML + Array(5).fill(app.renderPostSkeleton()).join('');
             try {
                 const res = await api('/api/me/likes');
                 let html = headerHTML;
@@ -1326,8 +1406,9 @@
         };
 
         app.loadReposts = async (headerHTML) => {
-            if (!app.token) return; // Prevent unauthorized load
+            if (!app.token) return;
             const container = document.getElementById('view-container');
+            container.innerHTML = headerHTML + Array(5).fill(app.renderPostSkeleton()).join('');
             try {
                 const res = await api('/api/me/reposts');
                 let html = headerHTML;
@@ -1346,8 +1427,9 @@
         };
         
         app.loadSaved = async (headerHTML) => {
-            if (!app.token) return; // Prevent unauthorized load
+            if (!app.token) return;
             const container = document.getElementById('view-container');
+            container.innerHTML = headerHTML + Array(5).fill(app.renderPostSkeleton()).join('');
             try {
                 const res = await api('/api/me/saved');
                 let html = headerHTML;
@@ -1366,8 +1448,9 @@
         };
 
         app.loadMentions = async (headerHTML) => {
-            if (!app.token) return; // Prevent unauthorized load
+            if (!app.token) return; 
             const container = document.getElementById('view-container');
+            container.innerHTML = headerHTML + Array(5).fill(app.renderUserSkeleton()).join('');
             try {
                 const res = await api('/api/me/mentions');
                 let html = headerHTML;
@@ -1376,12 +1459,10 @@
                     html += app.renderEmpty('Belum ada sebutan.');
                 } else {
                     dataList.forEach(m => {
-                        // Membedakan apakah mention dari komentar atau postingan
                         const isComment = !!m.comment_id;
                         const actionText = isComment ? 'menyebut Anda dalam balasan' : 'menyebut Anda dalam utas';
                         const avatar = util.getAvatar(m.mentioned_by_avatar_url, m.mentioned_by_display_name);
                         
-                        // Menentukan judul / konten yang relevan untuk ditampilkan
                         const contentToDisplay = isComment ? m.comment_content : m.post_content;
                         const titleHtml = !isComment && m.post_title ? `<h4 class="font-bold text-[14px] text-white mb-1 mt-1">${util.formatContent(m.post_title)}</h4>` : '';
                         
@@ -1424,7 +1505,6 @@
                     <div class="p-10 text-center text-rz_text_secondary text-[15px]">Ketik sesuatu untuk mencari</div>
                 </div>
             `;
-            // Default to users as per threads UI
             app.currentSearchTab = 'users'; 
         };
 
@@ -1433,7 +1513,7 @@
             if (!q) return;
             
             const resContainer = document.getElementById('search-results');
-            resContainer.innerHTML = `<div class="p-10 text-center"><i class="ph ph-spinner animate-spin text-2xl text-rz_text_secondary"></i></div>`;
+            resContainer.innerHTML = Array(5).fill(app.renderUserSkeleton()).join('');
             
             try {
                 const resUsers = await api(`/api/search/users?q=${encodeURIComponent(q)}`);
@@ -1468,7 +1548,7 @@
             document.getElementById('tab-profile-reposts').className = `flex-1 text-center py-3 font-semibold text-[15px] ${tab === 'reposts' ? 'tab-active' : 'tab-inactive'} cursor-pointer transition`;
 
             const timeline = document.getElementById('profile-timeline');
-            timeline.innerHTML = `<div class="p-10 text-center"><i class="ph ph-spinner animate-spin text-2xl text-rz_text_secondary"></i></div>`;
+            timeline.innerHTML = Array(5).fill(app.renderPostSkeleton()).join('');
 
             try {
                 let endpoint = `/api/users/${targetUser}/posts`;
@@ -1503,6 +1583,19 @@
                 container.innerHTML = app.renderEmpty('Pengguna tidak ditemukan');
                 return;
             }
+
+            // Skeleton Loading Base Header
+            let baseHeader = `
+                <header class="sticky top-0 z-30 bg-[#000000]/80 backdrop-blur-xl h-[64px] px-4 flex justify-between items-center sm:hidden">
+                    <button onclick="app.navigate('home')" class="w-[32px] flex justify-start text-white hover:opacity-70 transition">
+                        <i class="ph ph-arrow-left text-2xl"></i>
+                    </button>
+                    <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/threads-white-icon.png" class="w-[32px] h-[32px] cursor-pointer" alt="Logo" onclick="app.navigate('home')">
+                    <div class="w-[32px]"></div>
+                </header>
+                <div class="hidden sm:block h-8 w-full"></div>
+            `;
+            container.innerHTML = baseHeader + app.renderProfileSkeleton();
 
             try {
                 const resUser = await api(`/api/users/${targetUser}`);
@@ -1570,7 +1663,7 @@
                         <div id="tab-profile-reposts" class="flex-1 text-center py-3 font-semibold text-[15px] tab-inactive cursor-pointer transition" onclick="app.switchProfileTab('reposts', '${targetUser}')">Repost</div>
                     </div>
                     <div id="profile-timeline">
-                        <div class="p-10 text-center"><i class="ph ph-spinner animate-spin text-2xl text-rz_text_secondary"></i></div>
+                        <!-- Fetched on switchProfileTab -->
                     </div>
                 `;
                 container.innerHTML = headerHTML;
@@ -1802,7 +1895,7 @@
             document.getElementById('follow-modal').classList.remove('hidden');
             document.getElementById('follow-modal-title').textContent = type === 'followers' ? 'Pengikut' : 'Mengikuti';
             const content = document.getElementById('follow-modal-content');
-            content.innerHTML = `<div class="p-10 text-center"><i class="ph ph-spinner animate-spin text-2xl text-rz_text_secondary"></i></div>`;
+            content.innerHTML = Array(5).fill(app.renderUserSkeleton()).join('');
 
             try {
                 const res = await api(`/api/users/${username}/${type}`);
@@ -1863,7 +1956,7 @@
                 `;
             }
 
-            content.innerHTML = `<div class="p-10 text-center"><i class="ph ph-spinner animate-spin text-2xl text-rz_text_secondary"></i></div>`;
+            content.innerHTML = app.renderPostSkeleton() + app.renderPostSkeleton();
             
             try {
                 let post = (app.postsData || []).find(p => p.id === id);
@@ -1874,7 +1967,7 @@
 
                 let html = app.createPostHTML(post, true);
                 html += `<div class="border-t border-rz_border mt-2" id="comments-container">
-                            <div class="p-4 text-center"><i class="ph ph-spinner animate-spin"></i> Memuat balasan...</div>
+                            ${Array(3).fill(app.renderPostSkeleton()).join('')}
                          </div>`;
                 content.innerHTML = html;
 
@@ -2048,8 +2141,15 @@
                 
                 util.showToast(postId ? 'Diperbarui' : 'Berhasil memposting', 'success');
                 app.closeModal('composer-modal');
-                if (app.currentView === 'home' || (app.currentView === 'profile' && !app.currentParams)) {
-                    app.navigate(app.currentView, app.currentParams);
+                
+                // Auto Refresh
+                if (app.currentView === 'home') {
+                    app.navigate('home');
+                } else if (app.currentView === 'profile') {
+                    const isMe = !app.currentParams || app.currentParams === app.user?.username;
+                    if (isMe) {
+                        app.navigate('profile', app.user.username);
+                    }
                 }
             } catch (err) {
                 util.showToast(err.message, 'error');
