@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Generator Promo ChatGPT Plus</title>
+
+	<!-- Theme Initialization Script (Prevents FOUC) -->
+	<script>
+		if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+	</script>
+
+	<!-- Tailwind CSS -->
+	<script src="https://cdn.tailwindcss.com"></script>
+	<script>
+		tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        black: '#000000',
+                    }
+                }
+            }
+        }
+	</script>
+
+	<!-- Google Fonts (Plus Jakarta Sans) -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&display=swap"
+		rel="stylesheet">
+
+	<!-- Lucide Icons -->
+	<script src="https://unpkg.com/lucide@latest"></script>
+
+	<style>
+		body {
+			font-family: 'Plus Jakarta Sans', sans-serif;
+			-webkit-font-smoothing: antialiased;
+			-moz-osx-font-smoothing: grayscale;
+			transition: background-color 0.3s ease, color 0.3s ease;
+		}
+
+		/* Subtle scrollbar for Vercel aesthetic */
+		::-webkit-scrollbar {
+			width: 8px;
+			height: 8px;
+		}
+
+		/* Light Mode Scrollbar */
+		::-webkit-scrollbar-track {
+			background: #ffffff;
+		}
+
+		::-webkit-scrollbar-thumb {
+			background: #e4e4e7;
+			/* zinc-200 */
+			border-radius: 4px;
+		}
+
+		::-webkit-scrollbar-thumb:hover {
+			background: #d4d4d8;
+			/* zinc-300 */
+		}
+
+		/* Dark Mode Scrollbar */
+		.dark ::-webkit-scrollbar-track {
+			background: #000000;
+		}
+
+		.dark ::-webkit-scrollbar-thumb {
+			background: #27272a;
+			/* zinc-800 */
+		}
+
+		.dark ::-webkit-scrollbar-thumb:hover {
+			background: #3f3f46;
+			/* zinc-700 */
+		}
+	</style>
+</head>
+
+<body class="flex h-screen overflow-hidden bg-white dark:bg-black transition-colors duration-300">
+
+	<!-- Header Navigation -->
+	<header
+		class="fixed top-0 w-full h-16 border-b border-zinc-200 dark:border-zinc-800/80 bg-white/80 dark:bg-black/80 backdrop-blur-md z-[60] flex items-center justify-between px-6 transition-colors duration-300">
+		<!-- Logo -->
+		<div class="flex items-center gap-2 relative z-[60]">
+			<div class="w-6 h-6 bg-black dark:bg-white rounded-sm flex items-center justify-center transition-colors">
+				<i data-lucide="bot" class="w-4 h-4 text-white dark:text-black"></i>
+			</div>
+			<span class="font-semibold text-sm tracking-tight text-zinc-900 dark:text-white transition-colors">ChatGPT Promo</span>
+		</div>
+
+		<!-- Desktop Nav -->
+		<nav class="hidden md:flex items-center gap-6 text-sm font-medium text-zinc-500 dark:text-zinc-400">
+			<a href="#" class="text-zinc-900 dark:text-white transition-colors">Klaim Promo</a>
+			<a href="#" class="hover:text-zinc-900 dark:hover:text-zinc-200 transition-colors">Riwayat</a>
+			<a href="#" class="hover:text-zinc-900 dark:hover:text-zinc-200 transition-colors">Bantuan</a>
+		</nav>
+
+		<!-- Right Actions (Theme Toggle, Live Status & Mobile Menu) -->
+		<div class="flex items-center gap-4 relative z-[60]">
+			<!-- Desktop Live Status -->
+			<div
+				class="hidden md:flex items-center gap-2 text-xs font-medium text-zinc-500 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-900 px-3 py-1.5 rounded-full">
+				<div class="w-1.5 h-1.5 rounded-full bg-green-500"></div>
+				Server: Operasional
+			</div>
+
+			<!-- Theme Toggle Button -->
+			<button id="themeToggleBtn" class="p-2 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-900 text-zinc-500 dark:text-zinc-400 transition-colors focus:outline-none">
+                <i data-lucide="sun" class="w-4 h-4 hidden dark:block"></i>
+                <i data-lucide="moon" class="w-4 h-4 block dark:hidden"></i>
+            </button>
+
+			<!-- Mobile Menu Button (2 Lines to Close Icon) -->
+			<button id="mobileMenuBtn" class="md:hidden relative flex justify-center items-center w-8 h-8 focus:outline-none">
+                <!-- 2-Line Burger -->
+                <div id="burgerIcon" class="flex flex-col justify-center items-center w-full h-full gap-1.5 transition-all duration-300 absolute">
+                    <span class="block w-5 h-[1.5px] bg-zinc-900 dark:bg-white transition-colors"></span>
+                    <span class="block w-5 h-[1.5px] bg-zinc-900 dark:bg-white transition-colors"></span>
+                </div>
+                <!-- Close Icon (Lucide X) -->
+                <div id="closeIcon" class="flex justify-center items-center w-full h-full transition-all duration-300 absolute opacity-0 scale-50 -rotate-90">
+                    <i data-lucide="x" class="w-6 h-6 text-zinc-900 dark:text-white transition-colors"></i>
+                </div>
+            </button>
+		</div>
+	</header>
+
+	<!-- Fullscreen Mobile Menu -->
+	<div id="mobileMenu"
+		class="fixed inset-0 bg-white dark:bg-black z-50 flex flex-col px-6 pt-24 pb-8 transition-all duration-300 opacity-0 pointer-events-none md:hidden">
+		<nav class="flex flex-col gap-6 text-2xl font-medium text-zinc-500 dark:text-zinc-400">
+			<a href="#" class="text-zinc-900 dark:text-white tracking-tight transition-colors">Klaim Promo</a>
+			<a href="#" class="hover:text-zinc-900 dark:hover:text-white transition-colors tracking-tight">Riwayat</a>
+			<a href="#" class="hover:text-zinc-900 dark:hover:text-white transition-colors tracking-tight">Bantuan</a>
+		</nav>
+
+		<div class="mt-auto border-t border-zinc-200 dark:border-zinc-800 pt-6 transition-colors">
+			<div class="flex items-center gap-3 text-sm text-zinc-500 dark:text-zinc-400">
+				<div class="w-2 h-2 rounded-full bg-green-500"></div>
+				Server: Operasional
+			</div>
+		</div>
+	</div>
+
+	<!-- Main Content -->
+	<main class="flex-1 overflow-y-auto relative w-full flex flex-col justify-center pt-16">
+		<div class="max-w-2xl mx-auto py-12 px-6 w-full">
+
+			<div class="mb-10">
+				<h1
+					class="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-white mb-2 transition-colors flex items-center gap-3">
+					Klaim Promo ChatGPT Plus
+				</h1>
+				<p class="text-sm text-zinc-500 dark:text-zinc-400 transition-colors">Dapatkan tautan checkout untuk
+					berlangganan gratis menggunakan token autentikasi Anda.</p>
+			</div>
+
+			<!-- Main Form Card -->
+			<div
+				class="bg-white dark:bg-black border border-zinc-200 dark:border-zinc-800 rounded-xl p-6 transition-colors shadow-sm dark:shadow-none">
+
+				<!-- Analytics Section -->
+				<div class="grid grid-cols-2 gap-4 mb-8">
+					<!-- Sessions Generated Data -->
+					<div id="sessionsCard"
+						class="p-4 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-[#0a0a0a] flex flex-col justify-between transition-colors">
+						<div class="text-xs font-medium text-zinc-500 dark:text-zinc-400 mb-1">Sesi Dibuat</div>
+
+						<!-- Skeleton Content -->
+						<div id="sessionsSkeleton" class="animate-pulse flex flex-col gap-2 mt-1">
+							<div class="h-6 bg-zinc-200 dark:bg-zinc-800 rounded w-16"></div>
+							<div class="h-1.5 bg-zinc-200 dark:bg-zinc-800 rounded w-full mt-1"></div>
+						</div>
+
+						<!-- Real Data -->
+						<div id="sessionsData" class="hidden flex-col">
+							<div
+								class="text-2xl font-semibold text-zinc-900 dark:text-white tracking-tight mb-2 flex items-baseline gap-1">
+								<span id="sessionsCount">0</span>
+								<span class="text-sm font-normal text-zinc-500 dark:text-zinc-500">/ 30</span>
+							</div>
+							<div class="w-full bg-zinc-200 dark:bg-zinc-800/60 rounded-full h-1.5 overflow-hidden">
+								<div id="sessionsProgress"
+									class="h-1.5 rounded-full transition-all duration-700 ease-out bg-teal-500"
+									style="width: 0%"></div>
+							</div>
+						</div>
+					</div>
+
+					<!-- Total Visitors Data -->
+					<div id="visitorsCard"
+						class="p-4 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-[#0a0a0a] flex flex-col justify-between transition-colors">
+						<div class="text-xs font-medium text-zinc-500 dark:text-zinc-400 mb-1 flex items-center gap-2">
+							Total Pengunjung
+							<span class="relative flex h-2 w-2">
+                              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+							<span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+							</span>
+						</div>
+
+						<!-- Skeleton Content -->
+						<div id="visitorsSkeleton" class="animate-pulse mt-1">
+							<div class="h-6 bg-zinc-200 dark:bg-zinc-800 rounded w-12"></div>
+						</div>
+
+						<!-- Real Data -->
+						<div id="visitorsData" class="hidden flex-col">
+							<div class="text-2xl font-semibold text-zinc-900 dark:text-white tracking-tight"
+								id="visitorsCount">0</div>
+						</div>
+					</div>
+				</div>
+
+				<form id="generatorForm" class="space-y-6">
+					<div>
+						<label for="tokenInput" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2 transition-colors">Token Autentikasi (Access Token)</label>
+						<div class="relative">
+							<textarea
+                                id="tokenInput"
+                                rows="4"
+                                class="w-full bg-transparent border border-zinc-200 dark:border-zinc-800 rounded-lg p-4 pr-10 text-sm text-zinc-900 dark:text-zinc-200 placeholder-zinc-400 dark:placeholder-zinc-600 focus:outline-none focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500 transition-all resize-y min-h-[120px]"
+                                placeholder="eyJhbGciOiJSUzI1NiI..."
+                                spellcheck="false"
+                            ></textarea>
+
+							<!-- Clear Button -->
+							<button
+                                type="button"
+                                id="clearTokenBtn"
+                                class="absolute top-3 right-3 p-1.5 rounded-md text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 hidden transition-colors focus:outline-none"
+                                title="Hapus Input"
+                            >
+                                <i data-lucide="x" class="w-4 h-4"></i>
+                            </button>
+						</div>
+					</div>
+
+					<div class="flex items-center justify-between pt-2">
+						<div id="statusIndicator" class="text-xs text-zinc-500 font-medium tracking-wide">
+							Siap
+						</div>
+						<button
+                            type="submit"
+                            id="generateBtn"
+                            class="bg-black dark:bg-white text-white dark:text-black text-sm font-medium px-5 py-2.5 rounded-md hover:bg-zinc-800 dark:hover:bg-zinc-200 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-black transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                        >
+                            <span id="btnText">Klaim Promo</span>
+                            <i data-lucide="arrow-right" class="w-4 h-4" id="generateIcon"></i>
+                            <i data-lucide="loader-2" class="w-4 h-4 animate-spin hidden" id="loadingIcon"></i>
+                        </button>
+					</div>
+				</form>
+
+				<!-- Result Section (Hidden initially) -->
+				<div id="resultContainer"
+					class="mt-8 pt-8 border-t border-zinc-200 dark:border-zinc-800 hidden transition-colors">
+					<label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2 transition-colors">URL Promo Checkout</label>
+					<div class="flex flex-col sm:flex-row gap-3">
+						<input
+                            type="text"
+                            id="resultInput"
+                            readonly
+                            class="flex-1 bg-zinc-50 dark:bg-[#0a0a0a] border border-zinc-200 dark:border-zinc-800 rounded-md px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-300 focus:outline-none selection:bg-zinc-200 dark:selection:bg-zinc-800 transition-colors"
+                        >
+						<div class="flex gap-2">
+							<button
+                                id="copyBtn"
+                                class="flex-1 sm:flex-none border border-zinc-200 dark:border-zinc-800 bg-transparent text-zinc-700 dark:text-zinc-300 px-4 py-2.5 rounded-md hover:bg-zinc-50 dark:hover:bg-zinc-900 hover:text-zinc-900 dark:hover:text-white transition-colors text-sm font-medium flex items-center justify-center gap-2 min-w-[100px]"
+                            >
+                                <i data-lucide="copy" class="w-4 h-4" id="copyIcon"></i>
+                                <span id="copyText">Salin</span>
+                            </button>
+							<a id="visitBtn" href="#" target="_blank"
+								class="flex-1 sm:flex-none border border-zinc-200 dark:border-zinc-800 bg-transparent text-zinc-700 dark:text-zinc-300 px-4 py-2.5 rounded-md hover:bg-zinc-50 dark:hover:bg-zinc-900 hover:text-zinc-900 dark:hover:text-white transition-colors text-sm font-medium flex items-center justify-center gap-2">
+								<i data-lucide="external-link" class="w-4 h-4"></i>
+								Kunjungi
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Instructions / Info -->
+			<div class="mt-8 text-xs text-zinc-500 dark:text-zinc-500 leading-relaxed max-w-xl transition-colors">
+				Alat ini membantu Anda memproses tautan checkout promo ChatGPT Plus. Token autentikasi Anda hanya
+				digunakan sesaat untuk memverifikasi sesi dan tidak pernah disimpan secara permanen di server kami.
+			</div>
+
+		</div>
+	</main>
+
+	<!-- Toast Notification -->
+	<div id="toast"
+		class="fixed bottom-6 right-6 transform transition-all duration-300 translate-y-12 opacity-0 flex items-center gap-3 bg-white dark:bg-black border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-white px-4 py-3 rounded-md shadow-2xl z-50 pointer-events-none">
+		<div id="toastIcon" class="w-4 h-4 text-zinc-500 dark:text-zinc-400"></div>
+		<span id="toastMessage" class="text-sm font-medium text-zinc-700 dark:text-zinc-200"></span>
+	</div>
+
+	<script>
+		// Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Theme Toggle Logic
+        const themeToggleBtn = document.getElementById('themeToggleBtn');
+        const htmlElement = document.documentElement;
+
+        themeToggleBtn.addEventListener('click', () => {
+            if (htmlElement.classList.contains('dark')) {
+                htmlElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            } else {
+                htmlElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        });
+
+        // Mobile Menu Logic with Icon Transition
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const burgerIcon = document.getElementById('burgerIcon');
+        const closeIcon = document.getElementById('closeIcon');
+        let isMenuOpen = false;
+
+        mobileMenuBtn.addEventListener('click', () => {
+            isMenuOpen = !isMenuOpen;
+            if (isMenuOpen) {
+                // Show menu
+                mobileMenu.classList.remove('opacity-0', 'pointer-events-none');
+                mobileMenu.classList.add('opacity-100', 'pointer-events-auto');
+                
+                // Animate icons
+                burgerIcon.classList.add('opacity-0', 'scale-50', 'rotate-90');
+                closeIcon.classList.remove('opacity-0', 'scale-50', '-rotate-90');
+                closeIcon.classList.add('opacity-100', 'scale-100', 'rotate-0');
+            } else {
+                // Hide menu
+                mobileMenu.classList.add('opacity-0', 'pointer-events-none');
+                mobileMenu.classList.remove('opacity-100', 'pointer-events-auto');
+                
+                // Animate icons
+                burgerIcon.classList.remove('opacity-0', 'scale-50', 'rotate-90');
+                closeIcon.classList.remove('opacity-100', 'scale-100', 'rotate-0');
+                closeIcon.classList.add('opacity-0', 'scale-50', '-rotate-90');
+            }
+        });
+
+        // DOM Elements
+        const form = document.getElementById('generatorForm');
+        const tokenInput = document.getElementById('tokenInput');
+        const clearTokenBtn = document.getElementById('clearTokenBtn');
+        const generateBtn = document.getElementById('generateBtn');
+        const btnText = document.getElementById('btnText');
+        const generateIcon = document.getElementById('generateIcon');
+        const loadingIcon = document.getElementById('loadingIcon');
+        const statusIndicator = document.getElementById('statusIndicator');
+        
+        const resultContainer = document.getElementById('resultContainer');
+        const resultInput = document.getElementById('resultInput');
+        const copyBtn = document.getElementById('copyBtn');
+        const visitBtn = document.getElementById('visitBtn');
+        const copyIcon = document.getElementById('copyIcon');
+        const copyText = document.getElementById('copyText');
+        
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
+        const toastIcon = document.getElementById('toastIcon');
+
+        // Analytics Elements
+        const sessionsSkeleton = document.getElementById('sessionsSkeleton');
+        const sessionsData = document.getElementById('sessionsData');
+        const sessionsCount = document.getElementById('sessionsCount');
+        const sessionsProgress = document.getElementById('sessionsProgress');
+        
+        const visitorsSkeleton = document.getElementById('visitorsSkeleton');
+        const visitorsData = document.getElementById('visitorsData');
+        const visitorsCount = document.getElementById('visitorsCount');
+
+        // Constants & State
+        const API_ENDPOINT = 'https://gptin.rizkifundie.workers.dev/';
+        let isQuotaReached = false;
+        let lastSessionCount = 0;
+        let lastVisitorCount = 0;
+
+        // Notification System
+        let toastTimeout;
+        const showToast = (message, type = 'info') => {
+            clearTimeout(toastTimeout);
+            
+            toastMessage.textContent = message;
+            
+            if (type === 'error') {
+                toast.classList.replace('border-zinc-200', 'border-red-500/50');
+                toast.classList.replace('dark:border-zinc-800', 'dark:border-red-900/50');
+                toastIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`;
+            } else if (type === 'success') {
+                toast.classList.replace('border-red-500/50', 'border-zinc-200');
+                toast.classList.replace('dark:border-red-900/50', 'dark:border-zinc-800');
+                toastIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+            } else {
+                toast.classList.replace('border-red-500/50', 'border-zinc-200');
+                toast.classList.replace('dark:border-red-900/50', 'dark:border-zinc-800');
+                toastIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>`;
+            }
+
+            toast.classList.remove('translate-y-12', 'opacity-0');
+            toastTimeout = setTimeout(() => {
+                toast.classList.add('translate-y-12', 'opacity-0');
+            }, 4000);
+        };
+
+        // Value Animation for numbers
+        const animateValue = (element, start, end, duration) => {
+            if (start === end) return;
+            let range = end - start;
+            let current = start;
+            let increment = end > start ? 1 : -1;
+            let stepTime = Math.abs(Math.floor(duration / range));
+            if (stepTime < 30) stepTime = 30; // Max speed threshold
+            
+            let timer = setInterval(function() {
+                current += increment;
+                element.textContent = current;
+                if (current === end) {
+                    clearInterval(timer);
+                }
+            }, stepTime);
+        };
+
+        // Polling Realtime Analytics
+        const fetchAnalytics = async () => {
+            try {
+                const response = await fetch(API_ENDPOINT);
+                if (!response.ok) return;
+                
+                const data = await response.json();
+                const totalGenerate = data.total_generate || 0;
+                const totalVisitors = data.total_visitors || 0;
+
+                // Hide Skeletons and Show Data (if still hidden)
+                if (!sessionsSkeleton.classList.contains('hidden')) {
+                    sessionsSkeleton.classList.add('hidden');
+                    sessionsData.classList.remove('hidden');
+                    sessionsData.classList.add('flex');
+                    
+                    visitorsSkeleton.classList.add('hidden');
+                    visitorsData.classList.remove('hidden');
+                    visitorsData.classList.add('flex');
+                }
+
+                // Animate Numbers
+                animateValue(sessionsCount, lastSessionCount, totalGenerate, 800);
+                animateValue(visitorsCount, lastVisitorCount, totalVisitors, 800);
+                
+                lastSessionCount = totalGenerate;
+                lastVisitorCount = totalVisitors;
+
+                // Progress Bar Update
+                let percent = (totalGenerate / 30) * 100;
+                if (percent > 100) percent = 100;
+                sessionsProgress.style.width = `${percent}%`;
+
+                // Progress Bar Color Logic
+                sessionsProgress.classList.remove('bg-teal-500', 'bg-orange-500', 'bg-red-500');
+                if (totalGenerate < 20) {
+                    sessionsProgress.classList.add('bg-teal-500');
+                } else if (totalGenerate < 30) {
+                    sessionsProgress.classList.add('bg-orange-500');
+                } else {
+                    sessionsProgress.classList.add('bg-red-500');
+                }
+
+                // Quota & Safety Logic
+                if (totalGenerate >= 30) {
+                    if (!isQuotaReached) {
+                        isQuotaReached = true;
+                        generateBtn.disabled = true;
+                        btnText.textContent = "Batas Harian Tercapai";
+                        generateBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                        showToast("Sistem pada kapasitas penuh. Silakan periksa kembali nanti.", "error");
+                    }
+                } else if (isQuotaReached) {
+                    // Reset if quota drops below 30 (e.g. daily reset)
+                    isQuotaReached = false;
+                    btnText.textContent = "Klaim Promo";
+                    generateBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                    if(tokenInput.value.trim() !== '') generateBtn.disabled = false;
+                }
+
+            } catch (err) {
+                console.error("Gagal memuat analitik:", err);
+            }
+        };
+
+        // Start Polling
+        fetchAnalytics(); // Initial fetch
+        setInterval(fetchAnalytics, 5000); // Poll every 5s
+
+        // Input Interactions (Clear Button & Validation)
+        tokenInput.addEventListener('input', () => {
+            // Show/Hide Clear Button
+            if (tokenInput.value.length > 0) {
+                clearTokenBtn.classList.remove('hidden');
+            } else {
+                clearTokenBtn.classList.add('hidden');
+            }
+
+            // Reset Status Indicators
+            if (resultContainer.classList.contains('hidden')) {
+                statusIndicator.textContent = 'Siap';
+                statusIndicator.classList.remove('text-red-500', 'text-green-500');
+                statusIndicator.classList.add('text-zinc-500');
+            }
+        });
+
+        // Clear Button Action
+        clearTokenBtn.addEventListener('click', () => {
+            tokenInput.value = '';
+            clearTokenBtn.classList.add('hidden');
+            tokenInput.focus();
+            tokenInput.dispatchEvent(new Event('input')); // Trigger reset
+        });
+
+        // Form Submission Logic
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (isQuotaReached) return;
+
+            const token = tokenInput.value.trim();
+            if (!token) {
+                showToast('Harap masukkan Token Autentikasi terlebih dahulu.', 'error');
+                return;
+            }
+
+            // Set Loading State
+            generateBtn.disabled = true;
+            generateIcon.classList.add('hidden');
+            loadingIcon.classList.remove('hidden');
+            statusIndicator.textContent = 'Memproses...';
+            statusIndicator.classList.replace('text-zinc-500', 'text-zinc-400');
+            resultContainer.classList.add('hidden');
+
+            try {
+                const response = await fetch(API_ENDPOINT, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ auth_token: token })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Server merespons dengan status: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                if (data && data.checkout_url) {
+                    // Success State
+                    resultInput.value = data.checkout_url;
+                    visitBtn.href = data.checkout_url;
+                    
+                    resultContainer.classList.remove('hidden');
+                    
+                    statusIndicator.textContent = 'Berhasil diproses.';
+                    statusIndicator.classList.replace('text-zinc-400', 'text-green-500');
+                    showToast('URL Promo Checkout berhasil dibuat.', 'success');
+
+                    // Immediately fetch updated analytics after successful post
+                    fetchAnalytics();
+                } else {
+                    throw new Error('Format respons tidak valid: checkout_url tidak ditemukan');
+                }
+
+            } catch (error) {
+                console.error('Kesalahan Sistem:', error);
+                statusIndicator.textContent = 'Gagal memproses.';
+                statusIndicator.classList.replace('text-zinc-400', 'text-red-500');
+                showToast(error.message || 'Gagal terhubung dengan server.', 'error');
+            } finally {
+                // Restore Button State if Quota not reached
+                if (!isQuotaReached) {
+                    generateBtn.disabled = false;
+                }
+                loadingIcon.classList.add('hidden');
+                generateIcon.classList.remove('hidden');
+                
+                // Reset status color after a delay if error/success
+                setTimeout(() => {
+                    if(statusIndicator.textContent !== 'Memproses...') {
+                        statusIndicator.classList.remove('text-red-500', 'text-green-500');
+                        statusIndicator.classList.add('text-zinc-500');
+                        if (resultContainer.classList.contains('hidden')) {
+                            statusIndicator.textContent = 'Siap';
+                        }
+                    }
+                }, 3000);
+            }
+        });
+
+        // Copy functionality using iframe-safe execCommand fallback
+        copyBtn.addEventListener('click', () => {
+            if (!resultInput.value) return;
+
+            // Select the text field
+            resultInput.select();
+            resultInput.setSelectionRange(0, 99999); // For mobile devices
+
+            try {
+                // Copy the text inside the text field
+                document.execCommand('copy');
+                
+                // Visual feedback (Vercel Style)
+                const originalHTML = copyIcon.innerHTML;
+                const originalText = copyText.textContent;
+                
+                // Change to Check icon
+                copyIcon.innerHTML = `<polyline points="20 6 9 17 4 12"></polyline>`;
+                copyText.textContent = 'Tersalin!';
+                copyBtn.classList.replace('text-zinc-700', 'text-black');
+                copyBtn.classList.replace('dark:text-zinc-300', 'dark:text-white');
+                
+                showToast('URL disalin ke clipboard.', 'success');
+
+                setTimeout(() => {
+                    copyIcon.innerHTML = originalHTML;
+                    copyText.textContent = originalText;
+                    copyBtn.classList.replace('text-black', 'text-zinc-700');
+                    copyBtn.classList.replace('dark:text-white', 'dark:text-zinc-300');
+                }, 2000);
+
+            } catch (err) {
+                showToast('Gagal menyalin. Silakan salin secara manual.', 'error');
+            }
+            
+            // Remove selection
+            window.getSelection().removeAllRanges();
+        });
+	</script>
+</body>
+
+</html>
